@@ -1,6 +1,7 @@
 import React, { PureComponent, createElement } from 'react';
 import pathToRegexp from 'path-to-regexp';
-import { Breadcrumb } from 'antd';
+import router from 'umi/router';
+import { Breadcrumb, Icon } from 'antd';
 import styles from './index.less';
 import { urlToList } from '../_utils/pathTools';
 
@@ -79,7 +80,7 @@ export default class BreadcrumbView extends PureComponent {
   };
 
   conversionFromLocation = (routerLocation, breadcrumbNameMap) => {
-    const { breadcrumbSeparator, home, itemRender, linkElement = 'a' } = this.props;
+    const { breadcrumbSeparator, home, showback, itemRender, linkElement = 'a' } = this.props;
     // Convert the url to an array
     const pathSnippets = urlToList(routerLocation.pathname);
     // Loop data mosaic routing
@@ -113,9 +114,18 @@ export default class BreadcrumbView extends PureComponent {
     //   </Breadcrumb.Item>
     // );
     return (
-      <Breadcrumb className={styles.breadcrumb} separator={breadcrumbSeparator}>
-        {extraBreadcrumbItems}
-      </Breadcrumb>
+      <div>
+        <Breadcrumb className={styles.breadcrumb} separator={breadcrumbSeparator}>
+          {extraBreadcrumbItems}
+        </Breadcrumb>
+        {showback && (
+          <div className="" style={{ float: 'right' }}>
+            <a onClick={() => router.goBack()}>
+              <Icon type="left" /> 返回上一页
+            </a>
+          </div>
+        )}
+      </div>
     );
   };
 

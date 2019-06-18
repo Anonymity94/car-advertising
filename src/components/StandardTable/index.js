@@ -60,6 +60,8 @@ class StandardTable extends PureComponent {
       <div className={styles.standardTable}>
         <Table
           rowKey={rowKey || 'id'}
+          bordered
+          size="middle"
           // rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}

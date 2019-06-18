@@ -7,7 +7,14 @@ import GridContent from './GridContent';
 import styles from './index.less';
 import MenuContext from '@/layouts/MenuContext';
 
-const PageHeaderWrapper = ({ children, contentWidth, wrapperClassName, top, ...restProps }) => (
+const PageHeaderWrapper = ({
+  children,
+  contentWidth,
+  wrapperClassName,
+  top,
+  showback = false,
+  ...restProps
+}) => (
   <div style={{ margin: '-24px -24px 0' }} className={wrapperClassName}>
     {top}
     <MenuContext.Consumer>
@@ -15,6 +22,7 @@ const PageHeaderWrapper = ({ children, contentWidth, wrapperClassName, top, ...r
         <PageHeader
           wide={contentWidth === 'Fixed'}
           home=""
+          showback={showback}
           {...value}
           key="pageheader"
           {...restProps}

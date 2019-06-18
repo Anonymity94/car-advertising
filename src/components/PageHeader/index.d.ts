@@ -7,6 +7,7 @@ export interface IPageHeaderProps {
   extraContent?: React.ReactNode;
   routes?: any[];
   params?: any;
+  showback?: boolean,
   breadcrumbList?: Array<{ title: React.ReactNode; href?: string }>;
   tabList?: Array<{ key: string; tab: React.ReactNode }>;
   tabActiveKey?: string;
