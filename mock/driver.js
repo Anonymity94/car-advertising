@@ -31,12 +31,57 @@ const drivers = [
   },
 ];
 
+const appeals = [
+  {
+    id: Math.random(),
+    name: '刘婉茹',
+    oldTelephone: '138542345947',
+    telephone: '138542345947',
+    createTime: '2019-06-18T20:30:57+08:00',
+    description: '手机丢了，换了新手机号',
+    state: '0',
+    stateText: '未审核',
+    operatorName: '',
+  },
+  {
+    id: Math.random(),
+    oldTelephone: '138542345947',
+    telephone: '138542345947',
+    createTime: '2019-06-18T20:30:57+08:00',
+    description: '手机丢了，换了新手机号',
+    state: '1',
+    stateText: '已通过',
+    operatorName: '管理员',
+  },
+  {
+    id: Math.random(),
+    oldTelephone: '138542345947',
+    telephone: '138542345947',
+    createTime: '2019-06-18T20:30:57+08:00',
+    description: '手机丢了，换了新手机号',
+    state: '-1',
+    stateText: '未通过',
+    operatorName: '管理员',
+  },
+];
+
 export default {
   'GET /api/drivers': {
     success: true,
     message: '',
     result: {
       content: drivers,
+      number: 0,
+      size: 15,
+      totalElements: 0,
+    },
+  },
+
+  'GET /api/appeals': {
+    success: true,
+    message: '',
+    result: {
+      content: appeals,
       number: 0,
       size: 15,
       totalElements: 0,
@@ -68,6 +113,10 @@ export default {
     },
   },
   'POST /api/drivers/:id': {
+    success: true,
+  },
+
+  'POST /api/appeals/:id': {
     success: true,
   },
 };

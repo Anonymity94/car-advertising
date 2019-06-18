@@ -1,13 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
 import Link from 'umi/link';
 import { connect } from 'dva';
-import { Card, Divider, Form, Row, Col, Input, Select, Button, DatePicker } from 'antd';
+import { Card, Divider, Form, Row, Col, Input, Select, Button, DatePicker, Icon } from 'antd';
 import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import { handlePageRefresh, handleSearchReset } from '@/utils/utils';
+import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
 
-import { DRIVER_STATE_LIST } from '@/common/constants';
+import { AUDIT_STATE_LIST } from '@/common/constants';
 
 const FormItem = Form.Item;
 
@@ -73,6 +73,7 @@ class List extends PureComponent {
     super(props);
     this.handlePageRefresh = handlePageRefresh.bind(this);
     this.handleSearchReset = handleSearchReset.bind(this);
+    this.handleTableChange = handleTableChange.bind(this);
   }
 
   componentDidMount() {}
@@ -120,7 +121,7 @@ class List extends PureComponent {
             </FormItem>
           </Col>
           <Col md={6}>
-            <FormItem label="日期">
+            <FormItem label="提交日期">
               {getFieldDecorator('createTime', {
                 initialValue: createTime ? moment(createTime) : undefined,
               })(
@@ -133,11 +134,11 @@ class List extends PureComponent {
               {getFieldDecorator('state', {
                 initialValue: state,
               })(
-                <Select placeholder="请选择人员状态">
+                <Select placeholder="请选择审核状态">
                   <Select.Option key="" value="">
                     全部
                   </Select.Option>
-                  {DRIVER_STATE_LIST.map(item => (
+                  {AUDIT_STATE_LIST.map(item => (
                     <Select.Option key={item.value} value={item.value}>
                       {item.label}
                     </Select.Option>
@@ -167,7 +168,16 @@ class List extends PureComponent {
     const { drivers, pagination, loading } = this.props;
     return (
       <PageHeaderWrapper>
-        <Card size="small" title="搜索查询" style={{ marginBottom: 10 }}>
+        <Card
+          size="small"
+          bordered={false}
+          title={
+            <div>
+              <Icon type="search" /> 筛选查询
+            </div>
+          }
+          style={{ marginBottom: 10 }}
+        >
           {this.renderSearchForm()}
         </Card>
         <Card bodyStyle={{ padding: 0 }} bordered={false}>
@@ -177,6 +187,7 @@ class List extends PureComponent {
             loading={loading}
             columns={tableColumns}
             data={{ list: drivers, pagination }}
+            onChange={this.handleTableChange}
           />
         </Card>
       </PageHeaderWrapper>

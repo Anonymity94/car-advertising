@@ -6,9 +6,9 @@ import FooterToolbar from '@/components/FooterToolbar';
 import router from 'umi/router';
 import UserDetail from './UserDetail';
 import {
-  DRIVER_STATE_UNREVIEWED,
-  DRIVER_STATE_PASSED,
-  DRIVER_STATE_NOT_APPROVED,
+  AUDIT_STATE_UNREVIEWED,
+  AUDIT_STATE_PASSED,
+  AUDIT_STATE_NOT_APPROVED,
 } from '@/common/constants';
 
 import styles from './styles.less';
@@ -54,7 +54,7 @@ class Audit extends PureComponent {
     });
   };
 
-  handleUpdateState = state => {
+  handleAudit = state => {
     const {
       dispatch,
       detail: { id },
@@ -101,7 +101,7 @@ class Audit extends PureComponent {
       loading: false,
     };
 
-    if (state === DRIVER_STATE_PASSED) {
+    if (state === AUDIT_STATE_PASSED) {
       confirmModal = Modal.confirm({
         title: '确定通过此条申请吗？',
         ...confirmProps,
@@ -152,20 +152,20 @@ class Audit extends PureComponent {
           <UserDetail detail={detail} loading={loading} />
         </Suspense>
 
-        {detail.id && detail.state === DRIVER_STATE_UNREVIEWED && (
+        {detail.id && detail.state === AUDIT_STATE_UNREVIEWED && (
           <FooterToolbar style={{ width }}>
             <section className={styles.operateWrap}>
               <Button
                 loading={submitting}
                 type="primary"
-                onClick={() => this.handleUpdateState(DRIVER_STATE_PASSED)}
+                onClick={() => this.handleAudit(AUDIT_STATE_PASSED)}
               >
                 通过
               </Button>
               <Button
                 loading={submitting}
                 type="danger"
-                onClick={() => this.handleUpdateState(DRIVER_STATE_NOT_APPROVED)}
+                onClick={() => this.handleAudit(AUDIT_STATE_NOT_APPROVED)}
               >
                 未通过
               </Button>

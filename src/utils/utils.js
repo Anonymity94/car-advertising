@@ -145,3 +145,11 @@ export function handleSearchReset() {
     page: 1,
   });
 }
+
+// 表格分页变动等
+export function handleTableChange(pageNumber, pageSize) {
+  this.handlePageRefresh({
+    page: pageNumber,
+    pageSize,
+  });
+}
