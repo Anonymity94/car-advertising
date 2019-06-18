@@ -14,7 +14,7 @@ export async function queryDrivers(params) {
  * @param {String} id
  */
 export async function queryDriverById({ id }) {
-  return request(`/api/drivers/${id}}`);
+  return request(`/api/drivers/${id}`);
 }
 
 /**
@@ -22,12 +22,13 @@ export async function queryDriverById({ id }) {
  * @param {String} id
  * @param {String} state
  */
-export async function updateDriverState({ id, state }) {
-  return request(`/api/drivers/${id}}`, {
+export async function updateDriverState({ id, state, reason }) {
+  return request(`/api/drivers/${id}`, {
     method: 'POST',
     body: {
       method: 'put',
       state,
+      reason,
     },
   });
 }

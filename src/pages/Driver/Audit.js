@@ -1,22 +1,180 @@
-import React, { PureComponent } from 'react';
-import moment from 'moment';
+import React, { PureComponent, Suspense, Fragment } from 'react';
 import { connect } from 'dva';
-import Link from 'umi/link';
-import { Row, Col, Card, List, Avatar } from 'antd';
+import { Button, Modal, Input } from 'antd';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import FooterToolbar from '@/components/FooterToolbar';
+import router from 'umi/router';
+import UserDetail from './UserDetail';
+import {
+  DRIVER_STATE_UNREVIEWED,
+  DRIVER_STATE_PASSED,
+  DRIVER_STATE_NOT_APPROVED,
+} from '@/common/constants';
 
-@connect()
-class Workplace extends PureComponent {
+import styles from './styles.less';
+
+@connect(({ driverModel: { detail }, loading }) => ({
+  detail,
+  loading: loading.effects['driverModel/queryDriverDetail'],
+  submitting: loading.effects['driverModel/updateDriverState'],
+}))
+class Audit extends PureComponent {
+  state = {
+    width: '100%',
+  };
+
   componentDidMount() {
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      match: { params },
+    } = this.props;
+    dispatch({
+      type: 'driverModel/queryDriverDetail',
+      payload: {
+        id: params.id,
+      },
+    });
+    window.addEventListener('resize', this.resizeFooterToolbar, { passive: true });
   }
 
   componentWillUnmount() {
-    const { dispatch } = this.props;
+    window.removeEventListener('resize', this.resizeFooterToolbar);
   }
 
+  resizeFooterToolbar = () => {
+    requestAnimationFrame(() => {
+      const sider = document.querySelectorAll('.ant-layout-sider')[0];
+      if (sider) {
+        const width = `calc(100% - ${sider.style.width})`;
+        const { width: stateWidth } = this.state;
+        if (stateWidth !== width) {
+          this.setState({ width });
+        }
+      }
+    });
+  };
+
+  handleUpdateState = state => {
+    const {
+      dispatch,
+      detail: { id },
+    } = this.props;
+
+    if (!id) return;
+
+    let confirmModal = null;
+
+    const doUpdate = reason => {
+      confirmModal.update({
+        okButtonProps: {
+          loading: true,
+        },
+      });
+      dispatch({
+        type: 'driverModel/updateDriverState',
+        payload: {
+          id,
+          state,
+          reason,
+        },
+      }).then(success => {
+        if (success) {
+          Modal.destroyAll();
+          router.goBack();
+        } else {
+          confirmModal.update({
+            okButtonProps: {
+              loading: false,
+            },
+          });
+        }
+      });
+    };
+
+    const confirmProps = {
+      maskClosable: false,
+      destroyOnClose: true,
+      keyboard: false,
+      okText: '确定',
+      cancelText: '取消',
+      autoFocusButton: true,
+      loading: false,
+    };
+
+    if (state === DRIVER_STATE_PASSED) {
+      confirmModal = Modal.confirm({
+        title: '确定通过此条申请吗？',
+        ...confirmProps,
+        onOk: () => {
+          doUpdate();
+          return Promise.reject();
+        },
+        onCancel: () => {},
+      });
+    } else {
+      let reason = '';
+      confirmModal = Modal.confirm({
+        title: '确定驳回此条申请吗？',
+        ...confirmProps,
+        content: (
+          <Fragment>
+            <div style={{ marginBottom: 10 }}>提交理由：</div>
+            <Input.TextArea
+              required
+              autoFocus
+              maxLength={512}
+              ref={input => {
+                this.reasonInput = input;
+              }}
+              placeholder="请输入审核注册会员未通过的原因！"
+            />
+          </Fragment>
+        ),
+        onOk: () => {
+          reason = this.reasonInput.textAreaRef.value;
+          if (!reason) {
+            return Promise.reject();
+          }
+          doUpdate(reason);
+          return true;
+        },
+      });
+    }
+  };
+
   render() {
-    return <div>人员审核</div>;
+    const { width } = this.state;
+    const { loading, detail, submitting } = this.props;
+
+    return (
+      <PageHeaderWrapper showback>
+        <Suspense fallback={null}>
+          <UserDetail detail={detail} loading={loading} />
+        </Suspense>
+
+        {detail.id && detail.state === DRIVER_STATE_UNREVIEWED && (
+          <FooterToolbar style={{ width }}>
+            <section className={styles.operateWrap}>
+              <Button
+                loading={submitting}
+                type="primary"
+                onClick={() => this.handleUpdateState(DRIVER_STATE_PASSED)}
+              >
+                通过
+              </Button>
+              <Button
+                loading={submitting}
+                type="danger"
+                onClick={() => this.handleUpdateState(DRIVER_STATE_NOT_APPROVED)}
+              >
+                未通过
+              </Button>
+            </section>
+          </FooterToolbar>
+        )}
+      </PageHeaderWrapper>
+    );
   }
 }
 
-export default Workplace;
+export default Audit;

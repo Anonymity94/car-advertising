@@ -37,14 +37,14 @@ export default [
                 component: './Driver/List',
               },
               {
-                path: '/application/drivers/:id',
-                name: 'info',
-                component: './Driver/Info',
-              },
-              {
                 path: '/application/drivers/:id/audit',
                 name: 'audit',
                 component: './Driver/Audit',
+              },
+              {
+                path: '/application/drivers/:id/info',
+                name: 'info',
+                component: './Driver/Info',
               },
             ],
           },

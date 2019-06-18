@@ -1,5 +1,6 @@
 import React from 'react';
 import { parse, stringify } from 'qs';
+import router from 'umi/router';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -106,4 +107,41 @@ export function formatWan(val) {
     );
   }
   return result;
+}
+
+export function handlePageRefresh(newQuery) {
+  const {
+    location: { query, pathname },
+  } = this.props;
+  router.push({
+    pathname,
+    search: stringify({
+      ...query,
+      ...newQuery,
+    }),
+  });
+}
+
+export function handleSearchReset() {
+  const { form } = this.props;
+  const { getFieldsValue, setFieldsValue } = form;
+
+  const fields = getFieldsValue();
+  // eslint-disable-next-line no-restricted-syntax
+  for (const item in fields) {
+    if ({}.hasOwnProperty.call(fields, item)) {
+      if (fields[item] instanceof Array) {
+        fields[item] = [];
+      } else {
+        fields[item] = '';
+      }
+    }
+  }
+  // 刷新表单数据
+  setFieldsValue(fields);
+
+  this.handlePageRefresh({
+    ...fields,
+    page: 1,
+  });
 }

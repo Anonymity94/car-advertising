@@ -29,7 +29,7 @@ export default modelExtend(pageModel, {
     *queryDrivers({ payload = {} }, { call, put }) {
       yield doPageRequest({ api: queryDrivers, payload, call, put, stateKey: 'drivers' });
     },
-    *queryDriverById({ payload }, { call, put }) {
+    *queryDriverDetail({ payload }, { call, put }) {
       const { success, result } = yield call(queryDriverById, payload);
       yield put({
         type: 'updateState',
