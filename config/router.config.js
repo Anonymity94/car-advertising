@@ -79,27 +79,27 @@ export default [
           },
           // 广告内容管理
           {
-            path: '/application/ad-content',
+            path: '/application/ads',
             name: 'ad-content',
             hideChildrenInMenu: true,
             routes: [
               {
-                path: '/application/ad-content',
+                path: '/application/ads',
                 name: 'list',
                 component: './AD/Content/List',
               },
               {
-                path: '/application/ad-content/detail',
+                path: '/application/ads/:id',
                 name: 'detail',
                 component: './AD/Content/Detail',
               },
               {
-                path: '/application/ad-content/create',
+                path: '/application/ad/create',
                 name: 'create',
                 component: './AD/Content/Create',
               },
               {
-                path: '/application/ad-content/update',
+                path: '/application/ads/:id/update',
                 name: 'update',
                 component: './AD/Content/Update',
               },
