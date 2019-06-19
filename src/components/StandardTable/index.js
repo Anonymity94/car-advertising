@@ -61,7 +61,7 @@ class StandardTable extends PureComponent {
         <Table
           rowKey={rowKey || 'id'}
           bordered
-          size="middle"
+          size="small"
           // rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}

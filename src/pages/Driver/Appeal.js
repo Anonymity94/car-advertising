@@ -293,6 +293,7 @@ class AppealList extends PureComponent {
             columns={tableColumns}
             data={{ list: appeals, pagination }}
             onChange={this.handleTableChange}
+            rowClassName={record => (record.state === AUDIT_STATE_UNREVIEWED ? 'trStrikingBg' : '')}
           />
         </Card>
       </PageHeaderWrapper>

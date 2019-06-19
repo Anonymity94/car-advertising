@@ -7,7 +7,7 @@ import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
 
-import { AUDIT_STATE_LIST } from '@/common/constants';
+import { AUDIT_STATE_LIST, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
 
 const FormItem = Form.Item;
 
@@ -181,6 +181,7 @@ class List extends PureComponent {
             columns={tableColumns}
             data={{ list: drivers, pagination }}
             onChange={this.handleTableChange}
+            rowClassName={record => (record.state === AUDIT_STATE_UNREVIEWED ? 'trStrikingBg' : '')}
           />
         </Card>
       </PageHeaderWrapper>

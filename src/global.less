@@ -1,3 +1,5 @@
+@import '~antd/lib/style/themes/default.less';
+
 html,
 body,
 #root {
@@ -65,4 +67,23 @@ ol {
       width: 100% !important;
     }
   }
+}
+
+:global(.ant-divider-vertical) {
+  margin: 0 4px !important;
+}
+
+.trStrikingBg {
+  // background: @primary-1 !important;
+  background: #bde4f7 !important;
+}
+
+.ant-upload-select-picture i {
+  font-size: 32px;
+  color: #999;
+}
+
+.ant-upload-select-picture .ant-upload-text {
+  margin-top: 8px;
+  color: #666;
 }
