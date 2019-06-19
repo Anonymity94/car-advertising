@@ -1,9 +1,10 @@
 import React, { memo } from 'react';
-import { Card, Descriptions, Divider, Row, Col } from 'antd';
+import moment from 'moment';
+import { Card, Descriptions, Divider, Row, Col, DatePicker } from 'antd';
 
 import styles from './styles.less';
 
-const UserDetail = memo(({ detail, loading }) => (
+const UserDetail = memo(({ detail, loading, editable = false, onDataChange }) => (
   <Card bordered={false} loading={loading}>
     <Descriptions title="基础信息" bordered size="small">
       <Descriptions.Item label="姓名">{detail.name}</Descriptions.Item>
@@ -27,7 +28,17 @@ const UserDetail = memo(({ detail, loading }) => (
       <Descriptions title="车辆信息" bordered size="small">
         <Descriptions.Item label="车辆类型">{detail.name}</Descriptions.Item>
         <Descriptions.Item label="行驶证号">{detail.telephone}</Descriptions.Item>
-        <Descriptions.Item label="证件到期时间">{detail.identityCard}</Descriptions.Item>
+        <Descriptions.Item label="证件到期时间">
+          {editable ? (
+            <DatePicker
+              allowClear={false}
+              defaultValue={detail.drivingPermitDueTime ? moment(detail.drivingPermitDueTime) : undefined}
+              onChange={onDataChange}
+            />
+          ) : (
+            detail.drivingPermitDueTime
+          )}
+        </Descriptions.Item>
       </Descriptions>
       <Row style={{ marginTop: 10 }} gutter={10}>
         <Col span={6}>

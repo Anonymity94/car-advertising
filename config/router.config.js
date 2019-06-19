@@ -197,12 +197,12 @@ export default [
             routes: [
               {
                 path: '/user/drivers',
-                component: './Driver/Audited',
+                component: './Driver/Approved',
               },
               {
-                path: '/user/drivers/:id',
+                path: '/user/drivers/:id/update',
                 name: 'info',
-                component: './Driver/Info',
+                component: './Driver/Update',
               },
             ],
           },

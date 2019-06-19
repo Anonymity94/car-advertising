@@ -4,9 +4,10 @@ import { pageModel, doPageRequest } from '@/utils/model';
 import {
   queryDrivers,
   queryDriverById,
-  queryAppeals,
   updateDriverState,
-  updateAppealState,
+  updateDrivingPermitDueTime,
+  queryApprovedDrivers,
+  deleteDriver,
 } from '@/services/driver';
 
 export default modelExtend(pageModel, {
@@ -22,10 +23,10 @@ export default modelExtend(pageModel, {
             payload,
           });
         }
-        if (location.pathname === '/application/appeals') {
+        if (location.pathname === '/user/drivers') {
           const payload = { ...location.query };
           dispatch({
-            type: 'queryAppeals',
+            type: 'queryApprovedDrivers',
             payload,
           });
         }
@@ -35,16 +36,33 @@ export default modelExtend(pageModel, {
 
   state: {
     drivers: [],
-    appeals: [],
-    detail: {},
+    detail: {}, // 车主详情
   },
 
   effects: {
-    // 所有车主列表
+    /**
+     * 获取所有的车主列表
+     */
     *queryDrivers({ payload = {} }, { call, put }) {
       yield doPageRequest({ api: queryDrivers, payload, call, put, stateKey: 'drivers' });
     },
-    // 车主详情
+
+    /**
+     * 获取已经审核通过的车主列表
+     */
+    *queryApprovedDrivers({ payload = {} }, { call, put }) {
+      yield doPageRequest({
+        api: queryApprovedDrivers,
+        payload,
+        call,
+        put,
+        stateKey: 'drivers',
+      });
+    },
+
+    /**
+     * 车主详情
+     */
     *queryDriverDetail({ payload }, { call, put }) {
       const { success, result } = yield call(queryDriverById, payload);
       yield put({
@@ -54,11 +72,10 @@ export default modelExtend(pageModel, {
         },
       });
     },
-    // 获取所有申诉列表
-    *queryAppeals({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryAppeals, payload, call, put, stateKey: 'appeals' });
-    },
-    // 人员审核
+
+    /**
+     * 审核
+     */
     *updateDriverState({ payload }, { call }) {
       const { success } = yield call(updateDriverState, payload);
       if (success) {
@@ -68,13 +85,36 @@ export default modelExtend(pageModel, {
       }
       return success;
     },
-    // 申诉审核
-    *updateAppealState({ payload }, { call }) {
-      const { success } = yield call(updateAppealState, payload);
+
+    /**
+     * 修改行驶证到期时间
+     */
+    *updateDrivingPermitDueTime({ payload }, { call, put }) {
+      const { id } = payload;
+      const { success } = yield call(updateDrivingPermitDueTime, payload);
       if (success) {
-        message.success('审核成功');
+        message.success('更新成功');
+        yield put({
+          type: 'queryDriverDetail',
+          payload: {
+            id,
+          },
+        });
       } else {
-        message.error('审核失败');
+        message.error('更新失败');
+      }
+      return success;
+    },
+
+    /**
+     * 删除
+     */
+    *deleteDriver({ payload }, { call }) {
+      const { success } = yield call(deleteDriver, payload);
+      if (success) {
+        message.success('删除成功');
+      } else {
+        message.error('删除失败');
       }
       return success;
     },

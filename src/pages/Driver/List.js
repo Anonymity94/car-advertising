@@ -51,6 +51,7 @@ const tableColumns = [
   {
     title: '操作',
     dataIndex: 'operate',
+    width: 140,
     align: 'center',
     render: (text, record) => (
       <Fragment>
@@ -91,14 +92,6 @@ class List extends PureComponent {
         createTime: createTime ? moment(createTime).format('YYYY-MM-DD') : '',
         page: 1,
       });
-    });
-  };
-
-  // 表格分页变动等
-  handleTableChange = (pageNumber, pageSize) => {
-    this.handlePageRefresh({
-      page: pageNumber,
-      pageSize,
     });
   };
 

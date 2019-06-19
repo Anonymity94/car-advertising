@@ -157,6 +157,7 @@ class Audit extends PureComponent {
             <section className={styles.operateWrap}>
               <Button
                 loading={submitting}
+                icon="check-circle"
                 type="primary"
                 onClick={() => this.handleAudit(AUDIT_STATE_PASSED)}
               >
@@ -164,6 +165,7 @@ class Audit extends PureComponent {
               </Button>
               <Button
                 loading={submitting}
+                icon="stop"
                 type="danger"
                 onClick={() => this.handleAudit(AUDIT_STATE_REFUSE)}
               >

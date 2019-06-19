@@ -2,9 +2,29 @@ import React from 'react';
 import { parse, stringify } from 'qs';
 import router from 'umi/router';
 
+/**
+ * 补充0
+ * @param {Number} val
+ */
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
 }
+
+/**
+ * 手机号码正则
+ */
+export const phoneReg = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+
+/**
+ * 密码正则
+ * 密码(以字母开头，长度在6~18之间，只能包含字母、数字和下划线)
+ */
+export const passwordReg = /^[a-zA-Z][a-zA-Z0-9-_]{5,17}$/;
+
+/**
+ * 身份证号码正则
+ */
+export const idcardReg = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;
 
 function getRelation(str1, str2) {
   if (str1 === str2) {

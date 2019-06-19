@@ -5,6 +5,9 @@ const drivers = [
     telephone: '138542345947',
     identityCard: '23343423234234', // 身份证
     createTime: '2019-06-18T20:30:57+08:00',
+    carType: '商务车', // 车辆类型
+    drivingPermit: '232433434', // 汽车行驶证
+    drivingPermitDueTime: '2019-06-18', // 汽车行驶证到期时间
     state: '0',
     stateText: '未审核',
     operatorName: '',
@@ -15,6 +18,9 @@ const drivers = [
     telephone: '138542345947',
     identityCard: '23343423234234', // 身份证
     createTime: '2019-06-18T20:30:57+08:00',
+    carType: '商务车', // 车辆类型
+    drivingPermit: '232433434', // 汽车行驶证
+    drivingPermitDueTime: '2019-06-18', // 汽车行驶证到期时间
     state: 1,
     stateText: '已通过',
     operatorName: '管理员',
@@ -25,41 +31,10 @@ const drivers = [
     telephone: '138542345947',
     identityCard: '23343423234234', // 身份证
     createTime: '2019-06-18T20:30:57+08:00',
+    carType: '商务车', // 车辆类型
+    drivingPermit: '232433434', // 汽车行驶证
+    drivingPermitDueTime: '2019-06-18', // 汽车行驶证到期时间
     state: -1,
-    stateText: '未通过',
-    operatorName: '管理员',
-  },
-];
-
-const appeals = [
-  {
-    id: Math.random(),
-    name: '刘婉茹',
-    oldTelephone: '138542345947',
-    telephone: '138542345947',
-    createTime: '2019-06-18T20:30:57+08:00',
-    description: '手机丢了，换了新手机号',
-    state: '0',
-    stateText: '未审核',
-    operatorName: '',
-  },
-  {
-    id: Math.random(),
-    oldTelephone: '138542345947',
-    telephone: '138542345947',
-    createTime: '2019-06-18T20:30:57+08:00',
-    description: '手机丢了，换了新手机号',
-    state: '1',
-    stateText: '已通过',
-    operatorName: '管理员',
-  },
-  {
-    id: Math.random(),
-    oldTelephone: '138542345947',
-    telephone: '138542345947',
-    createTime: '2019-06-18T20:30:57+08:00',
-    description: '手机丢了，换了新手机号',
-    state: '-1',
     stateText: '未通过',
     operatorName: '管理员',
   },
@@ -71,17 +46,6 @@ export default {
     message: '',
     result: {
       content: drivers,
-      number: 0,
-      size: 15,
-      totalElements: 0,
-    },
-  },
-
-  'GET /api/appeals': {
-    success: true,
-    message: '',
-    result: {
-      content: appeals,
       number: 0,
       size: 15,
       totalElements: 0,
@@ -112,11 +76,15 @@ export default {
         'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1560881541759&di=5e068feaa5e8f28e30b7e329ab77eb7c&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fq_70%2Cc_zoom%2Cw_640%2Fimages%2F20181210%2F008382543e594c6a888098892d615ce9.jpeg', // 驾驶证照片
     },
   },
-  'POST /api/drivers/:id': {
+  'POST /api/drivers/:id/state': {
     success: true,
   },
 
-  'POST /api/appeals/:id': {
+  'POST /api/drivers/:id/drivingPermitDueTime': {
+    success: true,
+  },
+
+  'POST /api/drivers/:id': {
     success: true,
   },
 };

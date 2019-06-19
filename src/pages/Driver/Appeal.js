@@ -1,6 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import router from 'umi/router';
 import {
   Card,
   Divider,
@@ -28,10 +27,10 @@ import {
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ driverModel: { appeals, pagination }, loading }) => ({
+@connect(({ appealModel: { appeals, pagination }, loading }) => ({
   appeals,
   pagination,
-  loading: loading.effects['driverModel/queryAppeals'],
+  loading: loading.effects['appealModel/queryAppeals'],
 }))
 class AppealList extends PureComponent {
   constructor(props) {
@@ -59,7 +58,7 @@ class AppealList extends PureComponent {
         },
       });
       dispatch({
-        type: 'driverModel/updateAppealState',
+        type: 'appealModel/updateAppealState',
         payload: {
           id,
           state,
@@ -261,21 +260,9 @@ class AppealList extends PureComponent {
           if (state === AUDIT_STATE_UNREVIEWED) {
             return (
               <Fragment>
-                <Button
-                  size="small"
-                  type="link"
-                  onClick={() => this.handleAudit(id, AUDIT_STATE_PASSED)}
-                >
-                  通过
-                </Button>
+                <a onClick={() => this.handleAudit(id, AUDIT_STATE_PASSED)}>通过</a>
                 <Divider type="vertical" />
-                <Button
-                  size="small"
-                  type="link"
-                  onClick={() => this.handleAudit(id, AUDIT_STATE_REFUSE)}
-                >
-                  不通过
-                </Button>
+                <a onClick={() => this.handleAudit(id, AUDIT_STATE_REFUSE)}>不通过</a>
               </Fragment>
             );
           }
