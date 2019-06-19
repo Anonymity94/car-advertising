@@ -89,14 +89,14 @@ export default [
                 component: './AD/Content/List',
               },
               {
+                path: '/application/ads/create',
+                name: 'create',
+                component: './AD/Content/Create',
+              },
+              {
                 path: '/application/ads/:id',
                 name: 'detail',
                 component: './AD/Content/Detail',
-              },
-              {
-                path: '/application/ad/create',
-                name: 'create',
-                component: './AD/Content/Create',
               },
               {
                 path: '/application/ads/:id/update',

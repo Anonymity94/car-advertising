@@ -107,23 +107,33 @@ export const SIGNING_GOLD_SETTLEMENT_STATE_LIST = [
 /**
  * 发布状态：未发布
  */
-export const CONTENT_PUBLISH_STATE_NO = STRING_BOOLEAN_NO;
+export const PUBLISH_STATE_NO = STRING_BOOLEAN_NO;
 
 /**
  * 发布状态：已发布
  */
-export const CONTENT_PUBLISH_STATE_YES = STRING_BOOLEAN_YES;
+export const PUBLISH_STATE_YES = STRING_BOOLEAN_YES;
 
 /**
- * 签约金结算状态
+ * 发布状态
  */
-export const CONTENT_PUBLISH_STATE_LIST = [
+export const PUBLISH_STATE_LIST = [
   {
     label: '未发布',
-    value: CONTENT_PUBLISH_STATE_NO,
+    value: PUBLISH_STATE_NO,
   },
   {
     label: '已发布',
-    value: CONTENT_PUBLISH_STATE_YES,
+    value: PUBLISH_STATE_YES,
   },
 ];
+
+/**
+ *  置顶状态：已置顶
+ */
+export const TOP_STATE_YES = STRING_BOOLEAN_YES;
+
+/**
+ *  置顶状态：未置顶
+ */
+export const TOP_STATE_NO = STRING_BOOLEAN_NO;

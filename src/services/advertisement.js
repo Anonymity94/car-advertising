@@ -9,7 +9,8 @@ import request from '@/utils/request';
  * 查询广告列表
  */
 export async function queryAds(params) {
-  return request(`/api/advertisements?${stringify(params)}`);
+  // return request(`/api/advertisements?${stringify(params)}`);
+  return request(`/api/ads?${stringify(params)}`);
 }
 
 /**
@@ -35,27 +36,31 @@ export async function updateAd({ id, ...resetParams }) {
 }
 
 /**
- * 发布广告
+ * 发布|取消发布 广告
+ * @param {String} id
  * @param {String} id
  */
-export async function publishAd({ id }) {
+export async function publishAd({ id, isPublish }) {
   return request(`/api/advertisements/${id}/publish`, {
     method: 'POST',
     body: {
       method: 'put',
+      isPublish,
     },
   });
 }
 
 /**
- * 置顶广告
+ * 置顶|取消置顶 广告
  * @param {String} id
+ * @param {String} isTop
  */
-export async function topAd({ id }) {
+export async function topAd({ id, isTop }) {
   return request(`/api/advertisements/${id}/top`, {
     method: 'POST',
     body: {
       method: 'put',
+      isTop,
     },
   });
 }
