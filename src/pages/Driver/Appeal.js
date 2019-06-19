@@ -21,7 +21,7 @@ import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils
 import {
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_PASSED,
-  AUDIT_STATE_NOT_APPROVED,
+  AUDIT_STATE_REFUSE,
   AUDIT_STATE_LIST,
 } from '@/common/constants';
 
@@ -272,7 +272,7 @@ class AppealList extends PureComponent {
                 <Button
                   size="small"
                   type="link"
-                  onClick={() => this.handleAudit(id, AUDIT_STATE_NOT_APPROVED)}
+                  onClick={() => this.handleAudit(id, AUDIT_STATE_REFUSE)}
                 >
                   不通过
                 </Button>

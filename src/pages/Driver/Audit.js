@@ -8,7 +8,7 @@ import UserDetail from './UserDetail';
 import {
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_PASSED,
-  AUDIT_STATE_NOT_APPROVED,
+  AUDIT_STATE_REFUSE,
 } from '@/common/constants';
 
 import styles from './styles.less';
@@ -165,7 +165,7 @@ class Audit extends PureComponent {
               <Button
                 loading={submitting}
                 type="danger"
-                onClick={() => this.handleAudit(AUDIT_STATE_NOT_APPROVED)}
+                onClick={() => this.handleAudit(AUDIT_STATE_REFUSE)}
               >
                 未通过
               </Button>
