@@ -2,7 +2,10 @@ import 'braft-editor/dist/index.css';
 import React, { PureComponent } from 'react';
 import BraftEditor from 'braft-editor';
 import { connect } from 'dva';
-import { Form, Input, Button, Card, Upload, Icon, Row, Col, InputNumber, DatePicker } from 'antd';
+import { Form, Input, Button, Card, Icon, Row, Col, InputNumber, DatePicker, Modal } from 'antd';
+import moment from 'moment';
+import router from 'umi/router';
+import StandardUpload from '@/components/StandardUpload';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import RichTextEditor from '@/components/BraftEditor';
 
@@ -43,28 +46,54 @@ class CreateAD extends PureComponent {
     });
   };
 
+  handleCancel = () => {
+    Modal.confirm({
+      title: '确认取消吗？',
+      content: '取消后，刚刚操作的内容将不会被保存',
+      onOk() {
+        router.goBack();
+      },
+    });
+  };
+
   handleSubmit = event => {
     event.preventDefault();
     const { form } = this.props;
     form.validateFields((error, values) => {
-      if (!error) {
-        const submitData = {
-          title: values.title,
-          content: values.content.toHTML(), // or values.content.toHTML()
-        };
-        console.log(submitData);
-        console.log('values', values);
+      if (error) return;
+
+      // 遍历地址
+      const { keys, address, dateRage, content } = values;
+      const addressList = [];
+      for (let i = 0; i < keys.length; i += 1) {
+        addressList.push({
+          address: address[i],
+          startTime: moment(dateRage[i][0]).format('YYYY-MM-DD'),
+          endTime: moment(dateRage[i][1]).format('YYYY-MM-DD'),
+        });
       }
+
+      const submitData = {
+        ...values,
+        content: content.toHTML(),
+        addressList,
+      };
+
+      // 可能还要处理 banner图片 和 列表图片
+
+      // 删除多于的值
+      delete submitData.keys;
+      delete submitData.dateRage;
+      delete submitData.address;
+
+      console.log(submitData);
     });
   };
 
   addAddressItem = () => {
     const { form } = this.props;
-    // can use data-binding to get
     const keys = form.getFieldValue('keys');
     const nextKeys = keys.concat((id += 1));
-    // can use data-binding to set
-    // important! notify form to detect changes
     form.setFieldsValue({
       keys: nextKeys,
     });
@@ -83,6 +112,32 @@ class CreateAD extends PureComponent {
     form.setFieldsValue({
       keys: keys.filter(key => key !== k),
     });
+  };
+
+  // banner 图片上传
+  handleBannerChange = ({ fileList }) =>
+    fileList.map(file => ({
+      uid: file.uid,
+      name: file.name || file.response.name,
+      url: file.response ? file.response.url : file.url,
+    }));
+
+  // 内容列表 图片上传
+  handleCoverChange = ({ fileList }) => {
+    console.log(fileList);
+    return fileList.map(file => ({
+      uid: file.uid,
+      name: file.name || file.response.name,
+      url: file.response ? file.response.url : file.url,
+    }));
+  };
+
+  // 签约条款文件
+  handleClauseChange = e => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
   };
 
   render() {
@@ -169,71 +224,78 @@ class CreateAD extends PureComponent {
             <FormItem {...formItemLayout} label="banner图片" extra="建议尺寸：16:9比例">
               {getFieldDecorator('banner', {
                 valuePropName: 'fileList',
-                getValueFromEvent: this.normFile,
+                getValueFromEvent: this.handleBannerChange,
                 rules: [
                   {
                     required: true,
                     message: '请上传banner图片',
                   },
                 ],
-              })(
-                <Upload
-                  name="avatar"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                >
-                  <div>
-                    <Icon type={false ? 'loading' : 'plus'} />
-                    <div className="ant-upload-text">上传</div>
-                  </div>
-                </Upload>
-              )}
+              })(<StandardUpload name="image" accept="image/*" limit={1} />)}
             </FormItem>
             <FormItem {...formItemLayout} label="列表图片" extra="建议尺寸：4:3比例">
               {getFieldDecorator('cover', {
                 valuePropName: 'fileList',
-                getValueFromEvent: this.normFile,
+                getValueFromEvent: this.handleCoverChange,
                 rules: [
                   {
                     required: true,
                     message: '请上传列表图片',
                   },
                 ],
-              })(
-                <Upload
-                  name="avatar"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                >
-                  <div>
-                    <Icon type={false ? 'loading' : 'plus'} />
-                    <div className="ant-upload-text">上传</div>
-                  </div>
-                </Upload>
-              )}
+              })(<StandardUpload name="image" accept="image/*" limit={3} />)}
             </FormItem>
+            <Form.Item label="签约条款" {...formItemLayout}>
+              {getFieldDecorator('clause', {
+                valuePropName: 'fileList',
+                getValueFromEvent: this.handleClauseChange,
+                rules: [
+                  {
+                    required: true,
+                    message: '请上传签约条款文件',
+                  },
+                ],
+              })(
+                <StandardUpload
+                  fileType="file"
+                  name="file"
+                  listType="text"
+                  accept=".pdf"
+                  limit={1}
+                />
+              )}
+            </Form.Item>
             <Form.Item label="签约金" {...formItemLayout}>
               {getFieldDecorator('bonus', {
                 validateFirst: true,
-                rules: [{ required: true, message: '请输入签约金' }],
+                rules: [
+                  { required: true, message: '请输入签约金' },
+                  { pattern: /^[1-9]\d*$/, message: '请输入正整数' },
+                ],
               })(<InputNumber style={{ width: 160 }} min={1} />)}
               <span className="ant-form-text"> 元/月</span>
             </Form.Item>
             <Form.Item label="积分" {...formItemLayout}>
               {getFieldDecorator('integral', {
                 validateFirst: true,
-                rules: [{ required: true, whitespace: true, message: '请输入积分' }],
-              })(<InputNumber style={{ width: 160 }} min={1} />)}
+                rules: [
+                  { required: true, message: '请输入积分' },
+                  { pattern: /^[1-9]\d*$/, message: '请输入正整数' },
+                ],
+              })(
+                <InputNumber
+                  // formatter={value => `${Math.ceil(value)}`}
+                  placeholder="积分"
+                  style={{ width: 160 }}
+                  min={1}
+                />
+              )}
             </Form.Item>
             <Form.Item label="内容" {...formItemLayout}>
               {getFieldDecorator('content', {
                 validateFirst: true,
                 rules: [
-                  { required: true, whitespace: true, message: '请输入内容' },
+                  { required: true, message: '请输入内容' },
                   {
                     validator: (_, value, callback) => {
                       if (value.isEmpty()) {
@@ -250,8 +312,11 @@ class CreateAD extends PureComponent {
             <Form.Item label="积分说明" {...formItemLayout}>
               {getFieldDecorator('remark', {
                 validateFirst: true,
-                rules: [{ required: true, whitespace: true, message: '请输入积分说明' }],
-              })(<Input.TextArea rows={3} />)}
+                rules: [
+                  { required: true, whitespace: true, message: '请输入积分说明' },
+                  { max: 512, message: '最长限制512个字符' },
+                ],
+              })(<Input.TextArea rows={3} placeholder="请输入积分说明，最长限制512个字符" />)}
             </Form.Item>
 
             {/* 地址 */}
@@ -267,7 +332,9 @@ class CreateAD extends PureComponent {
               <Button type="primary" htmlType="submit">
                 提交
               </Button>
-              <Button style={{ marginLeft: 10 }}>返回</Button>
+              <Button style={{ marginLeft: 10 }} onClick={this.handleCancel}>
+                返回
+              </Button>
             </FormItem>
           </Form>
         </Card>

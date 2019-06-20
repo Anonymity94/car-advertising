@@ -269,11 +269,14 @@ class AdminList extends PureComponent {
         render: (text, record) => {
           const { id, isTop, isPublish } = record;
 
+          let color = '';
+
           let publishText = '发布';
           let newPublishState = PUBLISH_STATE_YES;
           if (isPublish === PUBLISH_STATE_YES) {
             publishText = '下线';
             newPublishState = PUBLISH_STATE_NO;
+            color = '#f5222d';
           }
 
           let topText = '置顶';
@@ -291,7 +294,7 @@ class AdminList extends PureComponent {
                 okText="确定"
                 cancelText="取消"
               >
-                <a>{publishText}</a>
+                <a style={color ? { color } : null}>{publishText}</a>
               </Popconfirm>
               <Divider key="divider" type="vertical" />
               <Popconfirm
