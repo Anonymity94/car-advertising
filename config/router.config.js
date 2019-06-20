@@ -113,27 +113,27 @@ export default [
           },
           // 活动内容管理
           {
-            path: '/application/activity',
+            path: '/application/activities',
             name: 'activity',
             hideChildrenInMenu: true,
             routes: [
               {
-                path: '/application/activity',
+                path: '/application/activities',
                 name: 'list',
                 component: './Activity/List',
               },
               {
-                path: '/application/activity/detail',
-                name: 'detail',
-                component: './Activity/Detail',
-              },
-              {
-                path: '/application/activity/create',
+                path: '/application/activities/create',
                 name: 'create',
                 component: './Activity/Create',
               },
               {
-                path: '/application/activity/update',
+                path: '/application/activities/:id',
+                name: 'detail',
+                component: './Activity/Detail',
+              },
+              {
+                path: '/application/activities/:id/update',
                 name: 'update',
                 component: './Activity/Update',
               },
