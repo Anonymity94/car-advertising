@@ -1,9 +1,10 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
+import { adminLogin, adminLogout } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { message } from 'antd';
 
 export default {
   namespace: 'login',
@@ -14,13 +15,23 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const { success, result } = yield call(fakeAccountLogin, payload);
+      const { result } = yield call(adminLogin, payload);
+      const isSuccess = result.result === 'success';
+
+      if (!isSuccess) {
+        message.error(result.message);
+        return;
+      }
+
       yield put({
         type: 'changeLoginStatus',
-        payload: result,
+        payload: {
+          status: isSuccess,
+          currentAuthority: isSuccess ? 'admin' : 'guest',
+        },
       });
       // Login successfully
-      if (result.status === 'ok') {
+      if (isSuccess) {
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -41,27 +52,26 @@ export default {
       }
     },
 
-    *getCaptcha({ payload }, { call }) {
-      yield call(getFakeCaptcha, payload);
-    },
-
-    *logout(_, { put }) {
-      yield put({
-        type: 'changeLoginStatus',
-        payload: {
-          status: false,
-          currentAuthority: 'guest',
-        },
-      });
-      reloadAuthorized();
-      yield put(
-        routerRedux.push({
-          pathname: '/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        })
-      );
+    *logout(_, { call, put }) {
+      const { success } = yield call(adminLogout);
+      if (success) {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            status: false,
+            currentAuthority: 'guest',
+          },
+        });
+        reloadAuthorized();
+        yield put(
+          routerRedux.push({
+            pathname: '/login',
+            search: stringify({
+              redirect: window.location.href,
+            }),
+          })
+        );
+      }
     },
   },
 
@@ -71,7 +81,6 @@ export default {
       return {
         ...state,
         status: payload.status,
-        type: payload.type,
       };
     },
   },

@@ -34,7 +34,7 @@ class LoginPage extends Component {
           }}
         >
           <UserName
-            name="userName"
+            name="username"
             placeholder="用户名"
             rules={[
               {

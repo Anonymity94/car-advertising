@@ -15,8 +15,5 @@ export default {
     });
   },
   // 支持值为 Object 和 Array
-  'GET /api/currentUser': {
-    name: '系统管理员',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-  },
+  'GET /api/account/admin/logout': {},
 };
