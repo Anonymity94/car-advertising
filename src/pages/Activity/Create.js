@@ -2,7 +2,7 @@ import 'braft-editor/dist/index.css';
 import React, { PureComponent } from 'react';
 import BraftEditor from 'braft-editor';
 import { connect } from 'dva';
-import { Form, Input, Button, Card, Icon, Row, Col, InputNumber, DatePicker, Modal } from 'antd';
+import { Form, Input, Button, Card, DatePicker, Modal } from 'antd';
 import moment from 'moment';
 import router from 'umi/router';
 import StandardUpload from '@/components/StandardUpload';
@@ -138,7 +138,7 @@ class CreateActivity extends PureComponent {
                 ],
               })(<Input placeholder="请输入活动主办方" />)}
             </FormItem>
-            <FormItem {...formItemLayout} label="banner图片" extra="建议尺寸：16:9比例">
+            <FormItem {...formItemLayout} label="banner图片" extra="建议尺寸：4:3比例">
               {getFieldDecorator('banner', {
                 valuePropName: 'fileList',
                 getValueFromEvent: this.handleBannerChange,

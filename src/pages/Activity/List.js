@@ -297,7 +297,7 @@ class ActivityList extends PureComponent {
                 <a>{topText}</a>
               </Popconfirm>
               <br />
-              <Link to={`/application/activities/${id}`}>修改</Link>
+              <Link to={`/application/activities/${id}/update`}>修改</Link>
               <Divider type="vertical" />
               <a onClick={() => this.handleDelete(record)}>删除</a>
             </Fragment>

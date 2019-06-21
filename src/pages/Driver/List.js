@@ -57,7 +57,7 @@ const tableColumns = [
       <Fragment>
         <Link to={`/application/drivers/${record.id}/audit`}>审核</Link>
         <Divider type="vertical" />
-        <Link to={`/application/drivers/${record.id}/info`}>查看</Link>
+        <Link to={`/application/drivers/${record.id}`}>查看</Link>
       </Fragment>
     ),
   },

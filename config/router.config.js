@@ -42,7 +42,7 @@ export default [
                 component: './Driver/Audit',
               },
               {
-                path: '/application/drivers/:id/info',
+                path: '/application/drivers/:id',
                 name: 'info',
                 component: './Driver/Info',
               },
@@ -148,19 +148,24 @@ export default [
         routes: [
           // 商户列表
           {
-            path: '/integral/business',
+            path: '/integral/businesses',
             name: 'business',
             hideChildrenInMenu: true,
             routes: [
               {
-                path: '/integral/business',
+                path: '/integral/businesses',
                 name: 'list',
                 component: './Business/List',
               },
               {
-                path: '/integral/business/create',
+                path: '/integral/businesses/create',
                 name: 'create',
                 component: './Business/Create',
+              },
+              {
+                path: '/integral/businesses/:id/update',
+                name: 'create',
+                component: './Business/Update',
               },
             ],
           },
