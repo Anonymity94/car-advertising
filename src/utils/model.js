@@ -16,11 +16,11 @@ export const pageModel = modelExtend(model, {
   state: {
     list: [],
     pagination: {
-      hideOnSinglePage: true,
+      hideOnSinglePage: false,
       showSizeChanger: true,
       showQuickJumper: true,
-      current: 1,
-      total: 0,
+      // current: 1,
+      // total: 0,
       showTotal: total => `共 ${total} 条`,
       pageSize: PAGE_SIZE_DEFAULT,
       pageSizeOptions: ['10', '20', '30', '40', '50'],
@@ -54,11 +54,11 @@ export function* doPageRequest({ api, payload = {}, call, put, stateKey = 'list'
       type: 'querySuccess',
       payload: {
         stateKey, // 需要更新的state
-        stateValue: result.content, // state对象的值
+        stateValue: result, // state对象的值
         pagination: {
-          current: Number(payload.page) || 1,
-          pageSize: Number(payload.pageSize) || PAGE_SIZE_DEFAULT,
-          total: result.totalElements,
+          // current: Number(payload.page) || 1,
+          // pageSize: 1,
+          total: result.length,
         },
       },
     });

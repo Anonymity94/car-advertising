@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { pageModel, doPageRequest } from '@/utils/model';
-import { queryAdmins, updateAdminPassword, deleteAdmin } from '@/services/admin';
+import { queryAdmins, updateAdmin, createAdmin, deleteAdmin } from '@/services/admin';
 
 export default modelExtend(pageModel, {
   namespace: 'adminModel',
@@ -33,20 +33,33 @@ export default modelExtend(pageModel, {
     },
 
     /**
-     * 修改密码
+     * 修改管理员
      */
-    *updateAdminPassword({ payload }, { call }) {
-      const { success } = yield call(updateAdminPassword, payload);
+    *updateAdmin({ payload }, { call }) {
+      const { success } = yield call(updateAdmin, payload);
       if (success) {
-        message.success('修改密码成功');
+        message.success('修改成功');
       } else {
-        message.error('修改密码失败');
+        message.error('修改失败');
       }
       return success;
     },
 
     /**
-     * 修改密码
+     * 新建管理员
+     */
+    *createAdmin({ payload }, { call }) {
+      const { success } = yield call(createAdmin, payload);
+      if (success) {
+        message.success('新增成功');
+      } else {
+        message.error('新增失败');
+      }
+      return success;
+    },
+
+    /**
+     * 删除
      */
     *deleteAdmin({ payload }, { call }) {
       const { success } = yield call(deleteAdmin, payload);

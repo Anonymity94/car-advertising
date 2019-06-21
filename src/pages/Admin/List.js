@@ -4,7 +4,7 @@ import { Card, Divider, Form, Row, Col, Input, Button, Icon, Popconfirm } from '
 import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import PasswordModal from './PasswordModal';
+import FormModal from './FormModal'
 
 const FormItem = Form.Item;
 
@@ -13,7 +13,8 @@ const FormItem = Form.Item;
   admins,
   pagination,
   loading: loading.effects['adminModel/queryAdmins'],
-  submitLoading: loading.effects['adminModel/updateAdminPassword'],
+  submitLoading:
+    loading.effects['adminModel/updateAdmin'] || loading.effects['adminModel/createAdmin'],
 }))
 class AdminList extends PureComponent {
   constructor(props) {
@@ -61,7 +62,6 @@ class AdminList extends PureComponent {
       if (err) return;
       this.handlePageRefresh({
         ...fieldsValue,
-        page: 1,
       });
     });
   };
@@ -69,10 +69,9 @@ class AdminList extends PureComponent {
   handleSubmit = values => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'adminModel/updateAdminPassword',
+      type: values.id ? 'adminModel/updateAdmin' : 'adminModel/createAdmin',
       payload: {
-        id: values.id,
-        password: values.password,
+        ...values,
       },
     }).then(success => {
       if (success) {
@@ -85,7 +84,7 @@ class AdminList extends PureComponent {
   };
 
   handleDelete = id => {
-    const { dispatch, admins, pagination } = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'adminModel/deleteAdmin',
       payload: {
@@ -93,13 +92,7 @@ class AdminList extends PureComponent {
       },
     }).then(success => {
       if (success) {
-        this.handlePageRefresh({
-          page:
-            // 如果删除前只有1条数据，并且页码不是1，就请求上一页数据
-            admins.length === 1 && pagination.current > 1
-              ? pagination.current - 1
-              : pagination.current,
-        });
+        this.queryData();
       }
     });
   };
@@ -110,22 +103,22 @@ class AdminList extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { fullName, userName } = query;
+    const { name, username } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
         <Row gutter={10}>
           <Col md={6}>
             <FormItem label="姓名">
-              {getFieldDecorator('fullName', {
-                initialValue: fullName,
+              {getFieldDecorator('name', {
+                initialValue: name,
               })(<Input placeholder="输入姓名查询" />)}
             </FormItem>
           </Col>
           <Col md={6}>
             <FormItem label="账号">
-              {getFieldDecorator('userName', {
-                initialValue: userName,
+              {getFieldDecorator('username', {
+                initialValue: username,
               })(<Input placeholder="输入账号查询" />)}
             </FormItem>
           </Col>
@@ -158,12 +151,12 @@ class AdminList extends PureComponent {
       },
       {
         title: '姓名',
-        dataIndex: 'fullName',
+        dataIndex: 'name',
         align: 'center',
       },
       {
         title: '账号',
-        dataIndex: 'userName',
+        dataIndex: 'username',
         align: 'center',
       },
       {
@@ -181,7 +174,7 @@ class AdminList extends PureComponent {
             <a onClick={() => this.toogleModal(record)}>修改密码</a>
             <Divider type="vertical" />
             <Popconfirm
-              title={`确定删除[${record.fullName}]吗？`}
+              title={`确定删除[${record.name}]吗？`}
               onConfirm={() => this.handleDelete(record.id)}
               okText="删除"
               cancelText="取消"
@@ -210,6 +203,13 @@ class AdminList extends PureComponent {
         <Card bodyStyle={{ padding: 0 }} bordered={false}>
           <div className="searchWrap" />
           <StandardTable
+            title={() => (
+              <div style={{ textAlign: 'right' }}>
+                <Button type="primary" onClick={() => this.toogleModal()}>
+                  新增管理员
+                </Button>
+              </div>
+            )}
             rowKey="id"
             loading={loading}
             columns={tableColumns}
@@ -217,7 +217,7 @@ class AdminList extends PureComponent {
             onChange={this.handleTableChange}
           />
         </Card>
-        <PasswordModal
+        <FormModal
           current={current}
           confirmLoading={submitLoading}
           visible={modalVisible}

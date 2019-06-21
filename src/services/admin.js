@@ -9,20 +9,37 @@ import request from '@/utils/request';
  * 查询管理员列表
  */
 export async function queryAdmins(params) {
-  return request(`/api/admins?${stringify(params)}`);
+  return request(`/api/user-manager/admin-list?${stringify(params)}`);
 }
 
 /**
- * 修改管理员密码
+ * 修改管理员
  * @param {String} id
+ * @param {String} username
  * @param {String} password
+ * @param {String} name
  */
-export async function updateAdminPassword({ id, password }) {
-  return request(`/api/admins/${id}/password`, {
+export async function updateAdmin({ id, ...restParams }) {
+  return request(`/api/user-manager/admin-update?id=${id}`, {
     method: 'POST',
     body: {
       method: 'put',
-      password,
+      ...restParams,
+    },
+  });
+}
+
+/**
+ * 新增管理员
+ * @param {String} username
+ * @param {String} password
+ * @param {String} name
+ */
+export async function createAdmin(params) {
+  return request('/api/user-manager/admin-register', {
+    method: 'POST',
+    body: {
+      ...params,
     },
   });
 }
@@ -32,7 +49,7 @@ export async function updateAdminPassword({ id, password }) {
  * @param {String} id
  */
 export async function deleteAdmin({ id }) {
-  return request(`/api/admins/${id}`, {
+  return request(`/api/user-manager/admin-remove?id=${id}`, {
     method: 'POST',
     body: {
       method: 'delete',

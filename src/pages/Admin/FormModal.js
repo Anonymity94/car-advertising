@@ -56,7 +56,7 @@ class PasswordModal extends PureComponent {
 
     return (
       <Modal
-        title="修改密码"
+        title={current.id ? '修改' : '新增'}
         width={640}
         destroyOnClose
         maskClosable={false}
@@ -69,15 +69,26 @@ class PasswordModal extends PureComponent {
         <Form onSubmit={this.handleSubmit}>
           <FormItem label="id" style={{ display: 'none' }}>
             {getFieldDecorator('id', {
-              rules: [{ required: true, message: '请输入任务名称' }],
-              initialValue: current.id,
+              initialValue: current.id || '',
             })(<Input placeholder="请输入" />)}
           </FormItem>
           <FormItem label="姓名" {...this.formLayout}>
-            {current.fullName}
+            {getFieldDecorator('name', {
+              initialValue: current.name || '',
+              validateFirst: true,
+              rules: [{ required: true, whitespace: true, message: '请输入管理员姓名' }],
+            })(<Input placeholder="请输入管理员姓名" />)}
+          </FormItem>
+          <FormItem label="登录账号" {...this.formLayout}>
+            {getFieldDecorator('username', {
+              initialValue: current.username || '',
+              validateFirst: true,
+              rules: [{ required: true, whitespace: true, message: '请输入登录账号' }],
+            })(<Input placeholder="请输入登录账号" />)}
           </FormItem>
           <FormItem label="新密码" {...this.formLayout}>
             {getFieldDecorator('password', {
+              initialValue: current.password || '',
               validateFirst: true,
               rules: [
                 { required: true, message: '请输入新密码' },
@@ -93,6 +104,7 @@ class PasswordModal extends PureComponent {
           </FormItem>
           <FormItem label="确认密码" {...this.formLayout}>
             {getFieldDecorator('confirm', {
+              initialValue: current.password || '',
               rules: [
                 { required: true, message: '请再次输入新密码' },
                 {

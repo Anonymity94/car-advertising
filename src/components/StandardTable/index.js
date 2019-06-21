@@ -29,7 +29,7 @@ class StandardTable extends PureComponent {
   handleTableChange = (pagination, filters, sorter) => {
     const { onChange } = this.props;
     if (onChange) {
-      onChange(pagination, filters, sorter);
+      // onChange(pagination, filters, sorter);
     }
   };
 
@@ -39,7 +39,7 @@ class StandardTable extends PureComponent {
 
   render() {
     const { selectedRowKeys } = this.state;
-    const { data = {}, rowKey, ...rest } = this.props;
+    const { data = {}, rowKey, onChange, ...rest } = this.props;
     const { list = [], pagination } = data;
 
     const paginationProps = {
@@ -65,7 +65,7 @@ class StandardTable extends PureComponent {
           // rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}
-          onChange={this.handleTableChange}
+          // onChange={this.handleTableChange}
           {...rest}
         />
       </div>

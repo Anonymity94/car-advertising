@@ -167,9 +167,9 @@ export function handleSearchReset() {
 }
 
 // 表格分页变动等
-export function handleTableChange(pageNumber, pageSize) {
+export function handleTableChange(pagination, filters, sorter) {
   this.handlePageRefresh({
-    page: pageNumber,
-    pageSize,
+    page: pagination.pageNumber,
+    pageSize: pagination.pageSize,
   });
 }
