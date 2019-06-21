@@ -33,12 +33,7 @@ const appeals = [
 ];
 
 export default {
-  'GET /api/appeals': {
-    content: appeals,
-    number: 0,
-    size: 15,
-    totalElements: 0,
-  },
+  'GET /api/appeals': appeals,
 
   'POST /api/appeals/:id/state': {},
 };

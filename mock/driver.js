@@ -41,12 +41,7 @@ const drivers = [
 ];
 
 export default {
-  'GET /api/drivers': {
-    content: drivers,
-    number: 0,
-    size: 15,
-    totalElements: 0,
-  },
+  'GET /api/drivers': drivers,
 
   'GET /api/drivers/:id': {
     id: '232323',

@@ -32,11 +32,9 @@ const adContent = {
 };
 
 function mockAdsList(req, res) {
-  const params = req.query;
-  const { page, pageSize } = params;
 
   const list = [];
-  for (let i = 0; i < pageSize; i += 1) {
+  for (let i = 0; i < 50; i += 1) {
     list.push({
       ...adContent,
       id: Math.random(),
@@ -45,12 +43,7 @@ function mockAdsList(req, res) {
     });
   }
 
-  return res.json({
-    content: list,
-    number: page,
-    size: pageSize,
-    totalElements: list.length,
-  });
+  return res.json(list);
 }
 
 export default {

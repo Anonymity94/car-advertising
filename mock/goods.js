@@ -19,11 +19,9 @@ const content = {
 };
 
 function mockList(req, res) {
-  const params = req.query;
-  const { page, pageSize } = params;
 
   const list = [];
-  for (let i = 0; i < pageSize; i += 1) {
+  for (let i = 0; i < 50; i += 1) {
     list.push({
       ...content,
       id: Math.random(),
@@ -32,12 +30,7 @@ function mockList(req, res) {
     });
   }
 
-  return res.json({
-    content: list,
-    number: page,
-    size: pageSize,
-    totalElements: list.length,
-  });
+  return res.json(list);
 }
 
 export default {
