@@ -34,17 +34,11 @@ const appeals = [
 
 export default {
   'GET /api/appeals': {
-    success: true,
-    message: '',
-    result: {
-      content: appeals,
-      number: 0,
-      size: 15,
-      totalElements: 0,
-    },
+    content: appeals,
+    number: 0,
+    size: 15,
+    totalElements: 0,
   },
 
-  'POST /api/appeals/:id/state': {
-    success: true,
-  },
+  'POST /api/appeals/:id/state': {},
 };

@@ -3,9 +3,11 @@ import modelExtend from 'dva-model-extend';
 import { pageModel, doPageRequest } from '@/utils/model';
 import {
   queryBusinesses,
+  queryBusinessContent,
+  queryAllBusinessGoods,
+  createBusiness,
   updateBusiness,
   deleteBusiness,
-  queryBusinessContent,
 } from '@/services/business';
 
 export default modelExtend(pageModel, {
@@ -28,6 +30,7 @@ export default modelExtend(pageModel, {
   state: {
     businesses: [], // 活动列表
     detail: {},
+    allGoods: []
   },
 
   effects: {
@@ -52,14 +55,40 @@ export default modelExtend(pageModel, {
     },
 
     /**
-     * 修改商户内容
+     * 获取所有商户下的所有商品
+     */
+    *queryAllBusinessGoods({ payload }, { call, put }) {
+      const { success, result } = yield call(queryAllBusinessGoods, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          allGoods: success ? result : [],
+        },
+      });
+    },
+
+    /**
+     * 新建商户
+     */
+    *createBusiness({ payload }, { call }) {
+      const { success } = yield call(createBusiness, payload);
+      if (success) {
+        message.success('商户创建成功');
+      } else {
+        message.error('商户创建失败');
+      }
+      return success;
+    },
+
+    /**
+     * 修改商户
      */
     *updateBusiness({ payload }, { call }) {
       const { success } = yield call(updateBusiness, payload);
       if (success) {
-        message.success('内容修改成功');
+        message.success('商户修改成功');
       } else {
-        message.error('内容修改失败');
+        message.error('商户修改失败');
       }
       return success;
     },

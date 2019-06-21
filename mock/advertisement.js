@@ -46,14 +46,10 @@ function mockAdsList(req, res) {
   }
 
   return res.json({
-    success: true,
-    message: '',
-    result: {
-      content: list,
-      number: page,
-      size: pageSize,
-      totalElements: list.length,
-    },
+    content: list,
+    number: page,
+    size: pageSize,
+    totalElements: list.length,
   });
 }
 
@@ -63,17 +59,11 @@ export default {
   'GET /api/advertisements/:id': adContent,
 
   // 发布广告
-  'POST /api/advertisements/:id': {
-    success: true,
-  },
+  'POST /api/advertisements/:id': {},
 
   // 发布广告
-  'POST /api/advertisements/:id/publish': {
-    success: true,
-  },
+  'POST /api/advertisements/:id/publish': {},
 
   // 置顶广告
-  'POST /api/advertisements/:id/top': {
-    success: true,
-  },
+  'POST /api/advertisements/:id/top': {},
 };

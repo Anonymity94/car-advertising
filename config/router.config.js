@@ -178,12 +178,17 @@ export default [
               {
                 path: '/integral/goods',
                 name: 'list',
-                component: './Integral/Goods',
+                component: './Goods/List',
               },
               {
                 path: '/integral/goods/create',
                 name: 'create',
-                component: './Integral/Create',
+                component: './Goods/Create',
+              },
+              {
+                path: '/integral/goods/:id/update',
+                name: 'create',
+                component: './Goods/Update',
               },
             ],
           },

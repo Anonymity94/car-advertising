@@ -31,14 +31,10 @@ function mockList(req, res) {
   }
 
   return res.json({
-    success: true,
-    message: '',
-    result: {
-      content: list,
-      number: page,
-      size: pageSize,
-      totalElements: list.length,
-    },
+    content: list,
+    number: page,
+    size: pageSize,
+    totalElements: list.length,
   });
 }
 
@@ -48,17 +44,11 @@ export default {
   'GET /api/activities/:id': content,
 
   // 发布
-  'POST /api/activities/:id': {
-    success: true,
-  },
+  'POST /api/activities/:id': {},
 
   // 发布
-  'POST /api/activities/:id/publish': {
-    success: true,
-  },
+  'POST /api/activities/:id/publish': {},
 
   // 置顶
-  'POST /api/activities/:id/top': {
-    success: true,
-  },
+  'POST /api/activities/:id/top': {},
 };

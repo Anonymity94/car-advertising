@@ -2,21 +2,39 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
 import moment from 'moment';
-import { Card, Divider, Form, Row, Col, Input, Button, Icon, Modal, DatePicker } from 'antd';
+import {
+  Card,
+  Divider,
+  Form,
+  Row,
+  Col,
+  Input,
+  Button,
+  Icon,
+  Popconfirm,
+  Modal,
+  DatePicker,
+} from 'antd';
 import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import Link from 'umi/link';
+import {
+  TOP_STATE_NO,
+  PUBLISH_STATE_NO,
+  PUBLISH_STATE_YES,
+  TOP_STATE_YES,
+} from '@/common/constants';
 
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ businessModel: { businesses, pagination }, loading }) => ({
-  businesses,
+@connect(({ goodsModel: { goods, pagination }, loading }) => ({
+  goods,
   pagination,
-  loading: loading.effects['businessModel/queryBusinesses'],
+  loading: loading.effects['goodsModel/queryGoods'],
 }))
-class BusinessList extends PureComponent {
+class ActivityList extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -29,14 +47,14 @@ class BusinessList extends PureComponent {
 
   componentWillUnmount() {}
 
-  queryData = () => {
+  queryGoods = () => {
     const {
       dispatch,
       location: { query },
     } = this.props;
 
     dispatch({
-      type: 'businessModel/queryBusinesses',
+      type: 'goodsModel/queryGoods',
       payload: {
         ...query,
       },
@@ -48,17 +66,47 @@ class BusinessList extends PureComponent {
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      const { publishTime } = fieldsValue;
+      const { endTime } = fieldsValue;
       this.handlePageRefresh({
         ...fieldsValue,
-        publishTime: publishTime ? moment(publishTime).format('YYYY-MM-DD') : '',
+        endTime: endTime ? moment(endTime).format('YYYY-MM-DD') : '',
         page: 1,
       });
     });
   };
 
+  handlePublish = (id, isPublish) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'goodsModel/publishGoods',
+      payload: {
+        id,
+        isPublish,
+      },
+    }).then(success => {
+      if (success) {
+        this.queryGoods();
+      }
+    });
+  };
+
+  handleTop = (id, isTop) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'goodsModel/topGoods',
+      payload: {
+        id,
+        isTop,
+      },
+    }).then(success => {
+      if (success) {
+        this.queryGoods();
+      }
+    });
+  };
+
   handleDelete = ({ id }) => {
-    const { dispatch, businesses, pagination } = this.props;
+    const { dispatch, goods, pagination } = this.props;
     Modal.confirm({
       title: '确认删除吗？',
       content: '删除后，该内容将无法恢复！！',
@@ -66,7 +114,7 @@ class BusinessList extends PureComponent {
       maskClosable: false,
       onOk: () => {
         dispatch({
-          type: 'businessModel/deleteBusiness',
+          type: 'goodsModel/deleteGoods',
           payload: {
             id,
           },
@@ -75,7 +123,7 @@ class BusinessList extends PureComponent {
             this.handlePageRefresh({
               page:
                 // 如果删除前只有1条数据，并且页码不是1，就请求上一页数据
-                businesses.length === 1 && pagination.current > 1
+                goods.length === 1 && pagination.current > 1
                   ? pagination.current - 1
                   : pagination.current,
             });
@@ -91,27 +139,27 @@ class BusinessList extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { name, goods, endTime } = query;
+    const { businessName, address, endTime } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
         <Row gutter={10}>
           <Col md={6}>
             <FormItem label="商户名称">
-              {getFieldDecorator('name', {
-                initialValue: name,
+              {getFieldDecorator('businessName', {
+                initialValue: businessName,
               })(<Input placeholder="输入商户名称查询" />)}
             </FormItem>
           </Col>
           <Col md={6}>
-            <FormItem label="商品名称">
-              {getFieldDecorator('goods', {
-                initialValue: goods,
-              })(<Input placeholder="输入商铺名称查询" />)}
+            <FormItem label="地址">
+              {getFieldDecorator('address', {
+                initialValue: address,
+              })(<Input placeholder="输入地址查询" />)}
             </FormItem>
           </Col>
           <Col md={6}>
-            <FormItem label="到期时间">
+            <FormItem label="到期日期">
               {getFieldDecorator('endTime', {
                 initialValue: endTime ? moment(endTime) : undefined,
               })(<DatePicker placeholder="输入到期日期查询" />)}
@@ -135,7 +183,7 @@ class BusinessList extends PureComponent {
   }
 
   render() {
-    const { businesses, pagination, loading } = this.props;
+    const { goods, pagination, loading } = this.props;
 
     const tableColumns = [
       {
@@ -144,33 +192,33 @@ class BusinessList extends PureComponent {
         align: 'center',
       },
       {
-        title: '商户名称',
+        title: '所属商户名称',
+        dataIndex: 'businessName',
+        align: 'center',
+      },
+      {
+        title: '商品名称',
         dataIndex: 'name',
         align: 'center',
       },
       {
-        title: '联系人',
-        dataIndex: 'contact',
+        title: '地址',
+        dataIndex: 'address',
         align: 'center',
       },
       {
-        title: '联系方式',
-        dataIndex: 'telephone',
+        title: '积分',
+        dataIndex: 'integral',
         align: 'center',
       },
       {
-        title: '提供商品',
-        dataIndex: 'goods',
-        align: 'center',
-      },
-      {
-        title: '提供日期',
-        dataIndex: 'createTime',
+        title: '发布时间',
+        dataIndex: 'publishTime',
         align: 'center',
         render: text => text && moment(text).format('YYYY-MM-DD'),
       },
       {
-        title: '到期日期',
+        title: '到期时间',
         dataIndex: 'endTime',
         align: 'center',
         render: text => text && moment(text).format('YYYY-MM-DD'),
@@ -184,12 +232,48 @@ class BusinessList extends PureComponent {
         title: '操作',
         dataIndex: 'operate',
         align: 'center',
-        width: 100,
+        width: 140,
         render: (text, record) => {
-          const { id } = record;
+          const { id, isTop, isPublish } = record;
+
+          let color = '';
+
+          let publishText = '发布';
+          let newPublishState = PUBLISH_STATE_YES;
+          if (isPublish === PUBLISH_STATE_YES) {
+            publishText = '下线';
+            newPublishState = PUBLISH_STATE_NO;
+            color = '#f5222d';
+          }
+
+          let topText = '置顶';
+          let newTopState = TOP_STATE_YES;
+          if (isTop === TOP_STATE_YES) {
+            topText = '取消置顶';
+            newTopState = TOP_STATE_NO;
+          }
+
           return (
             <Fragment>
-              <Link to={`/integral/businesses/${id}/update`}>修改</Link>
+              <Popconfirm
+                title={`确定${publishText}吗？`}
+                onConfirm={() => this.handlePublish(id, newPublishState)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <a style={color ? { color } : null}>{publishText}</a>
+              </Popconfirm>
+              <Divider key="divider" type="vertical" />
+              <Popconfirm
+                title={`确定${topText}吗？`}
+                onConfirm={() => this.handleTop(id, newTopState)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <a>{topText}</a>
+              </Popconfirm>
+              <br />
+              <Link to={`/integral/goods/${id}/update`}>修改</Link>
               <Divider type="vertical" />
               <a onClick={() => this.handleDelete(record)}>删除</a>
             </Fragment>
@@ -217,16 +301,17 @@ class BusinessList extends PureComponent {
           <StandardTable
             title={() => (
               <div style={{ textAlign: 'right' }}>
-                <Button type="primary" onClick={() => router.push('/integral/businesses/create')}>
-                  新增商户
+                <Button type="primary" onClick={() => router.push('/integral/goods/create')}>
+                  新增商品
                 </Button>
               </div>
             )}
             rowKey="id"
             loading={loading}
             columns={tableColumns}
-            data={{ list: businesses, pagination }}
+            data={{ list: goods, pagination }}
             onChange={this.handleTableChange}
+            rowClassName={record => (record.isPublish === PUBLISH_STATE_NO ? 'trStrikingBg' : '')}
           />
         </Card>
       </PageHeaderWrapper>
@@ -234,4 +319,4 @@ class BusinessList extends PureComponent {
   }
 }
 
-export default BusinessList;
+export default ActivityList;

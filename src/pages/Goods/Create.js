@@ -7,7 +7,7 @@ import router from 'umi/router';
 import FormTemp from './FormTemp';
 
 @connect(({ loading }) => ({
-  submitLoading: loading.effects['businessModel/createBusiness'],
+  submitLoading: loading.effects['goodsModel/createGoods'],
 }))
 class Create extends PureComponent {
   componentDidMount() {}
@@ -15,7 +15,7 @@ class Create extends PureComponent {
   handleSubmit = values => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'businessModel/createBusiness',
+      type: 'goodsModel/createGoods',
       paylod: {
         ...values,
       },
@@ -38,13 +38,17 @@ class Create extends PureComponent {
     });
   };
 
+  saveFormRef = formRef => {
+    this.formRef = formRef;
+  };
+
   render() {
     const { submitLoading } = this.props;
     return (
       <PageHeaderWrapper showback>
         <Card>
           <FormTemp
-            wrappedComponentRef={formRef => (this.formRef = formRef)}
+            wrappedComponentRef={this.saveFormRef}
             onSubmit={this.handleSubmit}
             submitLoading={submitLoading}
           />

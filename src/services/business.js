@@ -21,6 +21,27 @@ export async function queryBusinessContent({ id }) {
 }
 
 /**
+ * 查询所有商户下的所有商品
+ * @param {String} id
+ */
+export async function queryAllBusinessGoods() {
+  return request(`/api/businesses/all-goods`);
+}
+
+/**
+ * 新建商户
+ */
+export async function createBusiness(params) {
+  return request(`/api/businesses`, {
+    method: 'POST',
+    body: {
+      method: 'post',
+      ...params,
+    },
+  });
+}
+
+/**
  * 修改商户
  * @param {String} id
  */

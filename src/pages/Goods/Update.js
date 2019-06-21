@@ -5,21 +5,21 @@ import { Card } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import FormTemp from './FormTemp';
 
-@connect(({ businessModel: { detail }, loading }) => ({
+@connect(({ goodsModel: { detail }, loading }) => ({
   detail,
-  loading: loading.effects['businessModel/queryBusinessContent'],
-  submitLoading: loading.effects['businessModel/updateBusiness'],
+  loading: loading.effects['goodsModel/queryGoodsContent'],
+  submitLoading: loading.effects['goodsModel/updateGoods'],
 }))
 class Update extends PureComponent {
   componentDidMount() {
-    this.queryBusinessContent();
+    this.queryGoodsContent();
   }
 
-  queryBusinessContent = () => {
+  queryGoodsContent = () => {
     const { dispatch, match } = this.props;
     const { id } = match.params;
     dispatch({
-      type: 'businessModel/queryBusinessContent',
+      type: 'goodsModel/queryGoodsContent',
       payload: {
         id,
       },
@@ -29,13 +29,13 @@ class Update extends PureComponent {
   handleSubmit = values => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'businessModel/updateBusiness',
+      type: 'goodsModel/updateGoods',
       paylod: {
         ...values,
       },
     }).then(success => {
       if (success) {
-        this.queryBusinessContent();
+        this.queryGoodsContent();
       }
     });
   };
