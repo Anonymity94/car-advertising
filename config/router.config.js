@@ -107,9 +107,9 @@ export default [
           },
           // 积分提现管理
           {
-            path: '/application/integral/withdrawal',
+            path: '/application/integral/settlement',
             name: 'withdrawal',
-            component: './Integral/Withdrawal',
+            component: './Integral/Settlement',
           },
           // 活动内容管理
           {

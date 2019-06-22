@@ -6,12 +6,12 @@ export const PAGE_SIZE_DEFAULT = 20;
 /**
  * NO: 0
  */
-export const STRING_BOOLEAN_NO = '0'
+export const STRING_BOOLEAN_NO = '0';
 
 /**
  * YES: 1
  */
-export const STRING_BOOLEAN_YES = '1'
+export const STRING_BOOLEAN_YES = '1';
 
 /**
  * 用户审核状态：未审核
@@ -103,7 +103,6 @@ export const SIGNING_GOLD_SETTLEMENT_STATE_LIST = [
   },
 ];
 
-
 /**
  * 发布状态：未发布
  */
@@ -137,3 +136,13 @@ export const TOP_STATE_YES = STRING_BOOLEAN_YES;
  *  置顶状态：未置顶
  */
 export const TOP_STATE_NO = STRING_BOOLEAN_NO;
+
+/**
+ * 积分结算状态：已结算
+ */
+export const INTEGRAL_SETTLEMENT_STATE_YES = STRING_BOOLEAN_YES;
+
+/**
+ * 积分结算状态：未结算
+ */
+export const INTEGRAL_SETTLEMENT_STATE_NO = STRING_BOOLEAN_NO;
