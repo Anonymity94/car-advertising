@@ -54,26 +54,46 @@ export default [
             name: 'appeal',
             component: './Driver/Appeal',
           },
-          // 粘贴广告
+          // 广告签约管理
           {
-            path: '/application/ad-signing',
+            path: '/application/ad-signings',
             name: 'ad-signing',
             hideChildrenInMenu: true,
             component: './AD/Layout',
             routes: [
               {
-                path: '/application/ad-signing',
-                redirect: '/application/ad-signing/paste',
+                path: '/application/ad-signings',
+                redirect: '/application/ad-signings/paste',
               },
               {
-                path: '/application/ad-signing/paste',
+                path: '/application/ad-signings/paste',
                 name: 'paste',
-                component: './AD/Paste/List',
+                routes: [
+                  {
+                    path: '/application/ad-signings/paste',
+                    component: './AD/Paste/List',
+                  },
+                  {
+                    path: '/application/ad-signings/paste/detail',
+                    name: 'detail',
+                    component: './AD/Paste/Detail',
+                  },
+                ],
               },
               {
-                path: '/application/ad-signing/settlement',
+                path: '/application/ad-signings/settlement',
                 name: 'settlement',
-                component: './AD/Settlement/List',
+                routes: [
+                  {
+                    path: '/application/ad-signings/settlement',
+                    component: './AD/Settlement/List',
+                  },
+                  {
+                    path: '/application/ad-signings/settlement/detail',
+                    name: 'detail',
+                    component: './AD/Settlement/Detail',
+                  },
+                ],
               },
             ],
           },

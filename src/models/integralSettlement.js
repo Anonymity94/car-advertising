@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
-import { querySettlements, doSettlement } from '@/services/settlement';
+import { querySettlements, doSettlement } from '@/services/integralSettlement';
 import { INTEGRAL_SETTLEMENT_STATE_YES } from '@/common/constants';
 
 export default modelExtend(model, {
@@ -23,6 +23,8 @@ export default modelExtend(model, {
     list: [], // 已结算列表
     unpaid: [], // 未结算列表
     detail: {},
+
+    totalMoney: 0,
   },
 
   effects: {
@@ -35,10 +37,13 @@ export default modelExtend(model, {
       const list = [];
       const unpaid = [];
 
+      let totalMoney = 0;
+
       if (success) {
         result.forEach(item => {
           if (item.state === INTEGRAL_SETTLEMENT_STATE_YES) {
             list.push(item);
+            totalMoney += item.money;
           } else {
             unpaid.push(item);
           }
@@ -50,6 +55,7 @@ export default modelExtend(model, {
         payload: {
           list,
           unpaid,
+          totalMoney,
         },
       });
     },

@@ -181,7 +181,7 @@ export function handleSearchReset() {
       if (fields[item] instanceof Array) {
         fields[item] = [];
       } else {
-        fields[item] = '';
+        fields[item] = undefined;
       }
     }
   }

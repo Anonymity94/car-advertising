@@ -79,28 +79,24 @@ export async function deleteAd({ id }) {
 }
 
 /**
- * =========广告粘贴==========
+ * 查询广告签约详情
  */
+export async function queryAdSigningDetail({ id }) {
+  return request(`/api/advertisement-signings/detail?id=${id}`);
+}
 
 /**
  * 查询广告粘贴列表
  */
 export async function queryAdPastes() {
-  return request('/api/advertisements/pastes');
-}
-
-/**
- * 查询粘贴详情
- */
-export async function queryAdPasteDetail({ id }) {
-  return request(`/api/advertisements/pastes?id=${id}`);
+  return request('/api/advertisement-signings/pastes');
 }
 
 /**
  * 允许粘贴
  */
 export async function accessAdPaste({ id, ...rest }) {
-  return request(`/api/advertisements/access-paste?id=${id}`, {
+  return request(`/api/advertisement-signings/access-paste?id=${id}`, {
     method: 'POST',
     body: { ...rest },
   });
@@ -110,7 +106,24 @@ export async function accessAdPaste({ id, ...rest }) {
  * 拒绝粘贴
  */
 export async function rejectAdPaste({ id, ...rest }) {
-  return request(`/api/advertisements/reject-paste?id=${id}`, {
+  return request(`/api/advertisement-signings/reject-paste?id=${id}`, {
+    method: 'POST',
+    body: { ...rest },
+  });
+}
+
+/**
+ * 查询广告结算列表
+ */
+export async function queryAdSettlements() {
+  return request('/api/advertisement-signings/settlements');
+}
+
+/**
+ * 广告结算
+ */
+export async function doSigningSettlement({ id, ...rest }) {
+  return request(`/api/advertisement-signings/settlements?id=${id}`, {
     method: 'POST',
     body: { ...rest },
   });

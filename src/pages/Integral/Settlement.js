@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
+import numeral from 'numeral';
 import { Card, Form, Row, Col, Input, Button, Icon, DatePicker, List, Modal, Divider } from 'antd';
 import { Field } from '@/components/Charts';
 import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
@@ -12,9 +13,10 @@ import styles from './styles.less';
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ integralSettlementModel: { list, unpaid }, loading }) => ({
+@connect(({ integralSettlementModel: { list, totalMoney, unpaid }, loading }) => ({
   list,
   unpaid,
+  totalMoney,
   loading: loading.effects['integralSettlementModel/querySettlements'],
 }))
 class Settlement extends PureComponent {
@@ -40,7 +42,7 @@ class Settlement extends PureComponent {
     <section className={styles.unpaidList}>
       <Field label="名称:" value={item.username} />
       <Field label="积分数:" value={item.integral} />
-      <Field label="金额数:" value={item.money} />
+      <Field label="金额数:" value={`￥${numeral(item.money).format('0,0')}`} />
       <Field label="手机号:" value={item.telephone} />
     </section>
   );
@@ -114,7 +116,7 @@ class Settlement extends PureComponent {
 
   render() {
     const { filterResult } = this.state;
-    const { loading, unpaid } = this.props;
+    const { loading, list, unpaid, totalMoney } = this.props;
 
     const tableColumns = [
       {
@@ -136,6 +138,7 @@ class Settlement extends PureComponent {
         title: '金额数',
         dataIndex: 'money',
         align: 'center',
+        render: text => `￥${numeral(text).format('0,0')}`,
       },
       {
         title: '手机号',
@@ -188,6 +191,19 @@ class Settlement extends PureComponent {
         <Card size="small" bordered={false} title="已结账积分">
           {this.renderSearchForm()}
           <StandardTable
+            title={() => (
+              <Fragment>
+                <ul className={styles.total}>
+                  <li>
+                    总计：<span>￥{numeral(totalMoney).format('0,0')}元</span>
+                  </li>
+                  <Divider className={styles.divier} type="vertical" />
+                  <li>
+                    总数：<span>{list.length}</span>
+                  </li>
+                </ul>
+              </Fragment>
+            )}
             rowKey="id"
             loading={loading}
             columns={tableColumns}

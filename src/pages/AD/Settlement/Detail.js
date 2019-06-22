@@ -1,22 +1,151 @@
-import React, { PureComponent } from 'react';
-import moment from 'moment';
+import React, { PureComponent, Suspense, Fragment } from 'react';
 import { connect } from 'dva';
-import Link from 'umi/link';
-import { Row, Col, Card, List, Avatar } from 'antd';
+import router from 'umi/router';
+import { Button, Row, Col, Card } from 'antd';
+import FooterToolbar from '@/components/FooterToolbar';
+import { SIGNING_GOLD_SETTLEMENT_STATE_SETTLED } from '@/common/constants';
+import FormModal from './FormModal';
+import { Field } from '@/components/Charts';
 
-@connect()
-class Workplace extends PureComponent {
+const UserDetail = React.lazy(() => import('@/pages/Driver/UserDetail'));
+
+@connect(({ driverModel: { detail }, loading }) => ({
+  detail,
+  loading: loading.effects['adSigningModel/queryAdSigningDetail'],
+  submitting: loading.effects['adSigningModel/doSigningSettlement'],
+}))
+class Info extends PureComponent {
+  state = {
+    modalVisible: false,
+    width: '100%',
+  };
+
   componentDidMount() {
-    const { dispatch } = this.props;
+    this.queryAdSigningDetail();
+    window.addEventListener('resize', this.resizeFooterToolbar, { passive: true });
   }
 
   componentWillUnmount() {
-    const { dispatch } = this.props;
+    window.removeEventListener('resize', this.resizeFooterToolbar);
   }
 
+  queryAdSigningDetail = () => {
+    const {
+      dispatch,
+      location: { query },
+    } = this.props;
+    dispatch({
+      type: 'adSigningModel/queryAdSigningDetail',
+      payload: {
+        id: query.id,
+      },
+    });
+  };
+
+  toogleModal = () => {
+    this.setState(({ modalVisible }) => ({
+      modalVisible: !modalVisible,
+    }));
+  };
+
+  handleSubmit = values => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adSigningModel/doSigningSettlement',
+      payload: {
+        ...values,
+      },
+    }).then(success => {
+      if (success) {
+        // 关闭弹出
+        this.toogleModal();
+        // 重新拉取表格
+        this.queryAdSigningDetail();
+      }
+    });
+  };
+
+  resizeFooterToolbar = () => {
+    requestAnimationFrame(() => {
+      const sider = document.querySelectorAll('.ant-layout-sider')[0];
+      if (sider) {
+        const width = `calc(100% - ${sider.style.width})`;
+        const { width: stateWidth } = this.state;
+        if (stateWidth !== width) {
+          this.setState({ width });
+        }
+      }
+    });
+  };
+
   render() {
-    return <div>费用结算详情</div>;
+    const { width, modalVisible } = this.state;
+    const { loading, detail, submitting } = this.props;
+
+    return (
+      <Fragment>
+        <Suspense fallback={null}>
+          <UserDetail detail={detail} loading={loading} />
+        </Suspense>
+
+        <Card
+          loading={loading}
+          title="粘贴信息"
+          size="small"
+          bordered={false}
+          style={{ marginTop: 10 }}
+        >
+          <Row gutter={10}>
+            <Col span={6}>
+              <img src={detail.pasteImages} alt="照片" />
+            </Col>
+          </Row>
+          <Field
+            label="备注："
+            value="备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注"
+          />
+        </Card>
+
+        {detail.id && detail.settlementState === SIGNING_GOLD_SETTLEMENT_STATE_SETTLED ? (
+          <Card title="结算信息" size="small" bordered={false} style={{ marginTop: 10 }}>
+            <Row gutter={10}>
+              <Col span={6}>
+                <img src={detail.pasteImages} alt="照片" />
+              </Col>
+            </Row>
+            <Field
+              label="备注："
+              value="备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注"
+            />
+          </Card>
+        ) : (
+          <FooterToolbar style={{ width }}>
+            <section style={{ textAlign: 'center' }}>
+              <Button
+                loading={submitting}
+                icon="check-circle"
+                type="primary"
+                onClick={() => this.toogleModal()}
+              >
+                结算
+              </Button>
+              <Button loading={submitting} icon="rollback" onClick={() => router.goBack()}>
+                返回
+              </Button>
+            </section>
+          </FooterToolbar>
+        )}
+
+        <FormModal
+          current={detail}
+          confirmLoading={submitting}
+          visible={modalVisible}
+          onCancel={this.toogleModal}
+          onSubmit={this.handleSubmit}
+        />
+      </Fragment>
+    );
   }
 }
 
-export default Workplace;
+export default Info;

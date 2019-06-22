@@ -26,7 +26,7 @@ export default modelExtend(model, {
   },
 
   state: {
-    list: [], // 管理员列表
+    list: [],
     detail: {},
   },
 

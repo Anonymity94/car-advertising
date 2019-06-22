@@ -4,7 +4,8 @@
 
 const content = {
   id: Math.random(),
-  username: '用户名',
+  userId: '232323',
+  fullname: '用户名',
   phone: '138542345947',
   idcard: '23343423234234', // 身份证
   carType: '商务车', // 车辆类型
@@ -37,7 +38,7 @@ function mockList(req, res) {
     list.push({
       ...content,
       id: Math.random(),
-      state: '0', // 粘贴情况
+      settlementState: '0', // 结算
     });
   }
 
@@ -46,7 +47,12 @@ function mockList(req, res) {
 
 export default {
   // 广告结算列表
-  'GET /api/advertisements/settlements': mockList,
+  'GET /api/advertisement-signings/settlements': mockList,
   // 广告结算详情
-  'GET /api/advertisements/settlements?id=:id': content,
+  'GET /api/advertisement-signings/detail': content,
+
+  // 广告结算
+  // body 参数
+  // {settlementImage: [], settlementRemark: 'xxxx'}
+  'POST /api/advertisement-signings/settlements?id=:id': {},
 };

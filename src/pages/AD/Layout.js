@@ -32,7 +32,7 @@ class ADLayout extends Component {
       },
       {
         key: 'settlement',
-        tab: '签约金计算',
+        tab: '签约金结算',
       },
     ];
 
@@ -40,6 +40,7 @@ class ADLayout extends Component {
 
     return (
       <PageHeaderWrapper
+        showback={location.pathname.indexOf('/detail') > -1}
         tabList={tabList}
         tabActiveKey={location.pathname.replace(`${match.path}/`, '')}
         onTabChange={this.handleTabChange}
