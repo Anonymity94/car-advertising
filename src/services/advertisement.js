@@ -77,3 +77,41 @@ export async function deleteAd({ id }) {
     },
   });
 }
+
+/**
+ * =========广告粘贴==========
+ */
+
+/**
+ * 查询广告粘贴列表
+ */
+export async function queryAdPastes() {
+  return request('/api/advertisements/pastes');
+}
+
+/**
+ * 查询粘贴详情
+ */
+export async function queryAdPasteDetail({ id }) {
+  return request(`/api/advertisements/pastes?id=${id}`);
+}
+
+/**
+ * 允许粘贴
+ */
+export async function accessAdPaste({ id, ...rest }) {
+  return request(`/api/advertisements/access-paste?id=${id}`, {
+    method: 'POST',
+    body: { ...rest },
+  });
+}
+
+/**
+ * 拒绝粘贴
+ */
+export async function rejectAdPaste({ id, ...rest }) {
+  return request(`/api/advertisements/reject-paste?id=${id}`, {
+    method: 'POST',
+    body: { ...rest },
+  });
+}

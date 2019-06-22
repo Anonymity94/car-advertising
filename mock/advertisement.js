@@ -32,7 +32,6 @@ const adContent = {
 };
 
 function mockAdsList(req, res) {
-
   const list = [];
   for (let i = 0; i < 50; i += 1) {
     list.push({
@@ -59,4 +58,7 @@ export default {
 
   // 置顶广告
   'POST /api/advertisements/:id/top': {},
+
+  // 广告粘贴列表
+  'GET /api/advertisements/pastes': mockAdsList,
 };

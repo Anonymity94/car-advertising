@@ -47,19 +47,24 @@ export const AUDIT_STATE_LIST = [
 ];
 
 /**
- * 广告粘贴状态：未粘贴
+ * 广告粘贴状态：未审核
  */
-export const AD_PASTE_STATE_UN_PASTED = STRING_BOOLEAN_NO;
+export const AD_PASTE_STATE_UN_REVIEW = '0';
 
 /**
- * 广告粘贴状态：已粘贴
+ * 广告粘贴状态：审核通过，未粘贴
  */
-export const AD_PASTE_STATE_PASTED = STRING_BOOLEAN_YES;
+export const AD_PASTE_STATE_UN_PASTED = '1';
 
 /**
- * 广告粘贴状态：已粘贴
+ * 广告粘贴状态：审核通过，已粘贴
  */
-export const AD_PASTE_STATE_REFUSE = '2';
+export const AD_PASTE_STATE_PASTED = '2';
+
+/**
+ * 广告粘贴状态：审核被拒绝
+ */
+export const AD_PASTE_STATE_REFUSE = '3';
 
 /**
  * 广告粘贴状态
