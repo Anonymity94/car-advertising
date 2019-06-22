@@ -19,10 +19,20 @@ const plugins = [
         default: 'zh-CN', // default zh-CN
         baseNavigator: true, // default true, when it is true, will use `navigator.language` overwrite default
       },
+      // @see: https://github.com/umijs/umi/issues/1086
+      // PUBLIC_PATH 对应 publicPath
+      headScripts: [
+        { src: '<%= PUBLIC_PATH %>libs/react.production-16.6.3.min.js' },
+        { src: '<%= PUBLIC_PATH %>libs/react-dom.production-16.6.3.min.js' },
+        { src: '<%= PUBLIC_PATH %>libs/react-router-dom-4.3.1.min.js' },
+        { src: '<%= PUBLIC_PATH %>libs/data-set-0.96.min.js' },
+        { src: '<%= PUBLIC_PATH %>libs/bizCharts-3.4.0.min.js' },
+        { src: '<%= PUBLIC_PATH %>libs/moment-2.22.1.min.js' },
+      ],
       metas: [{ charset: 'utf-8' }, { 'build-time': moment().format() }],
       dynamicImport: {
         loadingComponent: './components/PageLoading/index',
-        webpackChunkName: true,
+        // webpackChunkName: true,
       },
       ...(!process.env.TEST && os.platform() === 'darwin'
         ? {
@@ -47,6 +57,7 @@ export default {
   targets: {
     ie: 11,
   },
+  hash: true, // 开始文件hash
   // 路由配置
   routes: pageRoutes,
   // Theme for antd
@@ -56,6 +67,11 @@ export default {
   },
   externals: {
     '@antv/data-set': 'DataSet',
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    'react-router-dom': 'ReactRouterDOM',
+    bizcharts: 'BizCharts',
+    moment: 'moment',
   },
   // proxy: {
   //   '/server/api/': {
@@ -69,28 +85,7 @@ export default {
     javascriptEnabled: true,
   },
   disableRedirectHoist: true,
-  cssLoaderOptions: {
-    modules: true,
-    getLocalIdent: (context, localIdentName, localName) => {
-      if (
-        context.resourcePath.includes('node_modules') ||
-        context.resourcePath.includes('ant.design.pro.less') ||
-        context.resourcePath.includes('global.less')
-      ) {
-        return localName;
-      }
-      const match = context.resourcePath.match(/src(.*)/);
-      if (match && match[1]) {
-        const antdProPath = match[1].replace('.less', '');
-        const arr = slash(antdProPath)
-          .split('/')
-          .map(a => a.replace(/([A-Z])/g, '-$1'))
-          .map(a => a.toLowerCase());
-        return `antd-pro${arr.join('-')}-${localName}`.replace(/--/g, '-');
-      }
-      return localName;
-    },
-  },
+  cssLoaderOptions: {},
   manifest: {
     basePath: '/',
   },
