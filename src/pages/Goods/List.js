@@ -2,6 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
 import moment from 'moment';
+import isEqual from 'lodash/isEqual';
 import {
   Card,
   Divider,
@@ -41,7 +42,8 @@ class ActivityList extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -52,6 +54,16 @@ class ActivityList extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   handlePublish = (id, isPublish) => {
     const { dispatch } = this.props;

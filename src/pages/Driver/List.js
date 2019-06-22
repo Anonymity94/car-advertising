@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import Link from 'umi/link';
 import { connect } from 'dva';
+import isEqual from 'lodash/isEqual';
 import { Card, Divider, Form, Row, Col, Input, Select, Button, DatePicker, Icon } from 'antd';
 import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
@@ -75,7 +76,8 @@ class List extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -86,6 +88,16 @@ class List extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   renderSearchForm() {
     const {

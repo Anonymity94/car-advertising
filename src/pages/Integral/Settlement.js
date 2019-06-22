@@ -1,8 +1,9 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
+import isEqual from 'lodash/isEqual';
 import numeral from 'numeral';
-import { Card, Form, Row, Col, Input, Button, Icon, DatePicker, List, Modal, Divider } from 'antd';
+import { Card, Form, Row, Col, Input, Button, DatePicker, List, Modal, Divider } from 'antd';
 import { Field } from '@/components/Charts';
 import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
@@ -26,7 +27,9 @@ class Settlement extends PureComponent {
     this.state = {
       // eslint-disable-next-line react/no-unused-state
       search: {},
-      filterResult: props.list,
+
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -37,6 +40,16 @@ class Settlement extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   renderUnpaidItem = item => (
     <section className={styles.unpaidList}>

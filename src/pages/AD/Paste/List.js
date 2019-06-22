@@ -16,6 +16,7 @@ import {
   Spin,
   notification,
 } from 'antd';
+import isEqual from 'lodash/isEqual';
 import { handleSearch, handleSearchReset, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import FormModal, { ACCESS_PASTE, REJECT_PASTE } from './FormModal';
@@ -45,7 +46,8 @@ class AdPasteList extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -58,6 +60,16 @@ class AdPasteList extends PureComponent {
   }
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   queryAdPastes = () => {
     const { dispatch } = this.props;

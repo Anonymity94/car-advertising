@@ -1,7 +1,9 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
+import router from 'umi/router';
 import { Card, Divider, Form, Row, Col, Input, Button, DatePicker, Icon, Popconfirm } from 'antd';
 import moment from 'moment';
+import isEqual from 'lodash/isEqual';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
@@ -10,7 +12,6 @@ import {
   handleFilterResult,
 } from '@/utils/utils';
 
-import router from 'umi/router';
 
 const FormItem = Form.Item;
 
@@ -27,7 +28,8 @@ class Audited extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -38,6 +40,16 @@ class Audited extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   handleDelete = id => {
     const { dispatch } = this.props;

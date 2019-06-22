@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
+import isEqual from 'lodash/isEqual';
 import moment from 'moment';
 import { Card, Divider, Form, Row, Col, Input, Button, Icon, Modal, DatePicker } from 'antd';
 import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
@@ -23,7 +24,8 @@ class BusinessList extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -34,6 +36,16 @@ class BusinessList extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   handleDelete = ({ id }) => {
     const { dispatch } = this.props;

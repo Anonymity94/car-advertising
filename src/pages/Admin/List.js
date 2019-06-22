@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
+import isEqual from 'lodash/isEqual';
 import { Card, Divider, Form, Row, Col, Input, Button, Icon, Popconfirm } from 'antd';
 import { handleSearch, handleSearchReset, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
@@ -26,7 +27,8 @@ class AdminList extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -37,6 +39,16 @@ class AdminList extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   toogleModal = current => {
     this.setState(({ modalVisible }) => ({

@@ -14,13 +14,10 @@ import {
   Icon,
 } from 'antd';
 import moment from 'moment';
+import isEqual from 'lodash/isEqual';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import {
-  handleSearchReset,
-  handleSearch,
-  handleFilterResult,
-} from '@/utils/utils';
+import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
 import {
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_PASSED,
@@ -42,7 +39,8 @@ class AppealList extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -53,6 +51,16 @@ class AppealList extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   handleAudit = (id, state) => {
     const { dispatch } = this.props;

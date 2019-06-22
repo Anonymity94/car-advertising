@@ -2,6 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import Link from 'umi/link';
+import isEqual from 'lodash/isEqual';
 import { Card, Divider, Form, Row, Col, Input, Button, Icon, DatePicker, Select } from 'antd';
 import { handleSearch, handleSearchReset, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
@@ -28,7 +29,8 @@ class AdPasteList extends PureComponent {
       // eslint-disable-next-line react/no-unused-state
       search: {},
 
-      filterResult: props.list,
+      list: [],
+      filterResult: [],
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -41,6 +43,16 @@ class AdPasteList extends PureComponent {
   }
 
   componentWillUnmount() {}
+
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(nextProps.list, state.list)) {
+      return {
+        list: nextProps.list,
+        filterResult: nextProps.list,
+      };
+    }
+    return null;
+  }
 
   queryAdSettlements = () => {
     const { dispatch } = this.props;
