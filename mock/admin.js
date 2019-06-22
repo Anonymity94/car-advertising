@@ -1,26 +1,25 @@
-const admins = [
-  {
-    id: Math.random(),
-    name: '张全蛋111',
-    username: 'liuwanru',
-    password: 'aa3223',
-  },
-  {
-    id: Math.random(),
-    name: '张全蛋222',
-    username: 'liuwanru',
-    password: 'aa3223',
-  },
-  {
-    id: Math.random(),
-    name: '张全蛋333',
-    username: 'liuwanru',
-    password: 'aa3223',
-  },
-];
+const content = {
+  id: Math.random(),
+  name: '张全蛋111',
+  username: 'liuwanru',
+  password: 'aa3223',
+};
+
+function mockList(req, res) {
+  const list = [];
+  for (let i = 0; i < 50; i += 1) {
+    list.push({
+      ...content,
+      name: `张全蛋${i}`,
+      id: Math.random(),
+    });
+  }
+
+  return res.json(list);
+}
 
 export default {
-  'GET /api/user-manager/admin-list': admins,
+  'GET /api/user-manager/admin-list': mockList,
 
   // 删除
   'POST /api/user-manager/admin-remove': {},

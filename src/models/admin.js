@@ -1,9 +1,9 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
-import { pageModel, doPageRequest } from '@/utils/model';
+import { model } from '@/utils/model';
 import { queryAdmins, updateAdmin, createAdmin, deleteAdmin } from '@/services/admin';
 
-export default modelExtend(pageModel, {
+export default modelExtend(model, {
   namespace: 'adminModel',
 
   subscriptions: {
@@ -21,7 +21,7 @@ export default modelExtend(pageModel, {
   },
 
   state: {
-    admins: [], // 管理员列表
+    list: [], // 管理员列表
   },
 
   effects: {
@@ -29,7 +29,13 @@ export default modelExtend(pageModel, {
      * 获取所有管理员列表
      */
     *queryAdmins({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryAdmins, payload, call, put, stateKey: 'admins' });
+      const { success, result } = yield call(queryAdmins, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: success ? result : [],
+        },
+      });
     },
 
     /**

@@ -1,17 +1,22 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Card, Divider, Form, Row, Col, Input, Button, Icon, Popconfirm } from 'antd';
-import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
+import {
+  handlePageRefresh,
+  handleSearch,
+  handleSearchReset,
+  handleTableChange,
+  handleFilterResult,
+} from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import FormModal from './FormModal'
+import FormModal from './FormModal';
 
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ adminModel: { admins, pagination }, loading }) => ({
-  admins,
-  pagination,
+@connect(({ adminModel: { list }, loading }) => ({
+  list,
   loading: loading.effects['adminModel/queryAdmins'],
   submitLoading:
     loading.effects['adminModel/updateAdmin'] || loading.effects['adminModel/createAdmin'],
@@ -23,10 +28,20 @@ class AdminList extends PureComponent {
     this.state = {
       modalVisible: false,
       current: {},
+
+      // eslint-disable-next-line react/no-unused-state
+      search: {
+        name: '',
+        username: '',
+      },
+
+      filterResult: props.list,
     };
 
     this.handlePageRefresh = handlePageRefresh.bind(this);
     this.handleSearchReset = handleSearchReset.bind(this);
+    this.handleSearch = handleSearch.bind(this);
+    this.handleFilterResult = handleFilterResult.bind(this);
     this.handleTableChange = handleTableChange.bind(this);
   }
 
@@ -53,17 +68,6 @@ class AdminList extends PureComponent {
       modalVisible: !modalVisible,
       current: current || {},
     }));
-  };
-
-  handleSearch = e => {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      this.handlePageRefresh({
-        ...fieldsValue,
-      });
-    });
   };
 
   handleSubmit = values => {
@@ -97,7 +101,7 @@ class AdminList extends PureComponent {
     });
   };
 
-  renderSearchForm() {
+  renderSearchForm = () => {
     const {
       form: { getFieldDecorator },
       location: { query },
@@ -137,11 +141,11 @@ class AdminList extends PureComponent {
         </Row>
       </Form>
     );
-  }
+  };
 
   render() {
-    const { modalVisible, current } = this.state;
-    const { admins, pagination, loading, submitLoading } = this.props;
+    const { modalVisible, current, filterResult } = this.state;
+    const { loading, submitLoading } = this.props;
 
     const tableColumns = [
       {
@@ -213,7 +217,7 @@ class AdminList extends PureComponent {
             rowKey="id"
             loading={loading}
             columns={tableColumns}
-            data={{ list: admins, pagination }}
+            data={{ list: filterResult }}
             onChange={this.handleTableChange}
           />
         </Card>

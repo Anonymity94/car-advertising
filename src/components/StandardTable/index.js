@@ -45,7 +45,12 @@ class StandardTable extends PureComponent {
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      ...pagination,
+      hideOnSinglePage: false,
+      total: list.length,
+      showTotal: total => `共 ${total} 条`,
+      pageSize: 20,
+      size: 'default',
+      pageSizeOptions: ['10', '20', '30', '40', '50'],
     };
 
     const rowSelection = {

@@ -1,4 +1,5 @@
 import React from 'react';
+import lodash from 'lodash';
 import { parse, stringify } from 'qs';
 import router from 'umi/router';
 
@@ -142,6 +143,24 @@ export function handlePageRefresh(newQuery) {
   });
 }
 
+export function handleSearch(e) {
+  if (e) e.preventDefault();
+  const { form } = this.props;
+  form.validateFields((err, fieldsValue) => {
+    if (err) return;
+    this.setState(
+      {
+        search: {
+          ...fieldsValue,
+        },
+      },
+      () => {
+        this.handleFilterResult();
+      }
+    );
+  });
+}
+
 export function handleSearchReset() {
   const { form } = this.props;
   const { getFieldsValue, setFieldsValue } = form;
@@ -159,11 +178,7 @@ export function handleSearchReset() {
   }
   // 刷新表单数据
   setFieldsValue(fields);
-
-  this.handlePageRefresh({
-    ...fields,
-    page: 1,
-  });
+  this.handleSearch();
 }
 
 // 表格分页变动等
@@ -171,5 +186,42 @@ export function handleTableChange(pagination, filters, sorter) {
   this.handlePageRefresh({
     page: pagination.pageNumber,
     pageSize: pagination.pageSize,
+  });
+}
+
+export function handleFilterResult() {
+  const { search } = this.state;
+  const { list } = this.props;
+
+  let result = list.slice();
+
+  // eslint-disable-next-line compat/compat
+  const values = Object.values(search);
+  // 过滤掉空值
+  const compactValues = lodash.compact(values);
+  if (compactValues.length > 0) {
+    // 所有的搜关键字
+    const keywords = Object.keys(search);
+    // 模糊查询
+    result = result.filter(item => {
+      const keywordsFlag = lodash.fill(Array(keywords.length), true);
+      keywords.forEach((key, index) => {
+        // 某个搜索条件没有值得话，继续下一个
+        if (!search[key]) {
+          return;
+        }
+        if (item[key].indexOf(search[key]) === -1) {
+          keywordsFlag[index] = false;
+        }
+      });
+      // 所有的搜索条件全部命中，才返回。搜索的条件的模糊搜索是「与」的关系
+      if (keywordsFlag.indexOf(false) === -1) {
+        return true;
+      }
+      return false;
+    });
+  }
+  this.setState({
+    filterResult: result,
   });
 }
