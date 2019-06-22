@@ -1,9 +1,10 @@
 // https://umijs.org/config/
 import os from 'os';
+import slash from 'slash2';
+import moment from 'moment';
 import pageRoutes from './router.config';
 import webpackPlugin from './plugin.config';
 import defaultSettings from '../src/defaultSettings';
-import slash from 'slash2';
 
 const plugins = [
   [
@@ -18,6 +19,7 @@ const plugins = [
         default: 'zh-CN', // default zh-CN
         baseNavigator: true, // default true, when it is true, will use `navigator.language` overwrite default
       },
+      metas: [{ charset: 'utf-8' }, { 'build-time': moment().format() }],
       dynamicImport: {
         loadingComponent: './components/PageLoading/index',
         webpackChunkName: true,
