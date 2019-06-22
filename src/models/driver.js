@@ -81,10 +81,13 @@ export default modelExtend(model, {
     /**
      * 审核
      */
-    *auditDriver({ payload }, { call }) {
+    *auditDriver({ payload }, { call, put }) {
       const { success } = yield call(auditDriver, payload);
       if (success) {
         message.success('审核成功');
+        yield put({
+          type: 'queryDrivers',
+        });
       } else {
         message.error('审核失败');
       }
@@ -114,10 +117,13 @@ export default modelExtend(model, {
     /**
      * 删除
      */
-    *deleteDriver({ payload }, { call }) {
+    *deleteDriver({ payload }, { call, put }) {
       const { success } = yield call(deleteDriver, payload);
       if (success) {
         message.success('删除成功');
+        yield put({
+          type: 'queryDrivers',
+        });
       } else {
         message.error('删除失败');
       }

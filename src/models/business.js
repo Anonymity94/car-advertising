@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
-import { pageModel, doPageRequest } from '@/utils/model';
+import { model } from '@/utils/model';
 import {
   queryBusinesses,
   queryBusinessContent,
@@ -10,17 +10,15 @@ import {
   deleteBusiness,
 } from '@/services/business';
 
-export default modelExtend(pageModel, {
+export default modelExtend(model, {
   namespace: 'businessModel',
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
         if (location.pathname === '/integral/businesses') {
-          const payload = { ...location.query };
           dispatch({
             type: 'queryBusinesses',
-            payload,
           });
         }
       });
@@ -28,9 +26,9 @@ export default modelExtend(pageModel, {
   },
 
   state: {
-    businesses: [], // 活动列表
+    list: [], // 活动列表
     detail: {},
-    allGoods: []
+    allGoods: [],
   },
 
   effects: {
@@ -38,7 +36,13 @@ export default modelExtend(pageModel, {
      * 获取商户列表
      */
     *queryBusinesses({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryBusinesses, payload, call, put, stateKey: 'businesses' });
+      const { success, result } = yield call(queryBusinesses, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: success ? result : [],
+        },
+      });
     },
 
     /**
@@ -70,10 +74,13 @@ export default modelExtend(pageModel, {
     /**
      * 新建商户
      */
-    *createBusiness({ payload }, { call }) {
+    *createBusiness({ payload }, { call, put }) {
       const { success } = yield call(createBusiness, payload);
       if (success) {
         message.success('商户创建成功');
+        yield put({
+          type: 'queryBusinesses',
+        });
       } else {
         message.error('商户创建失败');
       }
@@ -96,10 +103,13 @@ export default modelExtend(pageModel, {
     /**
      * 删除商户
      */
-    *deleteBusiness({ payload }, { call }) {
+    *deleteBusiness({ payload }, { call, put }) {
       const { success } = yield call(deleteBusiness, payload);
       if (success) {
         message.success('删除成功');
+        yield put({
+          type: 'queryBusinesses',
+        });
       } else {
         message.error('删除失败');
       }

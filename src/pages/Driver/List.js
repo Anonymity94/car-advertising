@@ -5,12 +5,7 @@ import { Card, Divider, Form, Row, Col, Input, Select, Button, DatePicker, Icon 
 import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import {
-  handlePageRefresh,
-  handleSearchReset,
-  handleSearch,
-  handleFilterResult,
-} from '@/utils/utils';
+import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
 
 import { AUDIT_STATE_LIST, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
 
@@ -69,9 +64,8 @@ const tableColumns = [
 ];
 
 @Form.create()
-@connect(({ driverModel: { list, pagination }, loading }) => ({
+@connect(({ driverModel: { list }, loading }) => ({
   list,
-  pagination,
   loading: loading.effects['driverModel/queryDrivers'],
 }))
 class List extends PureComponent {
@@ -84,7 +78,6 @@ class List extends PureComponent {
       filterResult: props.list,
     };
 
-    this.handlePageRefresh = handlePageRefresh.bind(this);
     this.handleSearchReset = handleSearchReset.bind(this);
     this.handleSearch = handleSearch.bind(this);
     this.handleFilterResult = handleFilterResult.bind(this);

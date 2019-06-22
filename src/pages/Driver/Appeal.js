@@ -16,7 +16,11 @@ import {
 import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
+import {
+  handleSearchReset,
+  handleSearch,
+  handleFilterResult,
+} from '@/utils/utils';
 import {
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_PASSED,
@@ -27,17 +31,23 @@ import {
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ appealModel: { appeals, pagination }, loading }) => ({
-  appeals,
-  pagination,
+@connect(({ appealModel: { list }, loading }) => ({
+  list,
   loading: loading.effects['appealModel/queryAppeals'],
 }))
 class AppealList extends PureComponent {
   constructor(props) {
     super(props);
-    this.handlePageRefresh = handlePageRefresh.bind(this);
+    this.state = {
+      // eslint-disable-next-line react/no-unused-state
+      search: {},
+
+      filterResult: props.list,
+    };
+
     this.handleSearchReset = handleSearchReset.bind(this);
-    this.handleTableChange = handleTableChange.bind(this);
+    this.handleSearch = handleSearch.bind(this);
+    this.handleFilterResult = handleFilterResult.bind(this);
   }
 
   componentDidMount() {}
@@ -67,7 +77,6 @@ class AppealList extends PureComponent {
       }).then(success => {
         if (success) {
           Modal.destroyAll();
-          this.handlePageRefresh();
         } else {
           confirmModal.update({
             okButtonProps: {
@@ -127,20 +136,6 @@ class AppealList extends PureComponent {
         },
       });
     }
-  };
-
-  handleSearch = e => {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      const { createTime } = fieldsValue;
-      this.handlePageRefresh({
-        ...fieldsValue,
-        createTime: createTime ? moment(createTime).format('YYYY-MM-DD') : '',
-        page: 1,
-      });
-    });
   };
 
   renderSearchForm() {
@@ -206,7 +201,8 @@ class AppealList extends PureComponent {
   }
 
   render() {
-    const { appeals, pagination, loading } = this.props;
+    const { filterResult } = this.state;
+    const { loading } = this.props;
 
     const tableColumns = [
       {
@@ -291,8 +287,7 @@ class AppealList extends PureComponent {
             rowKey="id"
             loading={loading}
             columns={tableColumns}
-            data={{ list: appeals, pagination }}
-            onChange={this.handleTableChange}
+            data={{ list: filterResult }}
             rowClassName={record => (record.state === AUDIT_STATE_UNREVIEWED ? 'trStrikingBg' : '')}
           />
         </Card>

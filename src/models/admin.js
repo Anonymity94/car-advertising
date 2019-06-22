@@ -10,10 +10,8 @@ export default modelExtend(model, {
     setup({ dispatch, history }) {
       history.listen(location => {
         if (location.pathname === '/user/admins') {
-          const payload = { ...location.query };
           dispatch({
             type: 'queryAdmins',
-            payload,
           });
         }
       });
@@ -41,10 +39,13 @@ export default modelExtend(model, {
     /**
      * 修改管理员
      */
-    *updateAdmin({ payload }, { call }) {
+    *updateAdmin({ payload }, { call, put }) {
       const { success } = yield call(updateAdmin, payload);
       if (success) {
         message.success('修改成功');
+        yield put({
+          type: 'queryAdmins',
+        });
       } else {
         message.error('修改失败');
       }
@@ -54,10 +55,13 @@ export default modelExtend(model, {
     /**
      * 新建管理员
      */
-    *createAdmin({ payload }, { call }) {
+    *createAdmin({ payload }, { call, put }) {
       const { success } = yield call(createAdmin, payload);
       if (success) {
         message.success('新增成功');
+        yield put({
+          type: 'queryAdmins',
+        });
       } else {
         message.error('新增失败');
       }
@@ -67,10 +71,13 @@ export default modelExtend(model, {
     /**
      * 删除
      */
-    *deleteAdmin({ payload }, { call }) {
+    *deleteAdmin({ payload }, { call, put }) {
       const { success } = yield call(deleteAdmin, payload);
       if (success) {
         message.success('删除成功');
+        yield put({
+          type: 'queryAdmins',
+        });
       } else {
         message.error('删除失败');
       }

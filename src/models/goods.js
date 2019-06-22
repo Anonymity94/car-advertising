@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
-import { pageModel, doPageRequest } from '@/utils/model';
+import { model } from '@/utils/model';
 import {
   queryGoods,
   queryGoodsContent,
@@ -11,17 +11,15 @@ import {
   deleteGoods,
 } from '@/services/goods';
 
-export default modelExtend(pageModel, {
+export default modelExtend(model, {
   namespace: 'goodsModel',
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
         if (location.pathname === '/integral/goods') {
-          const payload = { ...location.query };
           dispatch({
             type: 'queryGoods',
-            payload,
           });
         }
       });
@@ -29,7 +27,7 @@ export default modelExtend(pageModel, {
   },
 
   state: {
-    goods: [],
+    list: [],
     detail: {},
   },
 
@@ -38,7 +36,13 @@ export default modelExtend(pageModel, {
      * 获取商品列表
      */
     *queryGoods({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryGoods, payload, call, put, stateKey: 'goods' });
+      const { success, result } = yield call(queryGoods, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: success ? result : [],
+        },
+      });
     },
 
     /**
@@ -64,10 +68,13 @@ export default modelExtend(pageModel, {
     /**
      * 新建商品
      */
-    *createGoods({ payload }, { call }) {
+    *createGoods({ payload }, { call, put }) {
       const { success } = yield call(createGoods, payload);
       if (success) {
         message.success('新建商品成功');
+        yield put({
+          type: 'queryGoods',
+        });
       } else {
         message.error('新建商品失败');
       }
@@ -90,10 +97,13 @@ export default modelExtend(pageModel, {
     /**
      * 发布商品
      */
-    *publishGoods({ payload }, { call }) {
+    *publishGoods({ payload }, { call, put }) {
       const { success } = yield call(publishGoods, payload);
       if (success) {
         message.success('发布成功');
+        yield put({
+          type: 'queryGoods',
+        });
       } else {
         message.error('发布失败');
       }
@@ -103,10 +113,13 @@ export default modelExtend(pageModel, {
     /**
      * 置顶商品
      */
-    *topGoods({ payload }, { call }) {
+    *topGoods({ payload }, { call, put }) {
       const { success } = yield call(topGoods, payload);
       if (success) {
         message.success('置顶成功');
+        yield put({
+          type: 'queryGoods',
+        });
       } else {
         message.error('置顶失败');
       }
@@ -116,10 +129,13 @@ export default modelExtend(pageModel, {
     /**
      * 删除商品
      */
-    *deleteGoods({ payload }, { call }) {
+    *deleteGoods({ payload }, { call, put }) {
       const { success } = yield call(deleteGoods, payload);
       if (success) {
         message.success('删除成功');
+        yield put({
+          type: 'queryGoods',
+        });
       } else {
         message.error('删除失败');
       }

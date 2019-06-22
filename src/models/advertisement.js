@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
-import { pageModel, doPageRequest } from '@/utils/model';
+import { model } from '@/utils/model';
 import {
   queryAds,
   updateAd,
@@ -10,17 +10,15 @@ import {
   queryAdContent,
 } from '@/services/advertisement';
 
-export default modelExtend(pageModel, {
+export default modelExtend(model, {
   namespace: 'adModel',
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
         if (location.pathname === '/application/ads') {
-          const payload = { ...location.query };
           dispatch({
             type: 'queryAds',
-            payload,
           });
         }
       });
@@ -28,7 +26,7 @@ export default modelExtend(pageModel, {
   },
 
   state: {
-    ads: [], // 管理员列表
+    list: [], // 管理员列表
     detail: {},
   },
 
@@ -37,7 +35,13 @@ export default modelExtend(pageModel, {
      * 获取广告列表
      */
     *queryAds({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryAds, payload, call, put, stateKey: 'ads' });
+      const { success, result } = yield call(queryAds, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: success ? result : [],
+        },
+      });
     },
 
     /**
@@ -69,10 +73,13 @@ export default modelExtend(pageModel, {
     /**
      * 发布广告
      */
-    *publishAd({ payload }, { call }) {
+    *publishAd({ payload }, { call, put }) {
       const { success } = yield call(publishAd, payload);
       if (success) {
         message.success('发布成功');
+        yield put({
+          type: 'queryAds',
+        });
       } else {
         message.error('发布失败');
       }
@@ -82,10 +89,13 @@ export default modelExtend(pageModel, {
     /**
      * 置顶广告
      */
-    *topAd({ payload }, { call }) {
+    *topAd({ payload }, { call, put }) {
       const { success } = yield call(topAd, payload);
       if (success) {
         message.success('置顶成功');
+        yield put({
+          type: 'queryAds',
+        });
       } else {
         message.error('置顶失败');
       }
@@ -95,10 +105,13 @@ export default modelExtend(pageModel, {
     /**
      * 删除广告
      */
-    *deleteAd({ payload }, { call }) {
+    *deleteAd({ payload }, { call, put }) {
       const { success } = yield call(deleteAd, payload);
       if (success) {
         message.success('删除成功');
+        yield put({
+          type: 'queryAds',
+        });
       } else {
         message.error('删除失败');
       }

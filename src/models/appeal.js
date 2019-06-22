@@ -1,19 +1,17 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
-import { pageModel, doPageRequest } from '@/utils/model';
+import { model } from '@/utils/model';
 import { queryAppeals, updateAppealState } from '@/services/appeal';
 
-export default modelExtend(pageModel, {
+export default modelExtend(model, {
   namespace: 'appealModel',
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
         if (location.pathname === '/application/appeals') {
-          const payload = { ...location.query };
           dispatch({
             type: 'queryAppeals',
-            payload,
           });
         }
       });
@@ -21,7 +19,7 @@ export default modelExtend(pageModel, {
   },
 
   state: {
-    appeals: [], // 申诉列表
+    list: [], // 申诉列表
   },
 
   effects: {
@@ -29,7 +27,13 @@ export default modelExtend(pageModel, {
      * 获取所有申诉列表
      */
     *queryAppeals({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryAppeals, payload, call, put, stateKey: 'appeals' });
+      const { success, result } = yield call(queryAppeals, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: success ? result : [],
+        },
+      });
     },
 
     /**
@@ -39,6 +43,7 @@ export default modelExtend(pageModel, {
       const { success } = yield call(updateAppealState, payload);
       if (success) {
         message.success('审核成功');
+        
       } else {
         message.error('审核失败');
       }

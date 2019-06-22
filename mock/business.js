@@ -1,3 +1,6 @@
+/**
+ * 商户管理
+ */
 const content = {
   id: Math.random(),
   name: '红星油厂',
@@ -9,7 +12,7 @@ const content = {
 
   goods: '红星油厂-红星机油,红星油厂-红星柴油', // 提供的商品
 
-  address: '活动内容', // 富文本
+  address: '地址', // 地址
   createTime: '2019-06-19 17:59:44', // 创建时间
   modifyTime: '2019-06-19 17:59:44', // 最近操作时间
   operator: '测试', // 操作人
@@ -47,12 +50,17 @@ function mockList(req, res) {
 export default {
   'GET /api/businesses': mockList,
 
+  // 获取所有商户下所有商品
   'GET /api/businesses/all-goods': allGoods,
 
+  // 获取商户详情
   'GET /api/businesses/:id': content,
 
   // 编辑
-  'POST /api/businesses/:id': {},
+  'PUT /api/businesses/:id': {},
   // 新建
   'POST /api/businesses': {},
+
+  // 删除
+  'DELETE /api/businesses/:id': {},
 };

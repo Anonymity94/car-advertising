@@ -5,7 +5,6 @@ import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
-  handlePageRefresh,
   handleSearchReset,
   handleSearch,
   handleFilterResult,
@@ -31,7 +30,6 @@ class Audited extends PureComponent {
       filterResult: props.list,
     };
 
-    this.handlePageRefresh = handlePageRefresh.bind(this);
     this.handleSearchReset = handleSearchReset.bind(this);
     this.handleSearch = handleSearch.bind(this);
     this.handleFilterResult = handleFilterResult.bind(this);

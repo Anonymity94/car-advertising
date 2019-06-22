@@ -1,12 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Card, Divider, Form, Row, Col, Input, Button, Icon, Popconfirm } from 'antd';
-import {
-  handlePageRefresh,
-  handleSearch,
-  handleSearchReset,
-  handleFilterResult,
-} from '@/utils/utils';
+import { handleSearch, handleSearchReset, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import FormModal from './FormModal';
@@ -29,15 +24,11 @@ class AdminList extends PureComponent {
       current: {},
 
       // eslint-disable-next-line react/no-unused-state
-      search: {
-        name: '',
-        username: '',
-      },
+      search: {},
 
       filterResult: props.list,
     };
 
-    this.handlePageRefresh = handlePageRefresh.bind(this);
     this.handleSearchReset = handleSearchReset.bind(this);
     this.handleSearch = handleSearch.bind(this);
     this.handleFilterResult = handleFilterResult.bind(this);
@@ -46,20 +37,6 @@ class AdminList extends PureComponent {
   componentDidMount() {}
 
   componentWillUnmount() {}
-
-  queryData = () => {
-    const {
-      dispatch,
-      location: { query },
-    } = this.props;
-
-    dispatch({
-      type: 'adminModel/queryAdmins',
-      payload: {
-        ...query,
-      },
-    });
-  };
 
   toogleModal = current => {
     this.setState(({ modalVisible }) => ({
@@ -79,8 +56,6 @@ class AdminList extends PureComponent {
       if (success) {
         // 关闭弹出
         this.toogleModal();
-        // 重新获取数据
-        this.queryData();
       }
     });
   };
@@ -92,10 +67,6 @@ class AdminList extends PureComponent {
       payload: {
         id,
       },
-    }).then(success => {
-      if (success) {
-        this.queryData();
-      }
     });
   };
 

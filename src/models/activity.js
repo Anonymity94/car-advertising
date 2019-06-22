@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
-import { pageModel, doPageRequest } from '@/utils/model';
+import { model } from '@/utils/model';
 import {
   queryActivities,
   updateActivity,
@@ -10,17 +10,15 @@ import {
   queryActivityContent,
 } from '@/services/activity';
 
-export default modelExtend(pageModel, {
+export default modelExtend(model, {
   namespace: 'activityModel',
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
         if (location.pathname === '/application/activities') {
-          const payload = { ...location.query };
           dispatch({
             type: 'queryActivities',
-            payload,
           });
         }
       });
@@ -28,7 +26,7 @@ export default modelExtend(pageModel, {
   },
 
   state: {
-    activities: [], // 活动列表
+    list: [], // 活动列表
     detail: {},
   },
 
@@ -37,7 +35,13 @@ export default modelExtend(pageModel, {
      * 获取广告列表
      */
     *queryActivities({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryActivities, payload, call, put, stateKey: 'activities' });
+      const { success, result } = yield call(queryActivities, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: success ? result : [],
+        },
+      });
     },
 
     /**
@@ -69,10 +73,13 @@ export default modelExtend(pageModel, {
     /**
      * 发布广告
      */
-    *publishActivity({ payload }, { call }) {
+    *publishActivity({ payload }, { call, put }) {
       const { success } = yield call(publishActivity, payload);
       if (success) {
         message.success('发布成功');
+        yield put({
+          type: 'queryActivities',
+        });
       } else {
         message.error('发布失败');
       }
@@ -82,10 +89,13 @@ export default modelExtend(pageModel, {
     /**
      * 置顶广告
      */
-    *topActivity({ payload }, { call }) {
+    *topActivity({ payload }, { call, put }) {
       const { success } = yield call(topActivity, payload);
       if (success) {
         message.success('置顶成功');
+        yield put({
+          type: 'queryActivities',
+        });
       } else {
         message.error('置顶失败');
       }
@@ -95,10 +105,13 @@ export default modelExtend(pageModel, {
     /**
      * 删除广告
      */
-    *deleteActivity({ payload }, { call }) {
+    *deleteActivity({ payload }, { call, put }) {
       const { success } = yield call(deleteActivity, payload);
       if (success) {
         message.success('删除成功');
+        yield put({
+          type: 'queryActivities',
+        });
       } else {
         message.error('删除失败');
       }

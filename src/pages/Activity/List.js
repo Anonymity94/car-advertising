@@ -16,7 +16,11 @@ import {
   Select,
   DatePicker,
 } from 'antd';
-import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
+import {
+  handleSearchReset,
+  handleSearch,
+  handleFilterResult,
+} from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import Link from 'umi/link';
@@ -31,51 +35,29 @@ import {
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ activityModel: { activities, pagination }, loading }) => ({
-  activities,
-  pagination,
+@connect(({ activityModel: { list }, loading }) => ({
+  list,
   loading: loading.effects['activityModel/queryActivities'],
 }))
 class ActivityList extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.handlePageRefresh = handlePageRefresh.bind(this);
+    this.state = {
+      // eslint-disable-next-line react/no-unused-state
+      search: {},
+
+      filterResult: props.list,
+    };
+
     this.handleSearchReset = handleSearchReset.bind(this);
-    this.handleTableChange = handleTableChange.bind(this);
+    this.handleSearch = handleSearch.bind(this);
+    this.handleFilterResult = handleFilterResult.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
-
-  queryData = () => {
-    const {
-      dispatch,
-      location: { query },
-    } = this.props;
-
-    dispatch({
-      type: 'activityModel/queryActivities',
-      payload: {
-        ...query,
-      },
-    });
-  };
-
-  handleSearch = e => {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      const { publishTime } = fieldsValue;
-      this.handlePageRefresh({
-        ...fieldsValue,
-        publishTime: publishTime ? moment(publishTime).format('YYYY-MM-DD') : '',
-        page: 1,
-      });
-    });
-  };
 
   handlePublish = (id, isPublish) => {
     const { dispatch } = this.props;
@@ -85,10 +67,6 @@ class ActivityList extends PureComponent {
         id,
         isPublish,
       },
-    }).then(success => {
-      if (success) {
-        this.queryData();
-      }
     });
   };
 
@@ -100,15 +78,11 @@ class ActivityList extends PureComponent {
         id,
         isTop,
       },
-    }).then(success => {
-      if (success) {
-        this.queryData();
-      }
     });
   };
 
   handleDelete = ({ id }) => {
-    const { dispatch, activities, pagination } = this.props;
+    const { dispatch } = this.props;
     Modal.confirm({
       title: '确认删除吗？',
       content: '删除后，该内容将无法恢复！！',
@@ -120,16 +94,6 @@ class ActivityList extends PureComponent {
           payload: {
             id,
           },
-        }).then(success => {
-          if (success) {
-            this.handlePageRefresh({
-              page:
-                // 如果删除前只有1条数据，并且页码不是1，就请求上一页数据
-                activities.length === 1 && pagination.current > 1
-                  ? pagination.current - 1
-                  : pagination.current,
-            });
-          }
         });
       },
     });
@@ -196,7 +160,8 @@ class ActivityList extends PureComponent {
   }
 
   render() {
-    const { activities, pagination, loading } = this.props;
+    const { filterResult } = this.state;
+    const { loading } = this.props;
 
     const tableColumns = [
       {
@@ -336,8 +301,7 @@ class ActivityList extends PureComponent {
             rowKey="id"
             loading={loading}
             columns={tableColumns}
-            data={{ list: activities, pagination }}
-            onChange={this.handleTableChange}
+            data={{ list: filterResult }}
             rowClassName={record => (record.isPublish === PUBLISH_STATE_NO ? 'trStrikingBg' : '')}
           />
         </Card>
