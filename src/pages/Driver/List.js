@@ -5,7 +5,12 @@ import { Card, Divider, Form, Row, Col, Input, Select, Button, DatePicker, Icon 
 import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
+import {
+  handlePageRefresh,
+  handleSearchReset,
+  handleSearch,
+  handleFilterResult,
+} from '@/utils/utils';
 
 import { AUDIT_STATE_LIST, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
 
@@ -24,12 +29,12 @@ const tableColumns = [
   },
   {
     title: '手机号',
-    dataIndex: 'telephone',
+    dataIndex: 'phone',
     align: 'center',
   },
   {
     title: '身份证号',
-    dataIndex: 'identityCard',
+    dataIndex: 'idcard',
     align: 'center',
   },
   {
@@ -45,7 +50,7 @@ const tableColumns = [
   },
   {
     title: '审核人',
-    dataIndex: 'operatorName',
+    dataIndex: 'verifyName',
     align: 'center',
   },
   {
@@ -64,36 +69,30 @@ const tableColumns = [
 ];
 
 @Form.create()
-@connect(({ driverModel: { drivers, pagination }, loading }) => ({
-  drivers,
+@connect(({ driverModel: { list, pagination }, loading }) => ({
+  list,
   pagination,
   loading: loading.effects['driverModel/queryDrivers'],
 }))
 class List extends PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      // eslint-disable-next-line react/no-unused-state
+      search: {},
+
+      filterResult: props.list,
+    };
+
     this.handlePageRefresh = handlePageRefresh.bind(this);
     this.handleSearchReset = handleSearchReset.bind(this);
-    this.handleTableChange = handleTableChange.bind(this);
+    this.handleSearch = handleSearch.bind(this);
+    this.handleFilterResult = handleFilterResult.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
-
-  handleSearch = e => {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      const { createTime } = fieldsValue;
-      this.handlePageRefresh({
-        ...fieldsValue,
-        createTime: createTime ? moment(createTime).format('YYYY-MM-DD') : '',
-        page: 1,
-      });
-    });
-  };
 
   renderSearchForm() {
     const {
@@ -158,7 +157,8 @@ class List extends PureComponent {
   }
 
   render() {
-    const { drivers, pagination, loading } = this.props;
+    const { filterResult } = this.state;
+    const { loading } = this.props;
     return (
       <PageHeaderWrapper>
         <Card
@@ -179,8 +179,7 @@ class List extends PureComponent {
             rowKey="id"
             loading={loading}
             columns={tableColumns}
-            data={{ list: drivers, pagination }}
-            onChange={this.handleTableChange}
+            data={{ list: filterResult }}
             rowClassName={record => (record.state === AUDIT_STATE_UNREVIEWED ? 'trStrikingBg' : '')}
           />
         </Card>

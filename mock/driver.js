@@ -2,60 +2,60 @@ const drivers = [
   {
     id: Math.random(),
     name: '刘婉茹',
-    telephone: '138542345947',
-    identityCard: '23343423234234', // 身份证
+    phone: '138542345947',
+    idcard: '23343423234234', // 身份证
     createTime: '2019-06-18T20:30:57+08:00',
     carType: '商务车', // 车辆类型
-    drivingPermit: '232433434', // 汽车行驶证
-    drivingPermitDueTime: '2019-06-18', // 汽车行驶证到期时间
+    carCode: '232433434', // 汽车行驶证
+    expireTime: '2019-06-18', // 汽车行驶证到期时间
     state: '0',
     stateText: '未审核',
-    operatorName: '',
+    verifyName: '',
   },
   {
     id: Math.random(),
     name: '刘婉茹',
-    telephone: '138542345947',
-    identityCard: '23343423234234', // 身份证
+    phone: '138542345947',
+    idcard: '23343423234234', // 身份证
     createTime: '2019-06-18T20:30:57+08:00',
     carType: '商务车', // 车辆类型
-    drivingPermit: '232433434', // 汽车行驶证
-    drivingPermitDueTime: '2019-06-18', // 汽车行驶证到期时间
+    carCode: '232433434', // 汽车行驶证
+    expireTime: '2019-06-18', // 汽车行驶证到期时间
     state: 1,
     stateText: '已通过',
-    operatorName: '管理员',
+    verifyName: '管理员',
   },
   {
     id: Math.random(),
     name: '刘婉茹',
-    telephone: '138542345947',
-    identityCard: '23343423234234', // 身份证
+    phone: '138542345947',
+    idcard: '23343423234234', // 身份证
     createTime: '2019-06-18T20:30:57+08:00',
     carType: '商务车', // 车辆类型
-    drivingPermit: '232433434', // 汽车行驶证
-    drivingPermitDueTime: '2019-06-18', // 汽车行驶证到期时间
+    carCode: '232433434', // 汽车行驶证
+    expireTime: '2019-06-18', // 汽车行驶证到期时间
     state: -1,
     stateText: '未通过',
-    operatorName: '管理员',
+    verifyName: '管理员',
   },
 ];
 
 export default {
-  'GET /api/drivers': drivers,
+  'GET /api/user-manager/user-list': drivers,
 
-  'GET /api/drivers/:id': {
+  'GET /api/user-manager/user-single?id=2323': {
     id: '232323',
     name: '刘婉茹',
     state: '0',
     telephone: '138542345947',
-    identityCard: '23343423234234', // 身份证
+    idcard: '23343423234234', // 身份证
     identityCardImage1:
       'http://t11.baidu.com/it/u=1856743291,913193672&fm=173&app=25&f=JPEG?w=500&h=325&s=4E53CF121D564CC85AE9B1CB010050B1', // 身份证国徽照
     identityCardImage2:
       'https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=2384163257,1795060609&fm=173&app=49&f=JPEG?w=640&h=429&s=00114F30075665C8087940C80300F0B2', // 身份证人脸照
     carType: '商务车', // 车辆类型
-    drivingPermit: '232433434', // 汽车行驶证
-    drivingPermitDueTime: '2019-06-18', // 汽车行驶证到期时间
+    carCode: '232433434', // 汽车行驶证
+    expireTime: '2019-06-18', // 汽车行驶证到期时间
     drivingPermitImage:
       'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3871765756,3947697558&fm=26&gp=0.jpg', // 行驶证照片
     carImgae:
@@ -65,7 +65,7 @@ export default {
   },
   'POST /api/drivers/:id/state': {},
 
-  'POST /api/drivers/:id/drivingPermitDueTime': {},
+  'POST /api/user-manager/user-update?id=:id': {},
 
-  'POST /api/drivers/:id': {},
+  'POST /api/user-manager/user-remove?id=:id': {},
 };

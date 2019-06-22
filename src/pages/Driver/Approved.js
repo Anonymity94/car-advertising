@@ -4,63 +4,50 @@ import { Card, Divider, Form, Row, Col, Input, Button, DatePicker, Icon, Popconf
 import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import { handlePageRefresh, handleSearchReset, handleTableChange } from '@/utils/utils';
+import {
+  handlePageRefresh,
+  handleSearchReset,
+  handleSearch,
+  handleFilterResult,
+} from '@/utils/utils';
 
 import router from 'umi/router';
 
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ driverModel: { drivers, pagination }, loading }) => ({
-  drivers,
+@connect(({ driverModel: { list, pagination }, loading }) => ({
+  list,
   pagination,
   loading: loading.effects['driverModel/queryApprovedDrivers'],
 }))
 class Audited extends PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      // eslint-disable-next-line react/no-unused-state
+      search: {},
+
+      filterResult: props.list,
+    };
+
     this.handlePageRefresh = handlePageRefresh.bind(this);
     this.handleSearchReset = handleSearchReset.bind(this);
-    this.handleTableChange = handleTableChange.bind(this);
+    this.handleSearch = handleSearch.bind(this);
+    this.handleFilterResult = handleFilterResult.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
 
-  handleSearch = e => {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      const { drivingPermitDueTime } = fieldsValue;
-      this.handlePageRefresh({
-        ...fieldsValue,
-        drivingPermitDueTime: drivingPermitDueTime
-          ? moment(drivingPermitDueTime).format('YYYY-MM-DD')
-          : '',
-        page: 1,
-      });
-    });
-  };
-
   handleDelete = id => {
-    const { dispatch, drivers, pagination } = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'driverModel/deleteDriver',
       payload: {
         id,
       },
-    }).then(success => {
-      if (success) {
-        this.handlePageRefresh({
-          page:
-            // 如果删除前只有1条数据，并且页码不是1，就请求上一页数据
-            drivers.length === 1 && pagination.current > 1
-              ? pagination.current - 1
-              : pagination.current,
-        });
-      }
     });
   };
 
@@ -70,7 +57,7 @@ class Audited extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { name, telephone, drivingPermitDueTime } = query;
+    const { name, telephone, expireTime } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
@@ -84,15 +71,15 @@ class Audited extends PureComponent {
           </Col>
           <Col md={6}>
             <FormItem label="手机号">
-              {getFieldDecorator('telephone', {
+              {getFieldDecorator('phone', {
                 initialValue: telephone,
               })(<Input placeholder="输入手机号查询" />)}
             </FormItem>
           </Col>
           <Col md={6}>
             <FormItem label="证件到期时间">
-              {getFieldDecorator('drivingPermitDueTime', {
-                initialValue: drivingPermitDueTime ? moment(drivingPermitDueTime) : undefined,
+              {getFieldDecorator('expireTime', {
+                initialValue: expireTime ? moment(expireTime) : undefined,
               })(<DatePicker />)}
             </FormItem>
           </Col>
@@ -114,7 +101,8 @@ class Audited extends PureComponent {
   }
 
   render() {
-    const { drivers, pagination, loading } = this.props;
+    const { filterResult } = this.state;
+    const { loading } = this.props;
     const tableColumns = [
       {
         title: '会员编号',
@@ -128,12 +116,12 @@ class Audited extends PureComponent {
       },
       {
         title: '手机号',
-        dataIndex: 'telephone',
+        dataIndex: 'phone',
         align: 'center',
       },
       {
         title: '身份证号',
-        dataIndex: 'identityCard',
+        dataIndex: 'idcard',
         align: 'center',
       },
       {
@@ -143,17 +131,17 @@ class Audited extends PureComponent {
       },
       {
         title: '行驶证号',
-        dataIndex: 'drivingPermit',
+        dataIndex: 'carCode',
         align: 'center',
       },
       {
         title: '车辆到期时间',
-        dataIndex: 'drivingPermitDueTime',
+        dataIndex: 'expireTime',
         align: 'center',
       },
       {
         title: '审核人',
-        dataIndex: 'operatorName',
+        dataIndex: 'verifyName',
         align: 'center',
       },
       {
@@ -198,8 +186,7 @@ class Audited extends PureComponent {
             rowKey="id"
             loading={loading}
             columns={tableColumns}
-            data={{ list: drivers, pagination }}
-            onChange={this.handleTableChange}
+            data={{ list: filterResult }}
           />
         </Card>
       </PageHeaderWrapper>

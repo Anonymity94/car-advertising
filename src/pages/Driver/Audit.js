@@ -16,7 +16,7 @@ import styles from './styles.less';
 @connect(({ driverModel: { detail }, loading }) => ({
   detail,
   loading: loading.effects['driverModel/queryDriverDetail'],
-  submitting: loading.effects['driverModel/updateDriverState'],
+  submitting: loading.effects['driverModel/auditDriver'],
 }))
 class Audit extends PureComponent {
   state = {
@@ -71,7 +71,7 @@ class Audit extends PureComponent {
         },
       });
       dispatch({
-        type: 'driverModel/updateDriverState',
+        type: 'driverModel/auditDriver',
         payload: {
           id,
           state,

@@ -1,16 +1,15 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
-import { pageModel, doPageRequest } from '@/utils/model';
+import { model } from '@/utils/model';
 import {
   queryDrivers,
   queryDriverById,
-  updateDriverState,
-  updateDrivingPermitDueTime,
-  queryApprovedDrivers,
+  auditDriver,
+  updateDriverExpireTime,
   deleteDriver,
 } from '@/services/driver';
 
-export default modelExtend(pageModel, {
+export default modelExtend(model, {
   namespace: 'driverModel',
 
   subscriptions: {
@@ -26,7 +25,7 @@ export default modelExtend(pageModel, {
         if (location.pathname === '/user/drivers') {
           const payload = { ...location.query };
           dispatch({
-            type: 'queryApprovedDrivers',
+            type: 'queryDrivers',
             payload,
           });
         }
@@ -35,7 +34,7 @@ export default modelExtend(pageModel, {
   },
 
   state: {
-    drivers: [],
+    list: [],
     detail: {}, // 车主详情
   },
 
@@ -44,21 +43,27 @@ export default modelExtend(pageModel, {
      * 获取所有的车主列表
      */
     *queryDrivers({ payload = {} }, { call, put }) {
-      yield doPageRequest({ api: queryDrivers, payload, call, put, stateKey: 'drivers' });
+      const { success, result } = yield call(queryDrivers, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: success ? result : [],
+        },
+      });
     },
 
     /**
      * 获取已经审核通过的车主列表
      */
-    *queryApprovedDrivers({ payload = {} }, { call, put }) {
-      yield doPageRequest({
-        api: queryApprovedDrivers,
-        payload,
-        call,
-        put,
-        stateKey: 'drivers',
-      });
-    },
+    // *queryApprovedDrivers({ payload = {} }, { call, put }) {
+    //   yield doPageRequest({
+    //     api: queryApprovedDrivers,
+    //     payload,
+    //     call,
+    //     put,
+    //     stateKey: 'drivers',
+    //   });
+    // },
 
     /**
      * 车主详情
@@ -76,8 +81,8 @@ export default modelExtend(pageModel, {
     /**
      * 审核
      */
-    *updateDriverState({ payload }, { call }) {
-      const { success } = yield call(updateDriverState, payload);
+    *auditDriver({ payload }, { call }) {
+      const { success } = yield call(auditDriver, payload);
       if (success) {
         message.success('审核成功');
       } else {
@@ -89,9 +94,9 @@ export default modelExtend(pageModel, {
     /**
      * 修改行驶证到期时间
      */
-    *updateDrivingPermitDueTime({ payload }, { call, put }) {
+    *updateDriverExpireTime({ payload }, { call, put }) {
       const { id } = payload;
-      const { success } = yield call(updateDrivingPermitDueTime, payload);
+      const { success } = yield call(updateDriverExpireTime, payload);
       if (success) {
         message.success('更新成功');
         yield put({

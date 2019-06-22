@@ -2,6 +2,7 @@ import React from 'react';
 import lodash from 'lodash';
 import { parse, stringify } from 'qs';
 import router from 'umi/router';
+import moment from 'moment';
 
 /**
  * 补充0
@@ -148,10 +149,18 @@ export function handleSearch(e) {
   const { form } = this.props;
   form.validateFields((err, fieldsValue) => {
     if (err) return;
+
+    const values = {};
+    Object.keys(fieldsValue).map(key => {
+      values[key] = moment.isMoment(fieldsValue[key])
+        ? moment(fieldsValue[key]).format('YYYY-MM-DD')
+        : fieldsValue[key];
+    });
+
     this.setState(
       {
         search: {
-          ...fieldsValue,
+          ...values,
         },
       },
       () => {
@@ -207,10 +216,10 @@ export function handleFilterResult() {
       const keywordsFlag = lodash.fill(Array(keywords.length), true);
       keywords.forEach((key, index) => {
         // 某个搜索条件没有值得话，继续下一个
-        if (!search[key]) {
+        if (!search[key] || !item[key]) {
           return;
         }
-        if (item[key].indexOf(search[key]) === -1) {
+        if (String(item[key]).indexOf(search[key]) === -1) {
           keywordsFlag[index] = false;
         }
       });

@@ -8,8 +8,8 @@ const UserDetail = memo(({ detail, loading, editable = false, onDataChange }) =>
   <Card bordered={false} loading={loading}>
     <Descriptions title="基础信息" bordered size="small">
       <Descriptions.Item label="姓名">{detail.name}</Descriptions.Item>
-      <Descriptions.Item label="联系方式">{detail.telephone}</Descriptions.Item>
-      <Descriptions.Item label="身份证号码">{detail.identityCard}</Descriptions.Item>
+      <Descriptions.Item label="联系方式">{detail.phone}</Descriptions.Item>
+      <Descriptions.Item label="身份证号码">{detail.idcard}</Descriptions.Item>
     </Descriptions>
     <Divider />
     <section>
@@ -32,11 +32,11 @@ const UserDetail = memo(({ detail, loading, editable = false, onDataChange }) =>
           {editable ? (
             <DatePicker
               allowClear={false}
-              defaultValue={detail.drivingPermitDueTime ? moment(detail.drivingPermitDueTime) : undefined}
+              defaultValue={detail.expireTime ? moment(detail.expireTime) : undefined}
               onChange={onDataChange}
             />
           ) : (
-            detail.drivingPermitDueTime
+            detail.expireTime
           )}
         </Descriptions.Item>
       </Descriptions>

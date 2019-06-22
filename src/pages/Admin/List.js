@@ -5,7 +5,6 @@ import {
   handlePageRefresh,
   handleSearch,
   handleSearchReset,
-  handleTableChange,
   handleFilterResult,
 } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
@@ -42,7 +41,6 @@ class AdminList extends PureComponent {
     this.handleSearchReset = handleSearchReset.bind(this);
     this.handleSearch = handleSearch.bind(this);
     this.handleFilterResult = handleFilterResult.bind(this);
-    this.handleTableChange = handleTableChange.bind(this);
   }
 
   componentDidMount() {}
@@ -218,7 +216,6 @@ class AdminList extends PureComponent {
             loading={loading}
             columns={tableColumns}
             data={{ list: filterResult }}
-            onChange={this.handleTableChange}
           />
         </Card>
         <FormModal

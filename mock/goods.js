@@ -1,3 +1,6 @@
+/**
+ * 商品积分管理
+ */
 const content = {
   id: Math.random(),
   name: '商品名称',
@@ -10,7 +13,10 @@ const content = {
 
   address: '地址',
 
-  content: '商品详情内容',
+  content: '商品详情内容', // 富文本
+
+  isTop: Math.random() > 0.5 ? '1' : '0', // 是否置顶
+  isPublish: Math.random() > 0.5 ? '1' : '0', // 发布状态
 
   createTime: '2019-06-19 17:59:44', // 创建时间
   publishTime: '2019-06-19 17:59:44', // 发布时间
@@ -34,12 +40,22 @@ function mockList(req, res) {
 }
 
 export default {
+  // 所有商品列表
   'GET /api/goods': mockList,
 
+  // 商品详情
   'GET /api/goods/:id': content,
 
   // 编辑
-  'POST /api/goods/:id': {},
+  'PUT /api/goods/:id': {},
   // 新建
   'POST /api/goods': {},
+
+  // 发布商品
+  // 参数：isPublish
+  'PUT /api/goods/:id/publish': {},
+
+  // 置顶商品
+  // 参数：isTop
+  'PUT /api/goods/:id/top': {},
 };

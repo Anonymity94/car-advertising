@@ -11,7 +11,7 @@ import styles from './styles.less';
 @connect(({ driverModel: { detail }, loading }) => ({
   detail,
   loading: loading.effects['driverModel/queryDriverDetail'],
-  submitting: loading.effects['driverModel/updateDrivingPermitDueTime'],
+  submitting: loading.effects['driverModel/updateDriverExpireTime'],
 }))
 class Audit extends PureComponent {
   state = {
@@ -57,20 +57,20 @@ class Audit extends PureComponent {
   handleUpdate = () => {
     const { dueDate } = this.state;
     const { dispatch, detail } = this.props;
-    const { id, drivingPermitDueTime } = detail;
+    const { id, expireTime } = detail;
     Modal.confirm({
       width: 500,
       title: (
         <div>
-          确定将行驶证到期时间更改到 <b>{dueDate || drivingPermitDueTime}</b>吗？
+          确定将行驶证到期时间更改到 <b>{dueDate || expireTime}</b>吗？
         </div>
       ),
       onOk: () => {
         dispatch({
-          type: 'driverModel/updateDrivingPermitDueTime',
+          type: 'driverModel/updateDriverExpireTime',
           payload: {
             id,
-            drivingPermitDueTime: dueDate || drivingPermitDueTime,
+            expireTime: dueDate || expireTime,
           },
         });
       },
