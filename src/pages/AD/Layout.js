@@ -42,7 +42,7 @@ class ADLayout extends Component {
       <PageHeaderWrapper
         showback={location.pathname.indexOf('/detail') > -1}
         tabList={tabList}
-        tabActiveKey={location.pathname.replace(`${match.path}/`, '')}
+        tabActiveKey={location.pathname.replace(`${match.path}/`, '').split('/')[0]}
         onTabChange={this.handleTabChange}
       >
         {children}
