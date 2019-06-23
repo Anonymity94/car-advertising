@@ -1,3 +1,52 @@
-@import '~antd/lib/style/themes/default.less';
 @import '~@/utils/utils.less';
+@import '~antd/lib/style/themes/default.less';
 
+.grid {
+  @height: 60px;
+  height: @height;
+  position: relative;
+  width: 90%;
+  overflow: hidden;
+  margin: 0 auto;
+  .clearfix();
+
+  .avatar {
+    position: relative;
+    float: left;
+    margin-right: 20px;
+
+    img {
+      border-radius: 100%;
+      width: @height;
+      height: @height;
+    }
+  }
+  .meta {
+    float: left;
+    height: @height;
+    line-height: @height;
+
+    :global(.ant-badge-count) {
+      right: -10px !important;
+    }
+
+    .title {
+      font-size: 16px;
+    }
+  }
+}
+
+.todosList {
+  :global {
+    .ant-card-grid {
+      cursor: pointer;
+
+      @media screen and (max-width: @screen-xl) {
+        width: 50%;
+      }
+      @media screen and (max-width: @screen-sm) {
+        width: 100%;
+      }
+    }
+  }
+}

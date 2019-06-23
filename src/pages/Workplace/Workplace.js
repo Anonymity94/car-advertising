@@ -1,23 +1,106 @@
-import React, { PureComponent } from 'react';
-import moment from 'moment';
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import Link from 'umi/link';
-import { Row, Col, Card, List, Avatar } from 'antd';
+import { Row, Col, Card, Spin, Icon, Badge } from 'antd';
+import { Bar } from '@/components/Charts';
 
+import router from 'umi/router';
 import styles from './Workplace.less';
 
-@connect()
-class Workplace extends PureComponent {
-  componentDidMount() {
-    const { dispatch } = this.props;
-  }
+const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-  }
+const modules = [
+  {
+    key: 'ad-signing',
+    name: '广告签约管理',
+    link: '/application/ad-signings',
+  },
+  {
+    key: 'user-verify',
+    name: '审核管理',
+    link: '/application/drivers',
+  },
+  {
+    key: 'user-appeal',
+    name: '申诉管理',
+    link: '/application/appeals',
+  },
+  {
+    key: 'ad-content',
+    name: '广告内容管理',
+    link: '/application/ads',
+  },
+  {
+    key: 'integral-settlement',
+    name: '积分提现管理',
+    link: '/application/integral/settlement',
+  },
+];
+
+@connect(({ reportModel: { registerMetrics, todoMetrics, signingMetrics }, loading }) => ({
+  registerMetrics,
+  todoMetrics,
+  signingMetrics,
+  loading,
+}))
+class Workplace extends PureComponent {
+  componentDidMount() {}
+
+  componentWillUnmount() {}
+
+  computedCount = moduleKey => {
+    const { todoMetrics } = this.props;
+    if (!moduleKey || !Array.isArray(todoMetrics)) return 0;
+
+    const find = todoMetrics.find(item => item.module === moduleKey);
+    if (!find) return 0;
+
+    return find.count;
+  };
 
   render() {
-    return <div>工作台</div>;
+    const { signingMetrics, registerMetrics, loading } = this.props;
+    return (
+      <Fragment>
+        <Card size="small" bordered={false} style={{ marginBottom: 20 }}>
+          <Row gutter={10}>
+            <Col sm={24} md={12}>
+              <Spin
+                indicator={antIcon}
+                spinning={loading.effects['reportModel/countSigningMetrics']}
+              >
+                <Bar height={200} title="最近7天签约人数" data={signingMetrics} />
+              </Spin>
+            </Col>
+            <Col sm={24} md={12}>
+              <Spin
+                indicator={antIcon}
+                spinning={loading.effects['reportModel/countRegisterMetrics']}
+              >
+                <Bar height={200} title="最近7天注册人数" data={registerMetrics} />
+              </Spin>
+            </Col>
+          </Row>
+        </Card>
+        <Card title="代办事项" size="small" bordered={false} className={styles.todosList}>
+          {modules.map(item => (
+            <Card.Grid onClick={() => router.push(item.link)}>
+              <div className={styles.grid}>
+                <div className={styles.avatar}>
+                  <img src={require(`./icons/${item.key}.png`)} alt={item.name} />
+                </div>
+                <div className={styles.meta}>
+                  <Badge count={this.computedCount(item.key)} overflowCount={999}>
+                    <div className={styles.title}>{item.name}</div>
+                  </Badge>
+                </div>
+              </div>
+            </Card.Grid>
+          ))}
+        </Card>
+      </Fragment>
+    );
   }
 }
 
