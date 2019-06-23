@@ -198,7 +198,7 @@ class BusinessList extends PureComponent {
           <StandardTable
             title={() => (
               <div style={{ textAlign: 'right' }}>
-                <Button type="primary" onClick={() => router.push('/integral/list/create')}>
+                <Button type="primary" onClick={() => router.push('/integral/businesses/create')}>
                   新增商户
                 </Button>
               </div>
