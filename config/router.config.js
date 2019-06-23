@@ -4,6 +4,27 @@ export default [
     component: '../layouts/UserLayout',
     routes: [{ path: '/login', component: './Login' }],
   },
+  // 微信公众号
+  {
+    path: '/h5',
+    component: '../layouts/WechatLayout',
+    Routes: ['src/pages/Authorized'],
+    name: 'h5',
+    routes: [
+      // 绑定手机号
+      {
+        path: '/h5/bind',
+        name: 'bind',
+        component: './Wechat/BindPhone',
+      },
+      // 更新手机号申诉
+      {
+        path: '/h5/appeal',
+        name: 'appeal',
+        component: './Wechat/Appeal',
+      },
+    ],
+  },
   // app
   {
     path: '/',

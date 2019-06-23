@@ -43,4 +43,6 @@ export default {
   'menu.user.admin': '管理员档案',
 
   'menu.account.logout': '退出登录',
+
+  'menu.h5.bind': '绑定手机号',
 };
