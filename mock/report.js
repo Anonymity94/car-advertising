@@ -13,7 +13,7 @@ function getRandomIntInclusive(min, max) {
 for (let i = 0; i < 7; i += 1) {
   const date = moment()
     .subtract(i, 'days')
-    .format('MM-DD');
+    .format('MM-DD'); // 返回的日期，不需要年份。
 
   countRegisterMetrics.unshift({
     x: date,
@@ -50,7 +50,14 @@ const countTodos = [
 ];
 
 export default {
+  // 最近7天，每天的用户注册数量
+  // 入参：startTime=2019-06-17&endTime=2019-06-23
   'GET /api/report/users/register-metrics': countRegisterMetrics,
+
+  // 最近7天，每天的广告签约数量
+  // 入参：startTime=2019-06-17&endTime=2019-06-23
   'GET /api/report/advertisemens/signing-metrics': countSigningMetrics,
+
+  // 统计不同模块下的待处理事项
   'GET /api/report/todo-metrics': countTodos,
 };

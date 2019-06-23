@@ -1,6 +1,12 @@
+import moment from 'moment';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import { countRegisterMetrics, countTodos, countSigningMetrics } from '@/services/report';
+
+const aWeekAgo = moment()
+  .subtract(6, 'days')
+  .format('YYYY-MM-DD');
+const today = moment().format('YYYY-MM-DD');
 
 export default modelExtend(model, {
   namespace: 'reportModel',
@@ -11,9 +17,17 @@ export default modelExtend(model, {
         if (location.pathname === '/workplace') {
           dispatch({
             type: 'countRegisterMetrics',
+            payload: {
+              startTime: aWeekAgo,
+              endTime: today,
+            },
           });
           dispatch({
             type: 'countSigningMetrics',
+            payload: {
+              startTime: aWeekAgo,
+              endTime: today,
+            },
           });
           dispatch({
             type: 'countTodos',
