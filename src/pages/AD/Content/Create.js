@@ -2,7 +2,19 @@ import 'braft-editor/dist/index.css';
 import React, { PureComponent } from 'react';
 import BraftEditor from 'braft-editor';
 import { connect } from 'dva';
-import { Form, Input, Button, Card, Icon, Row, Col, InputNumber, DatePicker, Modal } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Icon,
+  Row,
+  Col,
+  InputNumber,
+  DatePicker,
+  Modal,
+  TimePicker,
+} from 'antd';
 import moment from 'moment';
 import router from 'umi/router';
 import StandardUpload from '@/components/StandardUpload';
@@ -10,7 +22,6 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import RichTextEditor from '@/components/BraftEditor';
 
 const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
 
 const formItemLayout = {
   labelCol: { span: 3 },
@@ -150,7 +161,7 @@ class CreateAD extends PureComponent {
     const addressItems = keys.map((k, index) => (
       <Row gutter={10} key={k}>
         <Col span={3} className="ant-form-item-label" required>
-          {index === 0 ? '地址：' : ''}
+          {index === 0 ? '广告粘贴地址：' : ''}
         </Col>
         <Col span={20}>
           <Col span={10}>
@@ -164,23 +175,65 @@ class CreateAD extends PureComponent {
                     message: '请输入地址',
                   },
                 ],
-              })(<Input placeholder="请输入地址" />)}
+              })(<Input.TextArea rows={1} placeholder="请输入地址" />)}
             </Form.Item>
           </Col>
-          <Col span={10}>
-            <Form.Item>
-              {getFieldDecorator(`dateRange[${k}]`, {
-                // validateTrigger: ['onChange'],
+          <Col span={12}>
+            <Form.Item style={{ display: 'inline-block' }}>
+              <span className="ant-form-text">营业时间</span>
+              {getFieldDecorator(`startTime[${k}]`, {
+                validateTrigger: ['onChange'],
                 rules: [
                   {
                     required: true,
-                    message: '请选择起止时间',
+                    message: '请选择营业开始时间',
+                  },
+                  {
+                    validator: (rule, value, callback) => {
+                      const { form } = this.props;
+                      const endTime = form.getFieldValue(`endTime[${k}]`);
+                      if (!endTime) {
+                        callback();
+                        return;
+                      }
+                      if (new Date(value) - new Date(endTime) >= 0) {
+                        callback('营业开始时间需要早于结束时间');
+                        return;
+                      }
+                      callback();
+                    },
                   },
                 ],
-              })(<RangePicker />)}
+              })(<TimePicker placeholder="开始时间" format="HH:mm" minuteStep={30} />)}
+            </Form.Item>
+            <Form.Item style={{ display: 'inline-block', marginLeft: 10 }}>
+              {getFieldDecorator(`endTime[${k}]`, {
+                validateTrigger: ['onChange',],
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择营业结束时间',
+                  },
+                  {
+                    validator: (rule, value, callback) => {
+                      const { form } = this.props;
+                      const beginTime = form.getFieldValue(`beginTime${[k]}`);
+                      if (!beginTime) {
+                        callback();
+                        return;
+                      }
+                      if (new Date(value) - new Date(beginTime) <= 0) {
+                        callback('营业结束时间需要晚于开始时间');
+                        return;
+                      }
+                      callback();
+                    },
+                  },
+                ],
+              })(<TimePicker placeholder="结束时间" format="HH:mm" minuteStep={30} />)}
             </Form.Item>
           </Col>
-          <Col span={4}>
+          <Col span={2}>
             {keys.length > 1 ? (
               <Form.Item>
                 <Icon
@@ -264,6 +317,13 @@ class CreateAD extends PureComponent {
                   limit={1}
                 />
               )}
+            </Form.Item>
+            <Form.Item label="签约有效期" {...formItemLayout}>
+              {getFieldDecorator('signingExpireTime', {
+                initialValue: undefined,
+                validateFirst: true,
+                rules: [{ required: true, message: '请选择签约有效期' }],
+              })(<DatePicker format="YYYY-MM-DD" />)}
             </Form.Item>
             <Form.Item label="签约金" {...formItemLayout}>
               {getFieldDecorator('bonus', {
