@@ -26,10 +26,9 @@ const formItemLayoutWithOutLabel = {
 @connect()
 class CreateActivity extends PureComponent {
   componentDidMount() {
-    const { values } = this.props;
     // 异步设置编辑器内容
     setTimeout(() => {
-      const { form } = this.props;
+      const { form, values = {} } = this.props;
       form.setFieldsValue({
         content: BraftEditor.createEditorState(values.content || null),
         participation: BraftEditor.createEditorState(values.participation || null),
