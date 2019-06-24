@@ -135,14 +135,14 @@ export default [
                 component: './AD/Content/Create',
               },
               {
-                path: '/application/ads/:id',
-                name: 'detail',
-                component: './AD/Content/Detail',
-              },
-              {
                 path: '/application/ads/:id/update',
                 name: 'update',
                 component: './AD/Content/Update',
+              },
+              {
+                path: '/application/ads/:id',
+                name: 'detail',
+                component: './AD/Content/Detail',
               },
             ],
           },

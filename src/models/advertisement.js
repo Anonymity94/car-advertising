@@ -3,6 +3,7 @@ import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import {
   queryAds,
+  createAd,
   updateAd,
   publishAd,
   topAd,
@@ -58,6 +59,19 @@ export default modelExtend(model, {
     },
 
     /**
+     * 新增广告
+     */
+    *createAd({ payload }, { call }) {
+      const { success } = yield call(createAd, payload);
+      if (success) {
+        message.success('新增广告成功');
+      } else {
+        message.error('新增广告失败');
+      }
+      return success;
+    },
+
+    /**
      * 修改广告内容
      */
     *updateAd({ payload }, { call }) {
@@ -76,12 +90,12 @@ export default modelExtend(model, {
     *publishAd({ payload }, { call, put }) {
       const { success } = yield call(publishAd, payload);
       if (success) {
-        message.success('发布成功');
+        message.success('操作成功');
         yield put({
           type: 'queryAds',
         });
       } else {
-        message.error('发布失败');
+        message.error('操作失败');
       }
       return success;
     },
@@ -92,12 +106,12 @@ export default modelExtend(model, {
     *topAd({ payload }, { call, put }) {
       const { success } = yield call(topAd, payload);
       if (success) {
-        message.success('置顶成功');
+        message.success('操作成功');
         yield put({
           type: 'queryAds',
         });
       } else {
-        message.error('置顶失败');
+        message.error('操作失败');
       }
       return success;
     },

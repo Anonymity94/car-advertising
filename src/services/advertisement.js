@@ -22,14 +22,25 @@ export async function queryAdContent({ id }) {
 }
 
 /**
+ * 新增广告
+ */
+export async function createAd(params) {
+  return request(`/api/advertisements`, {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+/**
  * 修改广告
  * @param {String} id
  */
 export async function updateAd({ id, ...resetParams }) {
   return request(`/api/advertisements/${id}`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       ...resetParams,
     },
   });
@@ -38,13 +49,12 @@ export async function updateAd({ id, ...resetParams }) {
 /**
  * 发布|取消发布 广告
  * @param {String} id
- * @param {String} id
+ * @param {String} isPublish
  */
 export async function publishAd({ id, isPublish }) {
   return request(`/api/advertisements/${id}/publish`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       isPublish,
     },
   });
@@ -57,9 +67,8 @@ export async function publishAd({ id, isPublish }) {
  */
 export async function topAd({ id, isTop }) {
   return request(`/api/advertisements/${id}/top`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       isTop,
     },
   });
@@ -71,10 +80,8 @@ export async function topAd({ id, isTop }) {
  */
 export async function deleteAd({ id }) {
   return request(`/api/advertisements/${id}`, {
-    method: 'POST',
-    body: {
-      method: 'delete',
-    },
+    method: 'DELETE',
+    body: {},
   });
 }
 

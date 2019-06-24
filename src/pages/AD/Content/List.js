@@ -232,6 +232,10 @@ class AdminList extends PureComponent {
         title: '状态',
         dataIndex: 'state',
         align: 'center',
+        render: (value, row) => {
+          const { isPublish } = row;
+          return isPublish === PUBLISH_STATE_YES ? '已发布' : '未发布';
+        },
       },
       {
         title: '操作人',
@@ -293,7 +297,7 @@ class AdminList extends PureComponent {
                 <a>{topText}</a>
               </Popconfirm>
               <br />
-              <Link to={`/application/ads/${id}`}>修改</Link>
+              <Link to={`/application/ads/${id}/update`}>修改</Link>
               <Divider type="vertical" />
               <a onClick={() => this.handleDelete(record)}>删除</a>
             </Fragment>

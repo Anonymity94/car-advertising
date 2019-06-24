@@ -10,7 +10,7 @@ class ADInfo extends PureComponent {
   }
 
   render() {
-    return <div>更新广告</div>;
+    return <div>广告内容</div>;
   }
 }
 
