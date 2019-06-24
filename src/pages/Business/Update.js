@@ -30,7 +30,7 @@ class Update extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'businessModel/updateBusiness',
-      paylod: {
+      payload: {
         ...values,
       },
     }).then(success => {

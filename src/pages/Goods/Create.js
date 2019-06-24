@@ -16,7 +16,7 @@ class Create extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'goodsModel/createGoods',
-      paylod: {
+      payload: {
         ...values,
       },
     }).then(success => {

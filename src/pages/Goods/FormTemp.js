@@ -4,7 +4,6 @@ import 'braft-editor/dist/index.css';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import _ from 'lodash';
 import moment from 'moment';
 import router from 'umi/router';
 import { Form, Input, Button, DatePicker, Modal, InputNumber, Select } from 'antd';
@@ -111,9 +110,16 @@ class FormTemp extends PureComponent {
 
       delete submitData.keys;
 
-      if (onSubmit) {
-        onSubmit(submitData);
-      }
+      Modal.confirm({
+        title: '确定提交吗？',
+        keyboard: false,
+        maskClosable: false,
+        onOk: () => {
+          if (onSubmit) {
+            onSubmit(submitData);
+          }
+        },
+      });
     });
   };
 
