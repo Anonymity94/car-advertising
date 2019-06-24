@@ -11,6 +11,7 @@ module.exports = {
   },
   globals: {
     APP_TYPE: true,
+    IS_DEV: true,
     page: true,
   },
   rules: {

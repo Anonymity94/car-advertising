@@ -2,6 +2,7 @@ import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import router from 'umi/router';
 import hash from 'hash.js';
+import { MOCK_API_PREFIX } from '@/common/app';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -36,8 +37,6 @@ const checkStatus = response => {
   throw error;
 };
 
-const isDev = process.env.NODE_ENV === 'development';
-
 /**
  * Requests a URL, returning a promise.
  *
@@ -47,7 +46,7 @@ const isDev = process.env.NODE_ENV === 'development';
  */
 export default function request(url, option) {
   // eslint-disable-next-line no-param-reassign
-  url = isDev ? `/mock-api${url}` : url;
+  url = IS_DEV ? `${MOCK_API_PREFIX}${url}` : url;
 
   const options = {
     ...option,

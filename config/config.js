@@ -52,6 +52,7 @@ export default {
   plugins,
   define: {
     APP_TYPE: process.env.APP_TYPE || '',
+    IS_DEV: process.env.NODE_ENV === 'development',
   },
   treeShaking: true,
   targets: {
