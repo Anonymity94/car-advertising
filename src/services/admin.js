@@ -23,7 +23,6 @@ export async function updateAdmin({ id, ...restParams }) {
   return request(`/api/user-manager/admin-update?id=${id}`, {
     method: 'POST',
     body: {
-      method: 'put',
       ...restParams,
     },
   });
@@ -50,9 +49,7 @@ export async function createAdmin(params) {
  */
 export async function deleteAdmin({ id }) {
   return request(`/api/user-manager/admin-remove?id=${id}`, {
-    method: 'POST',
-    body: {
-      method: 'delete',
-    },
+    method: 'DELETE',
+    body: {},
   });
 }

@@ -40,7 +40,9 @@ class PasswordModal extends PureComponent {
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        onSubmit(values);
+        const submitData = { ...values };
+        delete submitData.confirm;
+        onSubmit(submitData);
       }
     });
   };
@@ -73,18 +75,22 @@ class PasswordModal extends PureComponent {
             })(<Input placeholder="请输入" />)}
           </FormItem>
           <FormItem label="姓名" {...this.formLayout}>
-            {getFieldDecorator('name', {
-              initialValue: current.name || '',
-              validateFirst: true,
-              rules: [{ required: true, whitespace: true, message: '请输入管理员姓名' }],
-            })(<Input placeholder="请输入管理员姓名" />)}
+            {current.id
+              ? current.name
+              : getFieldDecorator('name', {
+                  initialValue: current.name || '',
+                  validateFirst: true,
+                  rules: [{ required: true, whitespace: true, message: '请输入管理员姓名' }],
+                })(<Input placeholder="请输入管理员姓名" />)}
           </FormItem>
           <FormItem label="登录账号" {...this.formLayout}>
-            {getFieldDecorator('username', {
-              initialValue: current.username || '',
-              validateFirst: true,
-              rules: [{ required: true, whitespace: true, message: '请输入登录账号' }],
-            })(<Input placeholder="请输入登录账号" />)}
+            {current.id
+              ? current.username
+              : getFieldDecorator('username', {
+                  initialValue: current.username || '',
+                  validateFirst: true,
+                  rules: [{ required: true, whitespace: true, message: '请输入登录账号' }],
+                })(<Input placeholder="请输入登录账号" />)}
           </FormItem>
           <FormItem label="新密码" {...this.formLayout}>
             {getFieldDecorator('password', {
