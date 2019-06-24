@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Modal, Upload, Button } from 'antd';
+import { MOCK_API_PREFIX } from '@/common/app';
 
 export default class StandardUpload extends React.PureComponent {
   static propTypes = {
@@ -56,7 +57,7 @@ export default class StandardUpload extends React.PureComponent {
     return (
       <div style={fileType === 'image' ? { minHeight: 112 } : null}>
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          action={`${IS_DEV ? MOCK_API_PREFIX : ''}/api/upload`}
           listType="picture-card"
           fileList={list}
           onChange={onChange}
