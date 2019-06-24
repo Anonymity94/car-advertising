@@ -132,6 +132,7 @@ class AdminList extends PureComponent {
       {
         title: '编号',
         dataIndex: 'id',
+        width: 240,
         align: 'center',
       },
       {

@@ -67,9 +67,7 @@ export async function updateDriverExpireTime({ id, expireTime }) {
  */
 export async function deleteDriver({ id }) {
   return request(`/api/user-manager/user-remove?id=${id}`, {
-    method: 'POST',
-    body: {
-      method: 'delete',
-    },
+    method: 'DELETE',
+    body: {},
   });
 }

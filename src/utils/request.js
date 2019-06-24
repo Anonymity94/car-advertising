@@ -90,11 +90,19 @@ export default function request(url, option) {
       if (newOptions.method === 'DELETE' || response.status === 204) {
         return response.text();
       }
+      if (
+        (newOptions.method === 'POST' || newOptions.method === 'PUT') &&
+        response.status === 200
+      ) {
+        return {
+          success: true,
+        };
+      }
       return response.json();
     })
-    .then(result => ({
+    .then(response => ({
       success: true,
-      result,
+      result: response,
     }))
     .catch(e => {
       const status = e.name;
