@@ -6,22 +6,22 @@ export const PAGE_SIZE_DEFAULT = 20;
 /**
  * NO: 0
  */
-export const STRING_BOOLEAN_NO = '0';
+export const BOOLEAN_NO = 0;
 
 /**
  * YES: 1
  */
-export const STRING_BOOLEAN_YES = '1';
+export const BOOLEAN_YES = 1;
 
 /**
  * 用户审核状态：未审核
  */
-export const AUDIT_STATE_UNREVIEWED = STRING_BOOLEAN_NO;
+export const AUDIT_STATE_UNREVIEWED = BOOLEAN_NO;
 
 /**
  * 用户审核状态：已通过
  */
-export const AUDIT_STATE_PASSED = STRING_BOOLEAN_YES;
+export const AUDIT_STATE_PASSED = BOOLEAN_YES;
 
 /**
  * 用户审核状态：未通过
@@ -87,12 +87,12 @@ export const AD_PASTE_STATE_LIST = [
 /**
  * 签约金结算状态：未结算
  */
-export const SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED = STRING_BOOLEAN_NO;
+export const SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED = BOOLEAN_NO;
 
 /**
  * 签约金结算状态：已结算
  */
-export const SIGNING_GOLD_SETTLEMENT_STATE_SETTLED = STRING_BOOLEAN_YES;
+export const SIGNING_GOLD_SETTLEMENT_STATE_SETTLED = BOOLEAN_YES;
 
 /**
  * 签约金结算状态
@@ -111,12 +111,12 @@ export const SIGNING_GOLD_SETTLEMENT_STATE_LIST = [
 /**
  * 发布状态：未发布
  */
-export const PUBLISH_STATE_NO = STRING_BOOLEAN_NO;
+export const PUBLISH_STATE_NO = BOOLEAN_NO;
 
 /**
  * 发布状态：已发布
  */
-export const PUBLISH_STATE_YES = STRING_BOOLEAN_YES;
+export const PUBLISH_STATE_YES = BOOLEAN_YES;
 
 /**
  * 发布状态
@@ -135,19 +135,19 @@ export const PUBLISH_STATE_LIST = [
 /**
  *  置顶状态：已置顶
  */
-export const TOP_STATE_YES = STRING_BOOLEAN_YES;
+export const TOP_STATE_YES = BOOLEAN_YES;
 
 /**
  *  置顶状态：未置顶
  */
-export const TOP_STATE_NO = STRING_BOOLEAN_NO;
+export const TOP_STATE_NO = BOOLEAN_NO;
 
 /**
  * 积分结算状态：已结算
  */
-export const INTEGRAL_SETTLEMENT_STATE_YES = STRING_BOOLEAN_YES;
+export const INTEGRAL_SETTLEMENT_STATE_YES = BOOLEAN_YES;
 
 /**
  * 积分结算状态：未结算
  */
-export const INTEGRAL_SETTLEMENT_STATE_NO = STRING_BOOLEAN_NO;
+export const INTEGRAL_SETTLEMENT_STATE_NO = BOOLEAN_NO;

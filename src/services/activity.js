@@ -21,14 +21,25 @@ export async function queryActivityContent({ id }) {
 }
 
 /**
+ * 新建活动
+ */
+export async function createActivity(params) {
+  return request(`/api/activities`, {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+/**
  * 修改活动
  * @param {String} id
  */
 export async function updateActivity({ id, ...resetParams }) {
   return request(`/api/activities/${id}`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       ...resetParams,
     },
   });
@@ -37,13 +48,12 @@ export async function updateActivity({ id, ...resetParams }) {
 /**
  * 发布|取消发布 活动
  * @param {String} id
- * @param {String} id
+ * @param {String} isPublish
  */
 export async function publishActivity({ id, isPublish }) {
   return request(`/api/activities/${id}/publish`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       isPublish,
     },
   });
@@ -56,9 +66,8 @@ export async function publishActivity({ id, isPublish }) {
  */
 export async function topActivity({ id, isTop }) {
   return request(`/api/activities/${id}/top`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       isTop,
     },
   });
@@ -70,9 +79,8 @@ export async function topActivity({ id, isTop }) {
  */
 export async function deleteActivity({ id }) {
   return request(`/api/activities/${id}`, {
-    method: 'POST',
+    method: 'DELETE',
     body: {
-      method: 'delete',
     },
   });
 }

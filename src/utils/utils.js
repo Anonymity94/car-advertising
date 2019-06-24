@@ -200,6 +200,7 @@ export function handleTableChange(pagination, filters, sorter) {
 
 export function handleFilterResult() {
   const { search } = this.state;
+  console.log(search);
   const { list } = this.props;
 
   let result = list.slice();
@@ -215,11 +216,14 @@ export function handleFilterResult() {
     result = result.filter(item => {
       const keywordsFlag = lodash.fill(Array(keywords.length), true);
       keywords.forEach((key, index) => {
-        // 某个搜索条件没有值得话，继续下一个
-        if (!search[key] || !item[key]) {
+        // 某个搜索条件没有值，继续下一个
+        if (!search[key]) {
           return;
         }
-        if (String(item[key]).indexOf(search[key]) === -1) {
+        // 如果目标对象没有值，判定为不符合
+        if (!item[key]) {
+          keywordsFlag[index] = false;
+        } else if (String(item[key]).indexOf(String(search[key])) === -1) {
           keywordsFlag[index] = false;
         }
       });

@@ -3,6 +3,7 @@ import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import {
   queryActivities,
+  createActivity,
   updateActivity,
   publishActivity,
   topActivity,
@@ -32,7 +33,7 @@ export default modelExtend(model, {
 
   effects: {
     /**
-     * 获取广告列表
+     * 获取活动列表
      */
     *queryActivities({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryActivities, payload);
@@ -45,7 +46,7 @@ export default modelExtend(model, {
     },
 
     /**
-     * 广告详情
+     * 活动详情
      */
     *queryActivityContent({ payload }, { call, put }) {
       const { success, result } = yield call(queryActivityContent, payload);
@@ -58,7 +59,20 @@ export default modelExtend(model, {
     },
 
     /**
-     * 修改广告内容
+     * 新建活动
+     */
+    *createActivity({ payload }, { call }) {
+      const { success } = yield call(createActivity, payload);
+      if (success) {
+        message.success('新建活动成功');
+      } else {
+        message.error('新建活动失败');
+      }
+      return success;
+    },
+
+    /**
+     * 修改活动内容
      */
     *updateActivity({ payload }, { call }) {
       const { success } = yield call(updateActivity, payload);
@@ -71,39 +85,39 @@ export default modelExtend(model, {
     },
 
     /**
-     * 发布广告
+     * 发布活动
      */
     *publishActivity({ payload }, { call, put }) {
       const { success } = yield call(publishActivity, payload);
       if (success) {
-        message.success('发布成功');
+        message.success('操作成功');
         yield put({
           type: 'queryActivities',
         });
       } else {
-        message.error('发布失败');
+        message.error('操作失败');
       }
       return success;
     },
 
     /**
-     * 置顶广告
+     * 置顶活动
      */
     *topActivity({ payload }, { call, put }) {
       const { success } = yield call(topActivity, payload);
       if (success) {
-        message.success('置顶成功');
+        message.success('操作成功');
         yield put({
           type: 'queryActivities',
         });
       } else {
-        message.error('置顶失败');
+        message.error('操作失败');
       }
       return success;
     },
 
     /**
-     * 删除广告
+     * 删除活动
      */
     *deleteActivity({ payload }, { call, put }) {
       const { success } = yield call(deleteActivity, payload);

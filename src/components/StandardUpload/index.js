@@ -63,6 +63,7 @@ export default class StandardUpload extends React.PureComponent {
           onChange={onChange}
           onPreview={this.handlePreview}
           {...reset}
+          name="file"
         >
           {list.length >= limit ? null : uploadButton}
         </Upload>

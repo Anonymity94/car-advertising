@@ -2,10 +2,10 @@ import React, { PureComponent } from 'react';
 import { Upload, Icon, message } from 'antd';
 import BraftEditor from 'braft-editor';
 import { ContentUtils } from 'braft-utils';
+import { MOCK_API_PREFIX } from '@/common/app';
 
 import 'braft-editor/dist/index.css';
-import styles from './index.less'
-
+import styles from './index.less';
 
 const controls = [
   // 'undo',
@@ -55,7 +55,7 @@ export default class RichTextEditor extends PureComponent {
           <div className="control-item">
             <Upload
               accept="image/*"
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              action={`${IS_DEV ? MOCK_API_PREFIX : ''}/api/upload`}
               onChange={this.handleUploadChange}
               showUploadList={false}
             >
@@ -72,7 +72,7 @@ export default class RichTextEditor extends PureComponent {
           </div>
         ),
       },
-      'fullscreen'
+      'fullscreen',
       // 'separator',
       // {
       //   key: 'custom-button',
@@ -131,12 +131,11 @@ export default class RichTextEditor extends PureComponent {
     message.destroy();
 
     if (info.file.status === 'done') {
-      const { url, name } = info.file.response;
+      const { url } = info.file.response;
       this.setState({
         editorState: ContentUtils.insertMedias(editorState, [
           {
             type: 'IMAGE',
-            name,
             url,
           },
         ]),
