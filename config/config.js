@@ -73,13 +73,13 @@ export default {
     bizcharts: 'BizCharts',
     moment: 'moment',
   },
-  // proxy: {
-  //   '/server/api/': {
-  //     target: 'https://preview.pro.ant.design/',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/server': '' },
-  //   },
-  // },
+  proxy: {
+    '/mock-api/': {
+      target: 'http://39.106.231.234',
+      changeOrigin: true,
+      pathRewrite: { '^/mock-api': '' },
+    },
+  },
   ignoreMomentLocale: true,
   lessLoaderOptions: {
     javascriptEnabled: true,

@@ -36,6 +36,8 @@ const checkStatus = response => {
   throw error;
 };
 
+const isDev = process.env.NODE_ENV === 'development';
+
 /**
  * Requests a URL, returning a promise.
  *
@@ -44,6 +46,9 @@ const checkStatus = response => {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, option) {
+  // eslint-disable-next-line no-param-reassign
+  url = isDev ? `/mock-api${url}` : url;
+
   const options = {
     ...option,
   };
