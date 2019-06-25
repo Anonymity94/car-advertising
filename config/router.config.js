@@ -21,6 +21,12 @@ export default [
             name: 'bind',
             component: './Wechat/User/BindPhone',
           },
+          // 更好手机号
+          {
+            path: '/h5/user/change-phone',
+            name: 'change-phone',
+            component: './Wechat/User/ChangePhone',
+          },
           // 更新手机号申诉
           {
             path: '/h5/user/appeal',
@@ -57,7 +63,18 @@ export default [
             name: 'integral-exchange',
             component: './Wechat/User/IntegralExchange',
           },
+          // 等待页面
+          {
+            path: '/h5/user/waiting',
+            name: 'waiting',
+            component: './Wechat/User/Waiting',
+          },
         ],
+      },
+      {
+        path: '/h5/home',
+        name: 'home',
+        component: './Wechat/Home/Index',
       },
     ],
   },

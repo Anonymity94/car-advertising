@@ -1,8 +1,10 @@
 import React, { PureComponent, Fragment } from 'react';
 import { InputItem, Button, Modal, Flex } from 'antd-mobile';
-import { phoneReg } from '@/utils/utils';
+import router from 'umi/router';
+import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
+import { connect } from 'dva';
 
 import styles from './BindPhone.less';
 
@@ -17,7 +19,7 @@ const iconPorps = {
 };
 
 const FormWrapper = createForm()(
-  class FormContent extends React.Component {
+  class FormWrapper extends React.Component {
     state = {
       count: 0,
     };
@@ -39,19 +41,38 @@ const FormWrapper = createForm()(
     };
 
     getCaptcha = () => {
-      // do ajax get captcha
-      // 倒计时
-      this.runGetCaptchaCountDown();
+      const { form, dispatch } = this.props;
+      form.validateFields(['phone']);
+      const phoneError = form.getFieldError('phone');
+      if (phoneError) {
+        showError(phoneError[0]);
+        return;
+      }
+
+      const phone = form.getFieldValue('phone');
+
+      dispatch({
+        type: 'driverModel/getCaptcha',
+        payload: {
+          phone,
+        },
+      }).then(success => {
+        if (success) {
+          this.runGetCaptchaCountDown();
+        }
+      });
     };
 
     submit = () => {
       const { form, onOk } = this.props;
       form.validateFields((error, values) => {
         if (error) {
+          const errKeys = Object.keys(error);
+          showError(error[errKeys[0]].errors[0].message);
           return;
         }
         // 提示一下
-        Modal.alert('警告', '确定绑定吗？', [
+        Modal.alert('确定绑定吗？', '', [
           { text: '取消', onPress: () => {} },
           { text: '确定', onPress: () => onOk(values) },
         ]);
@@ -66,10 +87,14 @@ const FormWrapper = createForm()(
         <Fragment>
           <section className={styles.fileid}>
             <InputItem
-              placeholder="请输入新的手机号码"
+              placeholder="请输入手机号码"
               className="required"
               {...getFieldProps('phone', {
-                rules: [{ required: true }, { pattern: phoneReg, message: '请输入正确的手机号码' }],
+                validateFirst: true,
+                rules: [
+                  { required: true, whitespace: true, message: '请输入手机号码' },
+                  { pattern: phoneReg, message: '请输入正确的手机号码' },
+                ],
               })}
             >
               <div
@@ -89,7 +114,8 @@ const FormWrapper = createForm()(
                 placeholder="请输入验证码"
                 className={`${styles.captchaItem} required`}
                 {...getFieldProps('captcha', {
-                  rules: [{ required: true }],
+                  validateFirst: true,
+                  rules: [{ required: true, whitespace: true, message: '请输入验证码' }],
                 })}
               >
                 <div
@@ -115,7 +141,11 @@ const FormWrapper = createForm()(
           </section>
           <section className={styles.fileid}>
             <Flex style={{ justifyContent: 'space-between' }}>
-              <Button style={{ width: '45%' }} className="button-cancel">
+              <Button
+                style={{ width: '45%' }}
+                className="button-cancel"
+                onClick={() => router.replace('/h5/home')}
+              >
                 取消
               </Button>
               <Button style={{ width: '45%' }} className="button-ok" onClick={this.submit}>
@@ -130,23 +160,26 @@ const FormWrapper = createForm()(
 );
 
 // eslint-disable-next-line react/no-multi-comp
-class BindNewPhone extends PureComponent {
+@connect()
+class BindPhone extends PureComponent {
   handleSubmit = values => {
-    // TODO: do submit
-    console.log(values);
-    // 绑定成功，返回首页
-    // Modal.alert('绑定成功', '', [{ text: '确定', onPress: () => router.push('/user') }]);
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'driverModel/bindPhone',
+      payload: { ...values },
+    });
   };
 
   render() {
+    const { dispatch } = this.props;
     return (
       <DocumentTitle title="绑定手机号">
         <section className={styles.bindWrap}>
-          <FormWrapper onOk={this.handleSubmit} />
+          <FormWrapper dispatch={dispatch} onOk={this.handleSubmit} />
         </section>
       </DocumentTitle>
     );
   }
 }
 
-export default BindNewPhone;
+export default BindPhone;

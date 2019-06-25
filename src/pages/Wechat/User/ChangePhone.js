@@ -1,10 +1,11 @@
 import React, { PureComponent, Fragment } from 'react';
-import { TextareaItem, InputItem, Button, Modal, Flex } from 'antd-mobile';
-import { connect } from 'dva';
+import { InputItem, Button, Modal, Flex } from 'antd-mobile';
+import { phoneReg, showError } from '@/utils/utils';
+import Link from 'umi/link';
 import router from 'umi/router';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
-import { phoneReg, showError } from '@/utils/utils';
+import { connect } from 'dva';
 
 import styles from './BindPhone.less';
 
@@ -19,8 +20,9 @@ const iconPorps = {
 };
 
 const FormWrapper = createForm()(
-  class FormContent extends React.Component {
+  class FormWrapper extends React.Component {
     state = {
+      oldCount: 0,
       count: 0,
     };
 
@@ -28,14 +30,14 @@ const FormWrapper = createForm()(
       clearInterval(this.interval);
     }
 
-    runGetCaptchaCountDown = () => {
+    runGetCaptchaCountDown = stateKey => {
       let count = 59;
-      this.setState({ count });
-      this.interval = setInterval(() => {
+      this.setState({ [stateKey]: count });
+      this[`${stateKey}_interval`] = setInterval(() => {
         count -= 1;
-        this.setState({ count });
+        this.setState({ [stateKey]: count });
         if (count === 0) {
-          clearInterval(this.interval);
+          clearInterval(this[`${stateKey}_interval`]);
         }
       }, 1000);
     };
@@ -50,16 +52,16 @@ const FormWrapper = createForm()(
       callback();
     };
 
-    getCaptcha = () => {
+    getCaptcha = field => {
       const { form, dispatch } = this.props;
-      form.validateFields(['phone']);
-      const phoneError = form.getFieldError('phone');
+      form.validateFields([field]);
+      const phoneError = form.getFieldError(field);
       if (phoneError) {
         showError(phoneError[0]);
         return;
       }
 
-      const phone = form.getFieldValue('phone');
+      const phone = form.getFieldValue(field);
 
       dispatch({
         type: 'driverModel/getCaptcha',
@@ -68,7 +70,8 @@ const FormWrapper = createForm()(
         },
       }).then(success => {
         if (success) {
-          this.runGetCaptchaCountDown();
+          const stateKey = field === 'oldPhone' ? 'oldCount' : 'count';
+          this.runGetCaptchaCountDown(stateKey);
         }
       });
     };
@@ -82,7 +85,7 @@ const FormWrapper = createForm()(
           return;
         }
         // 提示一下
-        Modal.alert('确定提交申诉吗？', '', [
+        Modal.alert('确定更换手机号吗？', '', [
           { text: '取消', onPress: () => {} },
           { text: '确定', onPress: () => onOk(values) },
         ]);
@@ -90,7 +93,7 @@ const FormWrapper = createForm()(
     };
 
     render() {
-      const { count } = this.state;
+      const { count, oldCount } = this.state;
       const { form } = this.props;
       const { getFieldProps } = form;
       return (
@@ -118,14 +121,50 @@ const FormWrapper = createForm()(
               />
             </InputItem>
           </section>
+          <section className={styles.fileid} style={{ marginBottom: 10 }}>
+            <Flex style={{ justifyContent: 'space-between' }}>
+              <InputItem
+                placeholder="请输入验证码"
+                className={`${styles.captchaItem} required`}
+                {...getFieldProps('oldCaptcha', {
+                  validateFirst: true,
+                  rules: [{ required: true, whitespace: true, message: '请输入旧手机的验证码' }],
+                })}
+              >
+                <div
+                  className={`${styles.icon}`}
+                  style={{
+                    backgroundImage: `url(${captchaIcon})`,
+                    ...iconPorps,
+                    width: '21px',
+                    height: '27px',
+                  }}
+                />
+              </InputItem>
+              <Button
+                inline
+                className={styles.captchaBtn}
+                disabled={oldCount > 0}
+                loading={oldCount > 0}
+                onClick={() => this.getCaptcha('oldPhone')}
+              >
+                {oldCount ? `${oldCount}秒后重试` : '获取验证码'}
+              </Button>
+            </Flex>
+          </section>
+          <section className={styles.fileid}>
+            <Link to="/h5/user/appeal">
+              <p>若旧手机无法收到验证码，可点击此处提起申诉流程！</p>
+            </Link>
+          </section>
           <section className={styles.fileid}>
             <InputItem
-              placeholder="请输入新手机号码"
+              placeholder="请输入新的手机号码"
               className="required"
               {...getFieldProps('phone', {
                 validateFirst: true,
                 rules: [
-                  { required: true, whitespace: true, message: '请输入新手机号码' },
+                  { required: true, whitespace: true, message: '请输入新的手机号码' },
                   { pattern: phoneReg, message: '请输入正确的新手机号码' },
                   { validator: this.checkNewPhone },
                 ],
@@ -149,7 +188,7 @@ const FormWrapper = createForm()(
                 className={`${styles.captchaItem} required`}
                 {...getFieldProps('captcha', {
                   validateFirst: true,
-                  rules: [{ required: true, whitespace: true, message: '请输入验证码' }],
+                  rules: [{ required: true, whitespace: true, message: '请输入新手机的验证码' }],
                 })}
               >
                 <div
@@ -167,25 +206,11 @@ const FormWrapper = createForm()(
                 className={styles.captchaBtn}
                 disabled={count > 0}
                 loading={count > 0}
-                onClick={this.getCaptcha}
+                onClick={() => this.getCaptcha('phone')}
               >
                 {count ? `${count}秒后重试` : '获取验证码'}
               </Button>
             </Flex>
-          </section>
-          <section className={styles.fileid}>
-            <p className={styles.title}>申诉理由：</p>
-            <TextareaItem
-              placeholder="填写申诉理由，不得少于8个字，最多200字（选填）"
-              rows={4}
-              {...getFieldProps('reason', {
-                rules: [
-                  { required: false, whitespace: true, message: '请填写申诉理由' },
-                  { min: 8, message: '申诉理由不得少于8个字' },
-                  { max: 200, message: '申诉理由最多200字' },
-                ],
-              })}
-            />
           </section>
           <section className={styles.fileid}>
             <Flex style={{ justifyContent: 'space-between' }}>
@@ -209,24 +234,25 @@ const FormWrapper = createForm()(
 
 // eslint-disable-next-line react/no-multi-comp
 @connect()
-class Appeal extends PureComponent {
+class ChangePhone extends PureComponent {
   handleSubmit = values => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'appealModel/createAppeal',
+      type: 'driverModel/changePhone',
       payload: { ...values },
     });
   };
 
   render() {
+    const { dispatch } = this.props;
     return (
-      <DocumentTitle title="更换手机号申诉">
+      <DocumentTitle title="更换手机号">
         <section className={styles.bindWrap}>
-          <FormWrapper onOk={this.handleSubmit} />
+          <FormWrapper dispatch={dispatch} onOk={this.handleSubmit} />
         </section>
       </DocumentTitle>
     );
   }
 }
 
-export default Appeal;
+export default ChangePhone;

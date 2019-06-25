@@ -7,6 +7,9 @@ import {
   auditDriver,
   updateDriverExpireTime,
   deleteDriver,
+  bindPhone,
+  changePhone,
+  getCaptcha,
 } from '@/services/driver';
 
 export default modelExtend(model, {
@@ -126,6 +129,49 @@ export default modelExtend(model, {
         });
       } else {
         message.error('删除失败');
+      }
+      return success;
+    },
+
+    // =========微信========
+
+    /**
+     * 获取验证码
+     */
+    *getCaptcha({ payload }, { call }) {
+      const { success } = yield call(getCaptcha, payload);
+      if (success) {
+        message.success('验证码获取成功');
+      } else {
+        message.error('验证码获取失败');
+      }
+      return success;
+    },
+
+    /**
+     * 微信端绑定手机号
+     */
+    *bindPhone({ payload }, { call, put }) {
+      const { success } = yield call(bindPhone, payload);
+      if (success) {
+        message.success('绑定成功');
+        // TODO
+      } else {
+        message.error('绑定失败');
+      }
+      return success;
+    },
+
+    /**
+     * 微信端更换手机号
+     */
+    *changePhone({ payload }, { call, put }) {
+      const { success } = yield call(changePhone, payload);
+      if (success) {
+        message.success('更换手机号成功');
+        // TODO
+      } else {
+        message.error('更换手机号失败');
       }
       return success;
     },

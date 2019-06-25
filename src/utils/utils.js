@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import lodash from 'lodash';
 import { parse, stringify } from 'qs';
+import { Toast } from 'antd-mobile';
 import router from 'umi/router';
 import moment from 'moment';
 
@@ -237,4 +238,38 @@ export function handleFilterResult() {
   this.setState({
     filterResult: result,
   });
+}
+
+export function showError(msg) {
+  if (!msg) {
+    return;
+  }
+
+  Toast.info(
+    <Fragment>
+      <svg
+        t="1561473935227"
+        className="icon"
+        viewBox="0 0 1024 1024"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        p-id="9670"
+        width="60"
+        height="60"
+      >
+        <path
+          d="M512.8192 511.1808z m-458.9568 0a458.9568 458.9568 0 1 0 458.9568-458.9568 458.9568 458.9568 0 0 0-458.9056 458.9568"
+          fill="#FB6664"
+          p-id="9671"
+        />
+        <path
+          d="M511.0272 740.6592a57.344 57.344 0 0 1-57.344-57.344V511.1808a57.344 57.344 0 1 1 114.688 0v172.0832a57.344 57.344 0 0 1-57.344 57.344z m0-344.2176A57.344 57.344 0 1 1 568.32 339.0464a57.344 57.344 0 0 1-57.344 57.344z"
+          fill="#FFFFFF"
+          p-id="9672"
+        />
+      </svg>
+      <div>{msg}</div>
+    </Fragment>,
+    2
+  );
 }

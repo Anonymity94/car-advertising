@@ -1,7 +1,8 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
-import { queryAppeals, updateAppealState } from '@/services/appeal';
+import { queryAppeals, updateAppealState, createAppeal } from '@/services/appeal';
+import router from 'umi/router';
 
 export default modelExtend(model, {
   namespace: 'appealModel',
@@ -37,13 +38,25 @@ export default modelExtend(model, {
     },
 
     /**
+     * 用户提起申诉
+     */
+    *createAppeal({ payload }, { call, put }) {
+      const { success } = yield call(createAppeal, payload);
+      if (success) {
+        router.push('/h5/user/waiting');
+      } else {
+        message.error('申诉成功失败');
+      }
+      return success;
+    },
+
+    /**
      * 申诉审核
      */
     *updateAppealState({ payload }, { call }) {
       const { success } = yield call(updateAppealState, payload);
       if (success) {
         message.success('审核成功');
-        
       } else {
         message.error('审核失败');
       }

@@ -38,9 +38,8 @@ export async function queryDriverById({ id }) {
 export async function auditDriver({ id, state, reason }) {
   const api = state === AUDIT_STATE_PASSED ? 'user-access' : 'user-reject';
   return request(`/api/user-manager/${api}?id=${id}`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       reason,
     },
   });
@@ -53,9 +52,8 @@ export async function auditDriver({ id, state, reason }) {
  */
 export async function updateDriverExpireTime({ id, expireTime }) {
   return request(`/api/user-manager/user-update?id=${id}`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       expireTime,
     },
   });
@@ -69,5 +67,45 @@ export async function deleteDriver({ id }) {
   return request(`/api/user-manager/user-remove?id=${id}`, {
     method: 'DELETE',
     body: {},
+  });
+}
+
+/**
+ * 查询当前登陆人
+ */
+export async function queryCurrentUser() {
+  return request('/api/user/current');
+}
+
+/**
+ * 获取验证码
+ */
+export async function getCaptcha({ phone }) {
+  return request(`/api/captcha?phone=${phone}`);
+}
+
+/**
+ * 微信端：绑定手机号
+ * @param {String} phone
+ * @param {String} captcha
+ */
+export async function bindPhone(params) {
+  return request('/api/user/bind', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+/**
+ * 微信端：更换手机号
+ */
+export async function changePhone(params) {
+  return request('/api/user/change-phone', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
   });
 }
