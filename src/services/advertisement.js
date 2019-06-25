@@ -18,14 +18,14 @@ export async function queryAds(params) {
  * @param {String} id
  */
 export async function queryAdContent({ id }) {
-  return request(`/api/advertisements/${id}`);
+  return request(`/api/ads/${id}`);
 }
 
 /**
  * 新增广告
  */
 export async function createAd(params) {
-  return request(`/api/advertisements`, {
+  return request(`/api/ads`, {
     method: 'POST',
     body: {
       ...params,
@@ -38,7 +38,7 @@ export async function createAd(params) {
  * @param {String} id
  */
 export async function updateAd({ id, ...resetParams }) {
-  return request(`/api/advertisements/${id}`, {
+  return request(`/api/ads/${id}`, {
     method: 'PUT',
     body: {
       ...resetParams,
@@ -52,7 +52,7 @@ export async function updateAd({ id, ...resetParams }) {
  * @param {String} isPublish
  */
 export async function publishAd({ id, isPublish }) {
-  return request(`/api/advertisements/${id}/publish`, {
+  return request(`/api/ads/${id}/publish`, {
     method: 'PUT',
     body: {
       isPublish,
@@ -66,7 +66,7 @@ export async function publishAd({ id, isPublish }) {
  * @param {String} isTop
  */
 export async function topAd({ id, isTop }) {
-  return request(`/api/advertisements/${id}/top`, {
+  return request(`/api/ads/${id}/top`, {
     method: 'PUT',
     body: {
       isTop,
@@ -79,7 +79,7 @@ export async function topAd({ id, isTop }) {
  * @param {String} id
  */
 export async function deleteAd({ id }) {
-  return request(`/api/advertisements/${id}`, {
+  return request(`/api/ads/${id}`, {
     method: 'DELETE',
     body: {},
   });
