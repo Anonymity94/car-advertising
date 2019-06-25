@@ -235,7 +235,7 @@ class AppealList extends PureComponent {
       },
       {
         title: '申诉理由',
-        dataIndex: 'description',
+        dataIndex: 'reason',
         align: 'center',
       },
       {
