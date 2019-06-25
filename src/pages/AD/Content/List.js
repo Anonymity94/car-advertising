@@ -19,6 +19,7 @@ import {
   DatePicker,
 } from 'antd';
 import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
+import Ellipsis from '@/components/Ellipsis';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import Link from 'umi/link';
@@ -193,6 +194,7 @@ class AdminList extends PureComponent {
         title: '编号',
         dataIndex: 'id',
         align: 'center',
+        width: 100,
       },
       {
         title: '名称',
@@ -203,13 +205,20 @@ class AdminList extends PureComponent {
         title: '签约条款',
         dataIndex: 'clause',
         align: 'center',
-        render: text => <a>{text}</a>,
+        width: 150,
+        render: text => (
+          <Ellipsis tooltip lines={1}>
+            <Link target="_blank" rel="noopener noreferer" to={text}>
+              {text}
+            </Link>
+          </Ellipsis>
+        ),
       },
       {
         title: '签约金',
         dataIndex: 'bonus',
         align: 'center',
-        render: bonus => `${numeral(bonus).format('0,0')}/月`,
+        render: bonus => `${numeral(bonus).format('0,0')}元/月`,
       },
       {
         title: '积分',
@@ -256,7 +265,7 @@ class AdminList extends PureComponent {
         title: '操作',
         dataIndex: 'operate',
         align: 'center',
-        width: 140,
+        width: 100,
         render: (text, record) => {
           const { id, isTop, isPublish } = record;
 
