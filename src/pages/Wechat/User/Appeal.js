@@ -2,13 +2,12 @@ import React, { PureComponent, Fragment } from 'react';
 import { TextareaItem, InputItem, Button, Modal, Flex } from 'antd-mobile';
 import { phoneReg } from '@/utils/utils';
 import { createForm } from 'rc-form';
-import router from 'umi/router';
 import DocumentTitle from 'react-document-title';
 
 import styles from './BindPhone.less';
 
-import phoneIcon from './icons/phone@2x.png';
-import captchaIcon from './icons/captcha@2x.png';
+import phoneIcon from './icons/icon_phone@2x.png';
+import captchaIcon from './icons/icon_captcha@2x.png';
 
 const iconPorps = {
   backgroundSize: 'contain',

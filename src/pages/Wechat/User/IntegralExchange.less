@@ -1,0 +1,32 @@
+@import '~@/wechat.less';
+
+.content {
+  :global {
+    .am-card{
+      margin-bottom: 10px;
+    }
+    .am-card-header {
+      height: 57px;
+      font-size: 15px !important;
+    }
+    .am-card-header-extra {
+      font-size: 15px !important;
+    }
+    .am-card-footer {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .am-card-header-extra,
+    .am-card-footer-extra {
+      color: @color-base;
+    }
+  }
+
+  .unused {
+    color: @color-important;
+  }
+  .used {
+    color: @color-primary;
+  }
+}

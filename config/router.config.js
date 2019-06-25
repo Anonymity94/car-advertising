@@ -11,17 +11,53 @@ export default [
     Routes: ['src/pages/Authorized'],
     name: 'h5',
     routes: [
-      // 绑定手机号
       {
-        path: '/h5/bind',
-        name: 'bind',
-        component: './Wechat/BindPhone',
-      },
-      // 更新手机号申诉
-      {
-        path: '/h5/appeal',
-        name: 'appeal',
-        component: './Wechat/Appeal',
+        path: '/h5/user',
+        name: 'user',
+        routes: [
+          // 绑定手机号
+          {
+            path: '/h5/user/bind',
+            name: 'bind',
+            component: './Wechat/User/BindPhone',
+          },
+          // 更新手机号申诉
+          {
+            path: '/h5/user/appeal',
+            name: 'appeal',
+            component: './Wechat/User/Appeal',
+          },
+          // 用户主页
+          {
+            path: '/h5/user/center',
+            name: 'center',
+            component: './Wechat/User/center',
+          },
+          // 用户个人资料
+          {
+            path: '/h5/user/info',
+            name: 'info',
+            component: './Wechat/User/Info',
+          },
+          // 广告签约记录
+          {
+            path: '/h5/user/ad-signing',
+            name: 'ad-signing',
+            component: './Wechat/User/AdSigning',
+          },
+          // 广告结算记录
+          {
+            path: '/h5/user/ad-settlement',
+            name: 'ad-settlement',
+            component: './Wechat/User/AdSettlement',
+          },
+          // 积分兑换记录
+          {
+            path: '/h5/user/integral-exchange',
+            name: 'integral-exchange',
+            component: './Wechat/User/IntegralExchange',
+          },
+        ],
       },
     ],
   },

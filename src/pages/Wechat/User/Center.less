@@ -1,0 +1,61 @@
+@import '~@/wechat.less';
+
+.header {
+  background: #fff;
+  height: 164px;
+  position: relative;
+  margin-bottom: 20px;
+  margin-top: 40px;
+
+  .info {
+    text-align: center;
+    position: relative;
+    top: -28px;
+
+    img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+    }
+    p {
+      margin-top: 10px;
+      font-size: 15px;
+      color: @color-base;
+    }
+  }
+
+  .integral {
+    text-align: center;
+
+    .number {
+      font-size: 20px;
+
+      &.rest {
+        color: @color-primary;
+      }
+    }
+
+    p:last-child {
+      font-size: 12px;
+      color: @color-caption;
+    }
+  }
+}
+
+.content {
+  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+
+  .item {
+    width: 50%;
+    text-align: center;
+    padding: 55px 0;
+
+    .title {
+      color: @color-caption;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+  }
+}
