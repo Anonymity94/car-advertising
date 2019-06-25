@@ -58,7 +58,7 @@ export default {
   targets: {
     ie: 11,
   },
-  hash: true, // 开始文件hash
+  hash: true, // 开启文件hash
   // 路由配置
   routes: pageRoutes,
   // Theme for antd
@@ -91,5 +91,5 @@ export default {
     basePath: '/',
   },
 
-  chainWebpack: webpackPlugin,
+  // chainWebpack: webpackPlugin,
 };
