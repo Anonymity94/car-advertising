@@ -143,6 +143,11 @@ class BusinessList extends PureComponent {
         title: '提供商品',
         dataIndex: 'goods',
         align: 'center',
+        render: goods => {
+          if (!goods) return '';
+          if (!Array.isArray(goods)) return '';
+          return goods.map(item => item.name).join('、');
+        },
       },
       {
         title: '提供日期',
@@ -170,7 +175,7 @@ class BusinessList extends PureComponent {
           const { id } = record;
           return (
             <Fragment>
-              <Link to={`/integral/list/${id}/update`}>修改</Link>
+              <Link to={`/integral/businesses/${id}/update`}>修改</Link>
               <Divider type="vertical" />
               <a onClick={() => this.handleDelete(record)}>删除</a>
             </Fragment>

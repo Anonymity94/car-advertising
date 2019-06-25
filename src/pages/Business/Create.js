@@ -25,12 +25,8 @@ class Create extends PureComponent {
           title: '新增成功',
           keyboard: false,
           maskClosable: false,
-          okText: '继续添加',
+          okText: '返回',
           onOk: () => {
-            this.formRef.props.form.resetFields();
-          },
-          cancelText: '返回',
-          onCancel: () => {
             router.goBack();
           },
         });
@@ -43,11 +39,7 @@ class Create extends PureComponent {
     return (
       <PageHeaderWrapper showback>
         <Card>
-          <FormTemp
-            wrappedComponentRef={formRef => (this.formRef = formRef)}
-            onSubmit={this.handleSubmit}
-            submitLoading={submitLoading}
-          />
+          <FormTemp onSubmit={this.handleSubmit} submitLoading={submitLoading} />
         </Card>
       </PageHeaderWrapper>
     );

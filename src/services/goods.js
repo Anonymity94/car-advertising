@@ -27,7 +27,6 @@ export async function createGoods(params) {
   return request(`/api/goods`, {
     method: 'POST',
     body: {
-      method: 'post',
       ...params,
     },
   });
@@ -39,9 +38,8 @@ export async function createGoods(params) {
  */
 export async function updateGoods({ id, ...resetParams }) {
   return request(`/api/goods/${id}`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       ...resetParams,
     },
   });
@@ -54,9 +52,8 @@ export async function updateGoods({ id, ...resetParams }) {
  */
 export async function publishGoods({ id, isPublish }) {
   return request(`/api/goods/${id}/publish`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       isPublish,
     },
   });
@@ -69,9 +66,8 @@ export async function publishGoods({ id, isPublish }) {
  */
 export async function topGoods({ id, isTop }) {
   return request(`/api/goods/${id}/top`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       isTop,
     },
   });
@@ -83,9 +79,7 @@ export async function topGoods({ id, isTop }) {
  */
 export async function deleteGoods({ id }) {
   return request(`/api/goods/${id}`, {
-    method: 'POST',
-    body: {
-      method: 'delete',
-    },
+    method: 'DELETE',
+    body: {},
   });
 }

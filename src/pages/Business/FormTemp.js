@@ -172,7 +172,7 @@ class FormTemp extends PureComponent {
         data-key={k}
       >
         {getFieldDecorator(`goods[${k}]`, {
-          initialValue: k.indexOf(SEPARATOR) === -1 ? k : '',
+          initialValue: k.name && k.name.indexOf(SEPARATOR) === -1 ? k.name : '',
           validateTrigger: ['onChange', 'onBlur'],
           validateFirst: true,
           rules: [

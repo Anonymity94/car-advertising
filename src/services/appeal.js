@@ -21,9 +21,8 @@ export async function queryAppeals(params) {
  */
 export async function updateAppealState({ id, state, reason }) {
   return request(`/api/appeals/${id}/state`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       state,
       reason,
     },
