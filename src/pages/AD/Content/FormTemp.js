@@ -13,7 +13,6 @@ import {
   DatePicker,
   Modal,
   TimePicker,
-  message,
 } from 'antd';
 import moment from 'moment';
 import router from 'umi/router';

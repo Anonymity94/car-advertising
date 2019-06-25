@@ -25,9 +25,12 @@ export default class StandardUpload extends React.PureComponent {
 
   handlePreview = file => {
     const { fileType } = this.props;
-    if (fileType === 'file') return;
+    if (fileType === 'file') {
+      window.open(file.url)
+      return;
+    }
     this.setState({
-      previewImage: file.url || file.thumbUrl,
+      previewImage: file.url,
       previewVisible: true,
     });
   };
