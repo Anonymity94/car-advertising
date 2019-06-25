@@ -35,7 +35,6 @@ export async function createBusiness(params) {
   return request(`/api/businesses`, {
     method: 'POST',
     body: {
-      method: 'post',
       ...params,
     },
   });
@@ -47,9 +46,8 @@ export async function createBusiness(params) {
  */
 export async function updateBusiness({ id, ...resetParams }) {
   return request(`/api/businesses/${id}`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
-      method: 'put',
       ...resetParams,
     },
   });
@@ -61,9 +59,7 @@ export async function updateBusiness({ id, ...resetParams }) {
  */
 export async function deleteBusiness({ id }) {
   return request(`/api/businesses/${id}`, {
-    method: 'POST',
-    body: {
-      method: 'delete',
-    },
+    method: 'DELETE',
+    body: {},
   });
 }

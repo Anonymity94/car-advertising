@@ -124,7 +124,7 @@ class FormTemp extends PureComponent {
       const goodsList = Object.keys(goods).map(key => goods[key]);
       const submitData = {
         ...values,
-        goods: goodsList.join(','),
+        goods: goodsList,
         beginTime: moment(beginTime).format('YYYY-MM-DD'),
         endTime: moment(endTime).format('YYYY-MM-DD'),
       };
@@ -155,7 +155,7 @@ class FormTemp extends PureComponent {
     } = this.props;
 
     let initKey = [`${SEPARATOR}`];
-    const goodsList = values.goods ? values.goods.split(',') : [];
+    const goodsList = values.goods ? values.goods : [];
     if (goodsList.length > 0) {
       initKey = goodsList;
     }
