@@ -69,6 +69,12 @@ export default [
             name: 'waiting',
             component: './Wechat/User/Waiting',
           },
+          // 用户注册
+          {
+            path: '/h5/user/register',
+            name: 'register',
+            component: './Wechat/User/Register',
+          },
         ],
       },
       {

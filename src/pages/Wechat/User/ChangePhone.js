@@ -7,7 +7,7 @@ import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 
-import styles from './BindPhone.less';
+import styles from './style.less';
 
 import phoneIcon from './icons/icon_phone@2x.png';
 import captchaIcon from './icons/icon_captcha@2x.png';
@@ -97,7 +97,7 @@ const FormWrapper = createForm()(
       const { form } = this.props;
       const { getFieldProps } = form;
       return (
-        <Fragment>
+        <div className={styles.formWrap}>
           <section className={styles.fileid}>
             <InputItem
               placeholder="请输入旧手机号码"
@@ -226,7 +226,7 @@ const FormWrapper = createForm()(
               </Button>
             </Flex>
           </section>
-        </Fragment>
+        </div>
       );
     }
   }
@@ -247,7 +247,7 @@ class ChangePhone extends PureComponent {
     const { dispatch } = this.props;
     return (
       <DocumentTitle title="更换手机号">
-        <section className={styles.bindWrap}>
+        <section>
           <FormWrapper dispatch={dispatch} onOk={this.handleSubmit} />
         </section>
       </DocumentTitle>

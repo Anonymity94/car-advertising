@@ -6,7 +6,7 @@ import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
 import { phoneReg, showError } from '@/utils/utils';
 
-import styles from './BindPhone.less';
+import styles from './style.less';
 
 import phoneIcon from './icons/icon_phone@2x.png';
 import captchaIcon from './icons/icon_captcha@2x.png';
@@ -94,7 +94,7 @@ const FormWrapper = createForm()(
       const { form } = this.props;
       const { getFieldProps } = form;
       return (
-        <Fragment>
+        <div className={styles.fromWrap}>
           <section className={styles.fileid}>
             <InputItem
               placeholder="请输入旧手机号码"
@@ -201,7 +201,7 @@ const FormWrapper = createForm()(
               </Button>
             </Flex>
           </section>
-        </Fragment>
+        </div>
       );
     }
   }
@@ -221,7 +221,7 @@ class Appeal extends PureComponent {
   render() {
     return (
       <DocumentTitle title="更换手机号申诉">
-        <section className={styles.bindWrap}>
+        <section>
           <FormWrapper onOk={this.handleSubmit} />
         </section>
       </DocumentTitle>
