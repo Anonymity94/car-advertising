@@ -7,13 +7,12 @@
     }
   }
   .fileid {
+    margin-bottom: 20px;
+
     .title {
       color: @color-base;
     }
 
-    &:not(:last-child) {
-      margin-bottom: 20px;
-    }
     &:last-child {
       padding-top: 20px;
     }
@@ -27,6 +26,10 @@
     }
   }
 
+  .subText {
+    color: @color-caption;
+  }
+
   .captchaBtn {
     width: 35%;
     font-size: 15px;
@@ -34,5 +37,52 @@
     &:before {
       border-color: @color-primary;
     }
+  }
+
+  .uploadRc {
+    display: block;
+    text-align: center;
+  }
+
+  .uploadText {
+    background: rgb(240, 242, 242);
+    color: @color-caption;
+    line-height: 50px;
+    padding-left: 20px;
+  }
+
+  .uploadWrap {
+    width: 250px;
+    height: 160px;
+    background-size: contain;
+    margin: 38px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .demo {
+      width: 214px;
+      height: 132px;
+    }
+    .uploadIcon {
+      position: absolute;
+      width: 58px;
+      height: 58px;
+    }
+  }
+}
+
+.uploadLoading {
+  display: block;
+  position: absolute;
+  width: 214px;
+  height: 132px;
+  background: #666;
+  opacity: 0.43;
+  border-radius: 10px;
+  .icon {
+    position: relative;
+    top: 50%;
+    margin-top: -30px;
   }
 }

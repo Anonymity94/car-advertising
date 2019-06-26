@@ -3,24 +3,28 @@ import DocumentTitle from 'react-document-title';
 import { Result } from 'antd-mobile';
 import router from 'umi/router';
 
-import waitingIcon from './icons/waiting.svg';
+import styles from './Waiting.less'
+
+import waitingIcon from './icons/waiting@2x.png';
 
 const myImg = src => <img src={src} style={{ width: 60, height: 60 }} alt="" />;
 
 export default class Waiting extends PureComponent {
   render() {
     return (
-      <DocumentTitle title="等待结果">
+      <DocumentTitle title="等待审核">
         <Fragment>
-          <Result
-            style={{ height: 300 }}
-            img={myImg(waitingIcon)}
-            title="等待处理"
-            message="审核时间3-5个工作日，请您耐心等待！"
-            buttonText="返回首页"
-            buttonType="ghost"
-            onButtonClick={() => router.replace('/h5/home')}
-          />
+          <div className={styles.wrap}>
+
+            <Result
+              img={myImg(waitingIcon)}
+              title="审核中"
+              message="审核时间3-5个工作日，请您耐心等待！"
+              buttonText="返回首页"
+              buttonType="ghost"
+              onButtonClick={() => router.replace('/h5/home')}
+            />
+          </div>
         </Fragment>
       </DocumentTitle>
     );

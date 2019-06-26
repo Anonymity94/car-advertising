@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import { WingBlank, WhiteSpace } from 'antd-mobile';
-
+import { WingBlank, WhiteSpace, LocaleProvider } from 'antd-mobile';
+import zhCN from 'antd-mobile/lib/calendar/locale/zh_CN';
 import styles from './WechatLayout.less';
 
 export default props => (
@@ -8,7 +8,9 @@ export default props => (
     <Fragment>
       <WhiteSpace size="lg" />
       <WingBlank size="lg">
-        <div {...props} />
+        <LocaleProvider locale={zhCN}>
+          <div {...props} />
+        </LocaleProvider>
       </WingBlank>
     </Fragment>
   </div>

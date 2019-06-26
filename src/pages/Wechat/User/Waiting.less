@@ -1,0 +1,22 @@
+@import '~@/wechat.less';
+
+.wrap {
+  height: calc(100vh - 50px);
+  background: #fff;
+  display: flex;
+  align-items: center;
+
+  :global {
+    .am-result {
+      margin-top: -50%;
+
+      &::after {
+        display: none !important;
+      }
+    }
+    .am-result-title {
+      font-size: 16px;
+      color: @color-primary;
+    }
+  }
+}
