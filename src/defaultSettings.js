@@ -6,5 +6,4 @@ module.exports = {
   fixedHeader: false, // sticky header
   autoHideHeader: false, // auto hide header
   fixSiderbar: true, // sticky siderbar
-  title: '车载广告',
 };

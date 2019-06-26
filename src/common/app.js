@@ -1,7 +1,7 @@
 /**
  * 产品名称
  */
-export const productName = '车载广告';
+export const productName = '乐蚁车酷';
 
 /**
  * 开发环境时，mock api 前缀

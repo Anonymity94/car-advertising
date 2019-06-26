@@ -29,6 +29,7 @@ const plugins = [
         { src: '<%= PUBLIC_PATH %>libs/bizCharts-3.4.0.min.js' },
         { src: '<%= PUBLIC_PATH %>libs/moment-2.22.1.min.js' },
       ],
+      title: '乐蚁车酷',
       metas: [{ charset: 'utf-8' }, { 'build-time': moment().format() }],
       dynamicImport: {
         loadingComponent: './components/PageLoading/index',
