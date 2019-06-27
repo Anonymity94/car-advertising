@@ -1,0 +1,73 @@
+@import '~@/wechat.less';
+@import '~@/utils/utils.less';
+
+.userInfoWrap {
+  background: #fff;
+  padding: 25px;
+  padding-bottom: 10px;
+  .header {
+    position: relative;
+    margin-bottom: 31px;
+    .clearfix();
+
+    img {
+      float: left;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+    .name {
+      float: left;
+      font-size: 15px;
+      color: @color-base;
+      p {
+        line-height: 27px;
+      }
+    }
+    .btn {
+      display: inline-block;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 68px;
+      height: 25px;
+      border-radius: 25px / 2;
+      border: 1px solid @color-primary;
+      color: @color-primary;
+      text-align: center;
+      line-height: 25px;
+    }
+  }
+
+  .info {
+    :global {
+      .am-list-item {
+        padding-left: 0;
+        height: 56px;
+        line-height: 56px;
+      }
+      .am-list-body:after {
+        display: none !important;
+      }
+    }
+  }
+}
+
+.content {
+  :global {
+    .am-tabs-tab-bar-wrap {
+      margin: 25px 0;
+    }
+    .am-tabs-default-bar-content {
+      justify-content: center;
+    }
+    // .am-tabs-default-bar-tab {
+    //   width: 40% !important;
+    // }
+    // .am-tabs-default-bar-underline{
+    //   width: 60px !important;
+    //   margin-left: ~'calc(50% - 60px)' / 2;
+    // }
+  }
+}

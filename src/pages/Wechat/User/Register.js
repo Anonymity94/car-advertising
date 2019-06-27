@@ -3,7 +3,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { InputItem, Button, List, Steps, WhiteSpace, DatePicker, Toast, Modal } from 'antd-mobile';
 import { Upload } from 'antd';
-import router from 'umi/router';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
@@ -52,6 +51,7 @@ export function beforeUpload(file) {
  * @param {*} loading loading
  */
 export function handleUpload(info, state, loading) {
+  const { onUpload } = this.props;
   const { status } = info.file;
 
   if (status === 'uploading') {
@@ -65,15 +65,24 @@ export function handleUpload(info, state, loading) {
       url: file.response ? file.response.url : file.url,
     }));
 
+    const newImage = result.pop();
+
+    // 上传成功后，把新的 url 传递出去，用于用户在个人中心页修改
+    if (onUpload) {
+      onUpload({
+        [state]: newImage.url,
+      });
+    }
+
     this.setState({
       // 只取最后 一个
-      [state]: [result.pop()],
+      [state]: [newImage],
       [loading]: false,
     });
   }
 
   if (status === 'error') {
-    Modal.alert('上传失败', '上传的图片太大了~', [{ text: '知道了', onPress: () => {} }]);
+    Modal.alert('上传失败', '', [{ text: '知道了', onPress: () => {} }]);
     this.setState({
       [state]: [],
       [loading]: false,
@@ -167,22 +176,18 @@ const steps = [
   },
 ];
 
-const STEP_0_FORM_REF = 'step_0_form';
-const STEP_1_FORM_REF = 'step_1_form';
-const STEP_2_FORM_REF = 'step_2_form';
-
-const UserInfoForm = createForm()(
+export const UserInfoForm = createForm()(
   class FormWrapper extends React.Component {
     handleOk = () => {
       const { form, onSubmit } = this.props;
       form.validateFields((error, values) => {
         if (error) {
-          onSubmit();
+          if (onSubmit) onSubmit();
           const errKeys = Object.keys(error);
           showError(error[errKeys[0]].errors[0].message);
           return;
         }
-        onSubmit(values);
+        if (onSubmit) onSubmit(values);
       });
     };
 
@@ -265,7 +270,7 @@ const UserInfoForm = createForm()(
   }
 );
 
-const IdcardForm = createForm()(
+export const IdcardForm = createForm()(
   class FormWrapper extends React.Component {
     constructor(props) {
       super(props);
@@ -287,7 +292,7 @@ const IdcardForm = createForm()(
       const { form, onSubmit } = this.props;
       form.validateFields((error, values) => {
         if (error) {
-          onSubmit();
+          if (onSubmit) onSubmit();
           const errKeys = Object.keys(error);
           showError(error[errKeys[0]].errors[0].message);
           return;
@@ -295,14 +300,17 @@ const IdcardForm = createForm()(
 
         const { idardBackImage, idardFrontImage } = values;
 
-        onSubmit({
-          idardBackImage: getUploadImageUrl(idardBackImage),
-          idardFrontImage: getUploadImageUrl(idardFrontImage),
-        });
+        if (onSubmit) {
+          onSubmit({
+            idardBackImage: getUploadImageUrl(idardBackImage),
+            idardFrontImage: getUploadImageUrl(idardFrontImage),
+          });
+        }
       });
     };
 
     render() {
+      const { showbtn = true } = this.props;
       const renderUpload = [
         {
           field: 'idardBackImage', // 表单的值
@@ -321,18 +329,20 @@ const IdcardForm = createForm()(
       return (
         <div className={styles.formWrap}>
           {renderUpload}
-          <section className={styles.field}>
-            <Button className="button-ok" onClick={this.handleOk}>
-              下一步
-            </Button>
-          </section>
+          {showbtn && (
+            <section className={styles.field}>
+              <Button className="button-ok" onClick={this.handleOk}>
+                下一步
+              </Button>
+            </section>
+          )}
         </div>
       );
     }
   }
 );
 
-const CarForm = createForm()(
+export const CarForm = createForm()(
   class FormWrapper extends React.Component {
     constructor(props) {
       super(props);
@@ -354,9 +364,30 @@ const CarForm = createForm()(
       this.handleUpload = handleUpload.bind(this);
     }
 
+    handleOk = () => {
+      const { form, onSubmit } = this.props;
+      form.validateFields((error, values) => {
+        if (error) {
+          if (onSubmit) onSubmit();
+          const errKeys = Object.keys(error);
+          showError(error[errKeys[0]].errors[0].message);
+          return;
+        }
+
+        const { carCodeImage, driverLicenseImage, carImage } = values;
+
+        if (onSubmit) {
+          onSubmit({
+            carCodeImage: getUploadImageUrl(carCodeImage),
+            driverLicenseImage: getUploadImageUrl(driverLicenseImage),
+            carImage: getUploadImageUrl(carImage),
+          });
+        }
+      });
+    };
+
     render() {
-      const { form } = this.props;
-      const { onOk } = this.props;
+      const { form, showinfo = true, showbtn = true } = this.props;
       const { getFieldProps } = form;
 
       const renderUpload = [
@@ -382,47 +413,54 @@ const CarForm = createForm()(
 
       return (
         <div className={styles.formWrap}>
-          <section className={styles.field}>
-            <InputItem
-              placeholder="请输入车辆类型"
-              className="required"
-              {...getFieldProps('carType', {
-                validateFirst: true,
-                rules: [{ required: true, whitespace: true, message: '请输入车辆类型' }],
-              })}
-            />
-          </section>
-          <section className={styles.field}>
-            <InputItem
-              placeholder="请输入行驶证号"
-              className="required"
-              {...getFieldProps('carCode', {
-                validateFirst: true,
-                rules: [{ required: true, whitespace: true, message: '请输入行驶证号' }],
-              })}
-            />
-          </section>
-          <section className={styles.field}>
-            <DatePicker
-              className="required"
-              mode="date"
-              {...getFieldProps('expireTime', {
-                rules: [{ required: true, message: '请选择证件到期时间' }],
-              })}
-            >
-              <List.Item>
-                <span className={styles.subText}>请选择行驶证到期时间</span>
-              </List.Item>
-            </DatePicker>
-          </section>
+          {/* 是否显示基本信息 */}
+          {showinfo && (
+            <Fragment>
+              <section className={styles.field}>
+                <InputItem
+                  placeholder="请输入车辆类型"
+                  className="required"
+                  {...getFieldProps('carType', {
+                    validateFirst: true,
+                    rules: [{ required: true, whitespace: true, message: '请输入车辆类型' }],
+                  })}
+                />
+              </section>
+              <section className={styles.field}>
+                <InputItem
+                  placeholder="请输入行驶证号"
+                  className="required"
+                  {...getFieldProps('carCode', {
+                    validateFirst: true,
+                    rules: [{ required: true, whitespace: true, message: '请输入行驶证号' }],
+                  })}
+                />
+              </section>
+              <section className={styles.field}>
+                <DatePicker
+                  className="required"
+                  mode="date"
+                  {...getFieldProps('expireTime', {
+                    rules: [{ required: true, message: '请选择证件到期时间' }],
+                  })}
+                >
+                  <List.Item>
+                    <span className={styles.subText}>请选择行驶证到期时间</span>
+                  </List.Item>
+                </DatePicker>
+              </section>
+            </Fragment>
+          )}
 
           {renderUpload}
 
-          <section className={styles.field}>
-            <Button className="button-ok" onClick={onOk}>
-              保存
-            </Button>
-          </section>
+          {showbtn && (
+            <section className={styles.field}>
+              <Button className="button-ok" onClick={this.handleOk}>
+                保存
+              </Button>
+            </section>
+          )}
         </div>
       );
     }
@@ -538,22 +576,13 @@ class BindPhone extends PureComponent {
           </Steps>
           <WhiteSpace size="lg" />
           <section style={{ display: `${current === 0 ? '' : 'none'}` }}>
-            <UserInfoForm
-              wrappedComponentRef={ref => this.handleRefForm(ref, STEP_0_FORM_REF)}
-              onSubmit={this.handleSubmitUserInfo}
-            />
+            <UserInfoForm onSubmit={this.handleSubmitUserInfo} />
           </section>
           <section style={{ display: `${current === 1 ? '' : 'none'}` }}>
-            <IdcardForm
-              wrappedComponentRef={ref => this.handleRefForm(ref, STEP_1_FORM_REF)}
-              onSubmit={this.handleSubmitIdcard}
-            />
+            <IdcardForm onSubmit={this.handleSubmitIdcard} />
           </section>
           <section style={{ display: `${current === 2 ? '' : 'none'}` }}>
-            <CarForm
-              wrappedComponentRef={ref => this.handleRefForm(ref, STEP_2_FORM_REF)}
-              onSubmit={this.handleSubmitCarInfo}
-            />
+            <CarForm onSubmit={this.handleSubmitCarInfo} />
           </section>
         </Fragment>
       </DocumentTitle>
