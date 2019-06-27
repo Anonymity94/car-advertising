@@ -101,6 +101,7 @@ export function renderUploadHtml(item) {
           // eslint-disable-next-line react/no-this-in-sfc
           onChange={info => this.handleUpload(info, item.field, item.loading)}
           beforeUpload={beforeUpload}
+          accept="image/*"
           name="file"
         >
           <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
