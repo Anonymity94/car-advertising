@@ -1,12 +1,14 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
+import router from 'umi/router';
 import {
   queryDrivers,
   queryDriverById,
   auditDriver,
   updateDriverExpireTime,
   deleteDriver,
+  register,
   bindPhone,
   changePhone,
   getCaptcha,
@@ -149,13 +151,26 @@ export default modelExtend(model, {
     },
 
     /**
+     * 用户注册
+     */
+    *register({ payload }, { call }) {
+      const { success } = yield call(register, payload);
+      if (success) {
+        // 跳转到成功提示
+        router.push('/h5/user/waiting');
+      } else {
+        message.error('注册失败');
+      }
+      return success;
+    },
+
+    /**
      * 微信端绑定手机号
      */
-    *bindPhone({ payload }, { call, put }) {
+    *bindPhone({ payload }, { call }) {
       const { success } = yield call(bindPhone, payload);
       if (success) {
-        message.success('绑定成功');
-        // TODO
+        router.push('/h5/user/center');
       } else {
         message.error('绑定失败');
       }
@@ -165,7 +180,7 @@ export default modelExtend(model, {
     /**
      * 微信端更换手机号
      */
-    *changePhone({ payload }, { call, put }) {
+    *changePhone({ payload }, { call }) {
       const { success } = yield call(changePhone, payload);
       if (success) {
         message.success('更换手机号成功');

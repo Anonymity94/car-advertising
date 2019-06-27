@@ -40,7 +40,7 @@ import uploadIcon from './icons/icon_upload@2x.png';
 export function beforeUpload(file) {
   const isLt5M = file.size / 1024 / 1024 < 5;
   if (!isLt5M) {
-    Modal.alert('上传的图片不能超过5M', '', [{ text: '好的', onPress: () => {} }]);
+    Modal.alert('上传的图片不能超过5M', '', [{ text: '知道了', onPress: () => {} }]);
   }
   return isLt5M;
 }
@@ -52,12 +52,14 @@ export function beforeUpload(file) {
  * @param {*} loading loading
  */
 export function handleUpload(info, state, loading) {
-  if (info.file.status === 'uploading') {
+  const { status } = info.file;
+
+  if (status === 'uploading') {
     this.setState({ [loading]: true });
     return;
   }
 
-  if (info.file.status === 'done') {
+  if (status === 'done') {
     const result = info.fileList.map(file => ({
       uid: file.uid,
       url: file.response ? file.response.url : file.url,
@@ -66,6 +68,14 @@ export function handleUpload(info, state, loading) {
     this.setState({
       // 只取最后 一个
       [state]: [result.pop()],
+      [loading]: false,
+    });
+  }
+
+  if (status === 'error') {
+    Modal.alert('上传失败', '上传的图片太大了~', [{ text: '知道了', onPress: () => {} }]);
+    this.setState({
+      [state]: [],
       [loading]: false,
     });
   }
@@ -420,14 +430,14 @@ const CarForm = createForm()(
 );
 
 // eslint-disable-next-line react/no-multi-comp
-@connect()
+@connect(({ loading }) => ({
+  submitLoading: loading.effects['driverModel/register'],
+}))
 class BindPhone extends PureComponent {
   state = {
     current: 0,
-
     userInfo: undefined,
     idcardInfo: undefined,
-    cartInfo: undefined,
   };
 
   handleSubmitUserInfo = values => {
@@ -477,13 +487,23 @@ class BindPhone extends PureComponent {
           },
         ]);
       }
+
+      const { dispatch } = this.props;
+
       // 提示确认提交吗？
       Modal.alert('确定保存吗？', '', [
         { text: '取消', onPress: () => {}, style: 'default' },
         {
           text: '保存',
           onPress: () => {
-            // TODO AJAX
+            dispatch({
+              type: 'driverModel/register',
+              payload: {
+                ...userInfo,
+                ...idcardInfo,
+                ...values,
+              },
+            });
           },
         },
       ]);
@@ -496,6 +516,14 @@ class BindPhone extends PureComponent {
 
   render() {
     const { current } = this.state;
+    const { submitLoading } = this.props;
+
+    if (submitLoading) {
+      Toast.loading('保存中....', 0);
+    } else {
+      Toast.hide();
+    }
+
     return (
       <DocumentTitle title="注册会员">
         <Fragment>

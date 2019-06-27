@@ -85,6 +85,16 @@ export async function getCaptcha({ phone }) {
 }
 
 /**
+ * 用户注册
+ */
+export async function register(params) {
+  return request('/api/user/register', {
+    method: 'POST',
+    body: { ...params },
+  });
+}
+
+/**
  * 微信端：绑定手机号
  * @param {String} phone
  * @param {String} captcha
