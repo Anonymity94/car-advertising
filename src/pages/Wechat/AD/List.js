@@ -1,114 +1,127 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent, Fragment, memo } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import router from 'umi/router';
-import { Carousel, PullToRefresh, ListView } from 'antd-mobile';
-import isEqual from 'lodash/isEqual';
-
 import Link from 'umi/link';
+import { Carousel, Card, Toast } from 'antd-mobile';
+import Scroll from '@/components/Scroll';
+import Loading from '@/components/Loading';
+import { TOP_STATE_YES } from '@/common/constants';
+
 import styles from './styles.less';
 
-const NUM_ROWS = 10;
-const pageIndex = 0;
+// 每页多少条
+const PAGE_SIZE = 10;
 
-@connect(({ adModel: { topList, waterfallList } }) => ({
-  topList,
-  waterfallList,
+const ColumnList = memo(({ list }) =>
+  list.map(item => (
+    <div className={styles.item}>
+      <Card>
+        <Card.Header>2323</Card.Header>
+        <Card.Body>
+          <div>This is content of `Card`</div>
+        </Card.Body>
+        <Card.Footer content="footer content" extra={<div>extra footer content</div>} />
+      </Card>
+    </div>
+  ))
+);
+
+@connect(({ loading }) => ({
+  queryLoading: loading.effects['adModel/queryAds'],
 }))
 class List extends PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      waterfallList: [],
-      pageData: [],
+      topList: [], // 置顶的
+      waterfallList: [], // 非置顶的
 
-      refreshing: true,
-      isLoading: true,
+      pageData: [], // 页面显示的列表
+
+      loading: false,
+      options: {
+        pullUpLoad: true,
+        // pullDownRefresh: true,
+        probeType: 3,
+      },
+      page: 0,
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.setState({
+      loading: true,
+    });
+    this.getAds();
+  }
+
+  getAds = () => {
     const { dispatch } = this.props;
 
-    await dispatch({
+    dispatch({
       type: 'adModel/queryAds',
+    }).then(({ success, list }) => {
+      if (success) {
+        const topList = [];
+        const waterfallList = [];
+        list.forEach(item => {
+          if (item.isTop === TOP_STATE_YES) {
+            topList.push(item);
+          } else {
+            waterfallList.push(item);
+          }
+        });
+
+        this.setState(
+          {
+            topList,
+            waterfallList,
+          },
+          () => {
+            this.getMoreData(this.state.page);
+          }
+        );
+      }
     });
-
-    const { waterfallList } = this.props;
-  }
-
-  static getDerivedStateFromProps(nextProps, state) {
-    if (!isEqual(nextProps.waterfallList, state.waterfallList)) {
-      return {
-        waterfallList: nextProps.waterfallList,
-      };
-    }
-    return null;
-  }
-
-  onRefresh = () => {
-    this.setState({ refreshing: true, isLoading: true });
-    // simulate initial Ajax
-    setTimeout(() => {
-      this.setState({
-        dataSource: [],
-        refreshing: false,
-        isLoading: false,
-      });
-    }, 600);
   };
 
-  genData = (pIndex = 0) => {
-    const { waterfallList } = this.props;
-    // 从waterfallList摘取相应的数据
+  getMoreData = page => {
+    const { waterfallList, pageData } = this.state;
+
+    const begin = page * PAGE_SIZE;
+    const moreData = waterfallList.slice(begin, PAGE_SIZE);
+
+    this.setState({
+      pageData: pageData.concat(moreData),
+      loading: false,
+      page,
+    });
   };
 
-  onEndReached = event => {
-    const { isLoading, hasMore, pageData } = this.state;
-    // load new data
-    // hasMore: from backend data, indicates whether it is the last page, here is false
-    if (isLoading && !hasMore) {
-      return;
-    }
-    console.log('reach end', event);
-    this.setState({ isLoading: true });
-    setTimeout(() => {
-      this.rData = { ...this.rData, ...this.genData(pageIndex + 1) };
-      this.setState({
-        pageData: pageData.cloneWithRows(this.rData),
-        isLoading: false,
-      });
-    }, 1000);
+  // 上拉加载
+  pullUpLoad = () => {
+    console.log('上拉加载');
+    this.setState({
+      loading: true,
+    });
+  };
+
+  // 下拉刷新
+  pullDownRefresh = () => {
+    console.log('下拉刷新');
   };
 
   render() {
-    const { topList } = this.props;
-    const { pageData, refreshing, isLoading } = this.state;
+    const { queryLoading } = this.props;
+    const { options, pageData, loading, topList } = this.state;
 
-    const separator = (sectionID, rowID) => (
-      <div
-        key={`${sectionID}-${rowID}`}
-        style={{
-          backgroundColor: '#F5F5F9',
-          height: 8,
-          borderTop: '1px solid #ECECED',
-          borderBottom: '1px solid #ECECED',
-        }}
-      />
-    );
-    let index = pageData.length - 1;
-    const row = (rowData, sectionID, rowID) => {
-      if (index < 0) {
-        index = pageData.length - 1;
-      }
-      const obj = pageData[index - 1];
-      return (
-        <div key={rowID} style={{ padding: '0 15px' }}>
-          {obj.title}
-        </div>
-      );
-    };
+    if (queryLoading) {
+      Toast.loading('加载中....', 0);
+    } else {
+      Toast.hide();
+    }
 
     return (
       <DocumentTitle title="广告签约">
@@ -134,21 +147,14 @@ class List extends PureComponent {
 
             {/* 瀑布流 */}
             <div className={styles.content}>
-              <ListView
-                dataSource={pageData}
-                renderHeader={() => <span>Pull to refresh</span>}
-                renderFooter={() => (
-                  <div style={{ padding: 30, textAlign: 'center' }}>
-                    {isLoading ? 'Loading...' : 'Loaded'}
-                  </div>
-                )}
-                renderRow={row}
-                renderSeparator={separator}
-                useBodyScroll
-                pullToRefresh={<PullToRefresh refreshing={refreshing} onRefresh={this.onRefresh} />}
-                onEndReached={this.onEndReached}
-                pageSize={5}
-              />
+              <Scroll
+                options={options}
+                pullUpLoad={this.pullUpLoad}
+                pullDownRefresh={this.pullDownRefresh}
+              >
+                <ColumnList list={pageData} />
+                <Loading show={loading} />
+              </Scroll>
             </div>
           </div>
         </Fragment>

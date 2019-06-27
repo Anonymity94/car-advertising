@@ -1,9 +1,10 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import BScroll from 'better-scroll';
 
-import './index.less';
+import styles from './index.less';
 
 const DEFAULT_OPTIONS = {
   observeDOM: true,
@@ -12,6 +13,7 @@ const DEFAULT_OPTIONS = {
   scrollbar: false,
   pullDownRefresh: false,
   pullUpLoad: false,
+  mouseWheel: true
 };
 
 class Scroll extends Component {
@@ -39,13 +41,14 @@ class Scroll extends Component {
     this.initScroll();
   }
 
-  shouldComponentUpdate(newProps, newState) {
+  shouldComponentUpdate(newProps) {
     // console.log("newProps", newProps.children && newProps.children[0].props.list.length);
     // console.log("this", this.props.children && this.props.children[0].props.list.length);
     if (this.scroll.options.pullDownRefresh || this.scroll.options.pullUpLoad) {
+      const { children } = this.props;
       if (newProps.children[0].props.list.length > 0) {
         const newList = newProps.children[0].props.list;
-          const List = this.props.children[0].props.list;
+        const List = children[0].props.list;
         if (newList.length !== List.length) {
           this.refresh();
         }
@@ -57,6 +60,30 @@ class Scroll extends Component {
   componentWillUnmount() {
     this.scroll.destroy();
     clearTimeout(this.refreshTimer);
+  }
+
+  // 下拉刷新
+  onPullingDown = () => {
+    this.setState({
+      isPullingDown: true,
+    });
+    this.props.pullDownRefresh();
+  };
+
+  // 上拉加载
+  onPullingUp = () => {
+    this.setState({
+      isPullUpLoad: true,
+    });
+    this.props.pullUpLoad();
+  };
+
+  // 重新计算
+  refresh() {
+    clearTimeout(this.refreshTimer);
+    this.refreshTimer = setTimeout(() => {
+      this.forceUpdate(true);
+    }, this.props.refreshDelay);
   }
 
   // 初始化
@@ -74,30 +101,6 @@ class Scroll extends Component {
     }
   }
 
-  // 重新计算
-  refresh() {
-    clearTimeout(this.refreshTimer);
-    this.refreshTimer = setTimeout(() => {
-      this.forceUpdate(true);
-    }, this.props.refreshDelay);
-  }
-
-  // 下拉刷新
-  onPullingDown = () => {
-    // this.setState({
-    //   isPullingDown: true
-    // });
-    // this.props.pullDownRefresh()
-  };
-
-  // 上拉加载
-  onPullingUp = () => {
-    this.setState({
-      isPullUpLoad: true,
-    });
-    this.props.pullUpLoad();
-  };
-
   // 数据更新
   forceUpdate(dirty = false) {
     if (this.props.options.pullDownRefresh && this.state.isPullingDown) {
@@ -109,16 +112,14 @@ class Scroll extends Component {
         isPullUpLoad: false,
       });
       this.scroll.finishPullUp();
-      dirty && this.scroll.refresh();
-    } else {
-      dirty && this.scroll.refresh();
-    }
+      if (dirty) this.scroll.refresh();
+    } else if (dirty) this.scroll.refresh();
   }
 
   render() {
     const { className = '' } = this.props;
     return (
-      <div className={`scroll-wrapper ${className}`} ref="scrollWrapper">
+      <div className={`${styles['scroll-wrapper']} ${className}`} ref="scrollWrapper">
         {/* 获取子组件 */}
         <div>{this.props.children}</div>
       </div>
