@@ -82,6 +82,11 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/mock-api': '' },
     },
+    '/upload/': {
+      target: 'http://39.106.231.234',
+      changeOrigin: true,
+      pathRewrite: { '^/upload': '/upload' },
+    },
   },
   ignoreMomentLocale: true,
   lessLoaderOptions: {
