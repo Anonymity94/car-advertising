@@ -22,18 +22,20 @@ const plugins = [
       // @see: https://github.com/umijs/umi/issues/1086
       // PUBLIC_PATH 对应 publicPath
       headScripts: [
-        { src: '<%= PUBLIC_PATH %>libs/react.production-16.6.3.min.js' },
-        { src: '<%= PUBLIC_PATH %>libs/react-dom.production-16.6.3.min.js' },
-        { src: '<%= PUBLIC_PATH %>libs/react-router-dom-4.3.1.min.js' },
-        { src: '<%= PUBLIC_PATH %>libs/data-set-0.96.min.js' },
-        { src: '<%= PUBLIC_PATH %>libs/bizCharts-3.4.0.min.js' },
-        { src: '<%= PUBLIC_PATH %>libs/moment-2.22.1.min.js' },
+        { src: 'https://lib.baomitu.com/react/16.6.3/umd/react.production.min.js' },
+        { src: 'https://lib.baomitu.com/react-dom/16.6.3/umd/react-dom.production.min.js' },
+        { src: 'https://lib.baomitu.com/react-router-dom/4.3.1/react-router-dom.min.js' },
+        { src: '//gw.alipayobjects.com/os/lib/antv/data-set/0.10.1/dist/data-set.min.js' },
+        { src: '//gw.alipayobjects.com/os/lib/bizcharts/3.4.3/umd/BizCharts.min.js' },
+        { src: 'https://lib.baomitu.com/moment.js/2.22.1/moment.min.js' },
       ],
       title: '乐蚁车酷',
+      fastClick: true,
       metas: [{ charset: 'utf-8' }, { 'build-time': moment().format() }],
       dynamicImport: {
         loadingComponent: './components/PageLoading/index',
         // webpackChunkName: true,
+        level: 3,
       },
       ...(!process.env.TEST && os.platform() === 'darwin'
         ? {
