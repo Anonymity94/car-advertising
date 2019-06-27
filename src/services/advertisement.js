@@ -89,21 +89,21 @@ export async function deleteAd({ id }) {
  * 查询广告签约详情
  */
 export async function queryAdSigningDetail({ id }) {
-  return request(`/api/advertisement-signings/detail?id=${id}`);
+  return request(`/api/ads/signings/detail?id=${id}`);
 }
 
 /**
  * 查询广告粘贴列表
  */
 export async function queryAdPastes() {
-  return request('/api/advertisement-signings/pastes');
+  return request('/api/ads/signings/pastes');
 }
 
 /**
  * 允许粘贴
  */
 export async function accessAdPaste({ id, ...rest }) {
-  return request(`/api/advertisement-signings/access-paste?id=${id}`, {
+  return request(`/api/ads/signings/access-paste?id=${id}`, {
     method: 'POST',
     body: { ...rest },
   });
@@ -113,7 +113,7 @@ export async function accessAdPaste({ id, ...rest }) {
  * 拒绝粘贴
  */
 export async function rejectAdPaste({ id, ...rest }) {
-  return request(`/api/advertisement-signings/reject-paste?id=${id}`, {
+  return request(`/api/ads/signings/reject-paste?id=${id}`, {
     method: 'POST',
     body: { ...rest },
   });
@@ -123,14 +123,14 @@ export async function rejectAdPaste({ id, ...rest }) {
  * 查询广告结算列表
  */
 export async function queryAdSettlements() {
-  return request('/api/advertisement-signings/settlements');
+  return request('/api/ads/signings/settlements');
 }
 
 /**
  * 广告结算
  */
 export async function doSigningSettlement({ id, ...rest }) {
-  return request(`/api/advertisement-signings/settlements?id=${id}`, {
+  return request(`/api/ads/signings/settlements?id=${id}`, {
     method: 'POST',
     body: { ...rest },
   });
