@@ -1,6 +1,29 @@
 /**
  * 广告粘贴管理
  */
+const sql = {
+  id: Math.random(), // 签约记录 id
+  userId: '232323', // 用户 id
+  adId: 23223, // 广告 id
+
+  // 0- 未审核。前端用户签约成功后，生成二维码,后台没有扫码之前，一直是未审核状态
+  // 1- 待粘贴。后台扫码后，变成未粘贴状态
+  // 2- 已粘贴。后台扫码后，点击粘贴按钮，上传图片和备注，变成已粘贴状态
+  // 3- 拒绝。后台扫码后，点击拒绝按钮，上传图片和原因，变成拒绝状态
+  pasteState: '0', // 粘贴情况
+  pasteTime: '2019-06-19', // 粘贴日期
+  pasteImages: [], // 操作人上传的照片,这里应该是有多张照片,也可以用字符串逗号分隔方式给出来
+  pasteRemark: '', // 操作人填写的备注信息和拒绝原因
+  pastePerson: '测试', // 粘贴审核人
+
+  // 0- 未结算
+  // 1- 已结算
+  settlementState: '0', // 结算状态
+  settlementTime: '2019-06-19', // 结算日期
+  settlementImages: [], // 结算时上传的图片
+  settlementRemark: '', // 结算备注
+  settlementPerson: '', // 结算审核人
+};
 
 const content = {
   id: Math.random(),
