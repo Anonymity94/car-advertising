@@ -1,13 +1,19 @@
 /**
- * 积分提现管理
+ * 积分兑换管理
  */
 
 const content = {
-  id: Math.random(),
-  username: '张三',
+  id: Math.random(), // 参与
+  fullname: '张三', //
+  telephone: '18366133937',
+
   integral: 20, // 积分数
   money: 2323, // 金额
-  telephone: '18366133937',
+
+  goodsName: '', // 商品名称
+  content: '', // 商品详情
+  businessName: '', // 所属商户
+
   settlementTime: '2019-06-22', // 结算日期
   state: 0, // 结算状态
   operator: '测试', // 操作人

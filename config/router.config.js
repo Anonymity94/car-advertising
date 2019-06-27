@@ -77,6 +77,44 @@ export default [
           },
         ],
       },
+      // 广告
+      {
+        path: '/h5/ads',
+        name: 'ads',
+        routes: [
+          // 广告列表
+          {
+            path: '/h5/ads',
+            name: 'ad',
+            component: './Wechat/AD/List',
+          },
+          // 广告详情
+          {
+            path: '/h5/ads/:id',
+            name: 'ad-detail',
+            component: './Wechat/AD/Detail',
+          },
+        ]
+      },
+      // 活动
+      {
+        path: '/h5/activities',
+        name: 'ads',
+        routes: [
+          // 活动列表
+          {
+            path: '/h5/activities',
+            name: 'ad',
+            component: './Wechat/Activity/List',
+          },
+          // 活动详情
+          {
+            path: '/h5/activities/:id',
+            name: 'ad-detail',
+            component: './Wechat/Activity/Detail',
+          },
+        ]
+      },
       {
         path: '/h5/home',
         name: 'home',

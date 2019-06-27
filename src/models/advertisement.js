@@ -10,6 +10,7 @@ import {
   deleteAd,
   queryAdContent,
 } from '@/services/advertisement';
+import { TOP_STATE_YES } from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'adModel',
@@ -27,8 +28,11 @@ export default modelExtend(model, {
   },
 
   state: {
-    list: [],
+    list: [], // 所有的
     detail: {},
+
+    topList: [], // 置顶的
+    waterfallList: [], // 非置顶的，用于微信端做瀑布流展示
   },
 
   effects: {
@@ -37,10 +41,25 @@ export default modelExtend(model, {
      */
     *queryAds({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryAds, payload);
+
+      const topList = [];
+      const waterfallList = [];
+      if (success) {
+        result.forEach(item => {
+          if (item.isTop === TOP_STATE_YES) {
+            topList.push(item);
+          } else {
+            waterfallList.push(item);
+          }
+        });
+      }
+
       yield put({
         type: 'updateState',
         payload: {
           list: success ? result : [],
+          topList,
+          waterfallList,
         },
       });
     },

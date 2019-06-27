@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { TextareaItem, InputItem, Button, Modal, Flex } from 'antd-mobile';
 import { connect } from 'dva';
 import router from 'umi/router';
