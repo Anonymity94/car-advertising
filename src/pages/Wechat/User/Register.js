@@ -2,7 +2,7 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { PureComponent, Fragment } from 'react';
 import { InputItem, Button, List, Steps, WhiteSpace, DatePicker, Toast, Modal } from 'antd-mobile';
-import { Upload, Spin } from 'antd';
+import { Upload } from 'antd';
 import router from 'umi/router';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
@@ -20,18 +20,18 @@ import phoneIcon from './icons/icon_phone@2x.png';
 // 边框背景图
 import uploadBgImage from './icons/upload_bg@2x.png';
 // 身份证示例
-import idcardDemo1Image from './icons/idcard_demo_1@2x.png';
-import idcardDemo2Image from './icons/idcard_demo_2@2x.png';
+import idardBackDemo from './icons/idcard_back_demo@2x.png';
+import idardFrontDemo from './icons/idcard_front_demo@2x.png';
 
 // 行驶证
-import carLicenseDemoImage from './icons/car_license_demo@2x.png';
+import carCodeDemo from './icons/car_license_demo@2x.png';
 // 驾驶证
-import driverLicenseDemoImage from './icons/driver_license_demo@2x.png';
+import driverLicenseDemo from './icons/driver_license_demo@2x.png';
 // 车辆照片示例
-import carDemoImage from './icons/car_demo@2x.png';
+import carDemo from './icons/car_demo@2x.png';
 
 // 上传按钮
-import uploadImage from './icons/icon_upload@2x.png';
+import uploadIcon from './icons/icon_upload@2x.png';
 
 /**
  * 上传图片是校验大小
@@ -43,6 +43,79 @@ export function beforeUpload(file) {
     Modal.alert('上传的图片不能超过5M', '', [{ text: '好的', onPress: () => {} }]);
   }
   return isLt5M;
+}
+
+/**
+ * 上传图片
+ * @param {*} info 图片对象
+ * @param {*} state 对应的 state 值
+ * @param {*} loading loading
+ */
+export function handleUpload(info, state, loading) {
+  if (info.file.status === 'uploading') {
+    this.setState({ [loading]: true });
+    return;
+  }
+
+  if (info.file.status === 'done') {
+    const result = info.fileList.map(file => ({
+      uid: file.uid,
+      url: file.response ? file.response.url : file.url,
+    }));
+
+    this.setState({
+      // 只取最后 一个
+      [state]: [result.pop()],
+      [loading]: false,
+    });
+  }
+}
+
+export function renderUploadHtml(item) {
+  // value
+  const value = this.state[item.field];
+  // loading
+  const loading = this.state[item.loading];
+
+  const {
+    form: { getFieldDecorator },
+    // eslint-disable-next-line react/no-this-in-sfc
+  } = this.props;
+  return (
+    <section className={styles.field}>
+      <p className={styles.uploadText}>{item.placeholder}</p>
+      {getFieldDecorator(item.field, {
+        initialValue: value,
+        rules: [
+          {
+            required: true,
+            message: item.placeholder,
+          },
+        ],
+      })(
+        <Upload
+          className={styles.uploadRc}
+          showUploadList={false}
+          withCredentials
+          action={`${IS_DEV ? MOCK_API_PREFIX : ''}/api/upload`}
+          // eslint-disable-next-line react/no-this-in-sfc
+          onChange={info => this.handleUpload(info, item.field, item.loading)}
+          beforeUpload={beforeUpload}
+          name="file"
+        >
+          <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
+            <img
+              className={styles.demo}
+              src={value.length === 0 ? item.demoImage : value[0].url}
+              alt={item.placeholder}
+            />
+            <img className={styles.uploadIcon} src={uploadIcon} alt="上传" />
+            {loading && <UploadLoading />}
+          </div>
+        </Upload>
+      )}
+    </section>
+  );
 }
 
 /**
@@ -107,7 +180,7 @@ const UserInfoForm = createForm()(
       const { getFieldProps } = form;
       return (
         <div className={styles.formWrap}>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入您的姓名（不可修改）"
               className="required"
@@ -127,7 +200,7 @@ const UserInfoForm = createForm()(
               />
             </InputItem>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入手机号码"
               className="required"
@@ -150,7 +223,7 @@ const UserInfoForm = createForm()(
               />
             </InputItem>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入您的身份证号"
               className="required"
@@ -170,7 +243,7 @@ const UserInfoForm = createForm()(
               />
             </InputItem>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <Button className="button-ok" onClick={this.handleOk}>
               下一步
             </Button>
@@ -183,14 +256,21 @@ const UserInfoForm = createForm()(
 
 const IdcardForm = createForm()(
   class FormWrapper extends React.Component {
-    state = {
-      //
-      idardImage1Loading: true,
-      idardImage1: [],
+    constructor(props) {
+      super(props);
+      this.state = {
+        // 反面，人像面
+        idardBackImageLoading: false,
+        idardBackImage: [],
 
-      idardImage2Loading: false,
-      idardImage2: [],
-    };
+        // 正面，国徽面
+        idardFrontImageLoading: false,
+        idardFrontImage: [],
+      };
+
+      this.renderUploadHtml = renderUploadHtml.bind(this);
+      this.handleUpload = handleUpload.bind(this);
+    }
 
     handleOk = () => {
       const { form, onSubmit } = this.props;
@@ -202,131 +282,35 @@ const IdcardForm = createForm()(
           return;
         }
 
-        const { idardImage1, idardImage2 } = values;
+        const { idardBackImage, idardFrontImage } = values;
 
         onSubmit({
-          idardImage1: getUploadImageUrl(idardImage1),
-          idardImage2: getUploadImageUrl(idardImage2),
+          idardBackImage: getUploadImageUrl(idardBackImage),
+          idardFrontImage: getUploadImageUrl(idardFrontImage),
         });
       });
     };
 
-    uploadIdcardImage1 = info => {
-      if (info.file.status === 'uploading') {
-        this.setState({ idardImage1Loading: true });
-        return;
-      }
-
-      if (info.file.status === 'done') {
-        const result = info.fileList.map(file => ({
-          uid: file.uid,
-          url: file.response ? file.response.url : file.url,
-        }));
-
-        this.setState({
-          idardImage1: result,
-          idardImage1Loading: false,
-        });
-      }
-    };
-
-    uploadIdcardImage2 = info => {
-      if (info.file.status === 'uploading') {
-        this.setState({ idardImage2Loading: true });
-        return;
-      }
-
-      if (info.file.status === 'done') {
-        const result = info.fileList.map(file => ({
-          uid: file.uid,
-          url: file.response ? file.response.url : file.url,
-        }));
-
-        this.setState({
-          idardImage2: result,
-          idardImage2Loading: false,
-        });
-      }
-    };
-
     render() {
-      const { idardImage1, idardImage1Loading, idardImage2, idardImage2Loading } = this.state;
-      const {
-        form: { getFieldDecorator },
-      } = this.props;
+      const renderUpload = [
+        {
+          field: 'idardBackImage', // 表单的值
+          loading: 'idardBackImageLoading',
+          demoImage: idardBackDemo,
+          placeholder: '上传身份证人像面',
+        },
+        {
+          field: 'idardFrontImage',
+          loading: 'idardFrontImageLoading',
+          demoImage: idardFrontDemo,
+          placeholder: '上传身份证国徽面',
+        },
+      ].map(item => this.renderUploadHtml(item));
+
       return (
         <div className={styles.formWrap}>
-          <section className={styles.fileid}>
-            <p className={styles.uploadText}>上传身份证人像面</p>
-            {getFieldDecorator('idardImage1', {
-              initialValue: idardImage1,
-              rules: [
-                {
-                  required: true,
-                  message: '请上传身份证人像面',
-                },
-              ],
-            })(
-              <Upload
-                className={styles.uploadRc}
-                showUploadList={false}
-                action={`${IS_DEV ? MOCK_API_PREFIX : ''}/api/upload`}
-                onChange={this.uploadIdcardImage1}
-                beforeUpload={beforeUpload}
-                name="file"
-              >
-                <div
-                  className={styles.uploadWrap}
-                  style={{ backgroundImage: `url(${uploadBgImage})` }}
-                >
-                  <img
-                    className={styles.demo}
-                    src={idardImage1.length === 0 ? idcardDemo1Image : idardImage1[0].url}
-                    alt="身份证人像面"
-                  />
-                  <img className={styles.uploadIcon} src={uploadImage} alt="上传" />
-                  {idardImage1Loading && <UploadLoading />}
-                </div>
-              </Upload>
-            )}
-          </section>
-          <section className={styles.fileid}>
-            <p className={styles.uploadText}>上传身份证国徽面</p>
-            <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
-              {getFieldDecorator('idardImage2', {
-                initialValue: idardImage2,
-                rules: [
-                  {
-                    required: true,
-                    message: '请上传身份证国徽面',
-                  },
-                ],
-              })(
-                <Upload
-                  className={styles.uploadRc}
-                  showUploadList={false}
-                  action={`${IS_DEV ? MOCK_API_PREFIX : ''}/api/upload`}
-                  onChange={this.uploadIdcardImage2}
-                  beforeUpload={beforeUpload}
-                  name="file"
-                >
-                  <div
-                    className={styles.uploadWrap}
-                    style={{ backgroundImage: `url(${uploadBgImage})` }}
-                  >
-                    <img
-                      className={styles.demo}
-                      src={idardImage2.length === 0 ? idcardDemo2Image : idardImage2[0].url}
-                      alt="请上传身份证国徽面"
-                    />
-                    <img className={styles.uploadIcon} src={uploadImage} alt="上传" />
-                    {idardImage2Loading && <UploadLoading />}
-                  </div>
-                </Upload>
-              )}
-            </div>
-          </section>
-          <section className={styles.fileid}>
+          {renderUpload}
+          <section className={styles.field}>
             <Button className="button-ok" onClick={this.handleOk}>
               下一步
             </Button>
@@ -339,15 +323,55 @@ const IdcardForm = createForm()(
 
 const CarForm = createForm()(
   class FormWrapper extends React.Component {
-    state = {};
+    constructor(props) {
+      super(props);
+      this.state = {
+        // 行驶证照片
+        carCodeLoading: false,
+        carCodeImage: [],
+
+        // 驾驶证照片
+        driverLicenseLoading: false,
+        driverLicenseImage: [],
+
+        // 车辆照片
+        carImageLoading: false,
+        carImage: [],
+      };
+
+      this.renderUploadHtml = renderUploadHtml.bind(this);
+      this.handleUpload = handleUpload.bind(this);
+    }
 
     render() {
       const { form } = this.props;
       const { onOk } = this.props;
       const { getFieldProps } = form;
+
+      const renderUpload = [
+        {
+          field: 'carCodeImage',
+          loading: 'carCodeLoading',
+          demoImage: carCodeDemo,
+          placeholder: '上传行驶证照片',
+        },
+        {
+          field: 'driverLicenseImage',
+          loading: 'driverLicenseLoading',
+          demoImage: driverLicenseDemo,
+          placeholder: '上传驾驶证照片',
+        },
+        {
+          field: 'carImage',
+          loading: 'carImageLoading',
+          demoImage: carDemo,
+          placeholder: '上传车辆照片',
+        },
+      ].map(item => this.renderUploadHtml(item));
+
       return (
         <div className={styles.formWrap}>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入车辆类型"
               className="required"
@@ -357,17 +381,17 @@ const CarForm = createForm()(
               })}
             />
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入行驶证号"
-              className="carcode"
-              {...getFieldProps('phone', {
+              className="required"
+              {...getFieldProps('carCode', {
                 validateFirst: true,
                 rules: [{ required: true, whitespace: true, message: '请输入行驶证号' }],
               })}
             />
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <DatePicker
               className="required"
               mode="date"
@@ -380,28 +404,10 @@ const CarForm = createForm()(
               </List.Item>
             </DatePicker>
           </section>
-          <section className={styles.fileid}>
-            <p className={styles.uploadText}>上传行驶证照片</p>
-            <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
-              <img className={styles.demo} src={carLicenseDemoImage} alt="上传行驶证照片" />
-              <img className={styles.uploadIcon} src={uploadImage} alt="上传" />
-            </div>
-          </section>
-          <section className={styles.fileid}>
-            <p className={styles.uploadText}>上传驾驶证照片</p>
-            <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
-              <img className={styles.demo} src={driverLicenseDemoImage} alt="上传驾驶证照片" />
-              <img className={styles.uploadIcon} src={uploadImage} alt="上传" />
-            </div>
-          </section>
-          <section className={styles.fileid}>
-            <p className={styles.uploadText}>上传车辆照片</p>
-            <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
-              <img className={styles.demo} src={carDemoImage} alt="上传车辆照片" />
-              <img className={styles.uploadIcon} src={uploadImage} alt="上传" />
-            </div>
-          </section>
-          <section className={styles.fileid}>
+
+          {renderUpload}
+
+          <section className={styles.field}>
             <Button className="button-ok" onClick={onOk}>
               保存
             </Button>

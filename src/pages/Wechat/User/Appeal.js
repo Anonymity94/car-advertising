@@ -95,7 +95,7 @@ const FormWrapper = createForm()(
       const { getFieldProps } = form;
       return (
         <div className={styles.fromWrap}>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入旧手机号码"
               className="required"
@@ -118,7 +118,7 @@ const FormWrapper = createForm()(
               />
             </InputItem>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入新手机号码"
               className="required"
@@ -142,7 +142,7 @@ const FormWrapper = createForm()(
               />
             </InputItem>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <Flex style={{ justifyContent: 'space-between' }}>
               <InputItem
                 placeholder="请输入验证码"
@@ -173,7 +173,7 @@ const FormWrapper = createForm()(
               </Button>
             </Flex>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <p className={styles.title}>申诉理由：</p>
             <TextareaItem
               placeholder="填写申诉理由，不得少于8个字，最多200字（选填）"
@@ -187,7 +187,7 @@ const FormWrapper = createForm()(
               })}
             />
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <Flex style={{ justifyContent: 'space-between' }}>
               <Button
                 style={{ width: '45%' }}

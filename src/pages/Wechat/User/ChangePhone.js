@@ -98,7 +98,7 @@ const FormWrapper = createForm()(
       const { getFieldProps } = form;
       return (
         <div className={styles.formWrap}>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入旧手机号码"
               className="required"
@@ -121,7 +121,7 @@ const FormWrapper = createForm()(
               />
             </InputItem>
           </section>
-          <section className={styles.fileid} style={{ marginBottom: 10 }}>
+          <section className={styles.field} style={{ marginBottom: 10 }}>
             <Flex style={{ justifyContent: 'space-between' }}>
               <InputItem
                 placeholder="请输入验证码"
@@ -152,12 +152,12 @@ const FormWrapper = createForm()(
               </Button>
             </Flex>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <Link to="/h5/user/appeal">
               <p>若旧手机无法收到验证码，可点击此处提起申诉流程！</p>
             </Link>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入新的手机号码"
               className="required"
@@ -181,7 +181,7 @@ const FormWrapper = createForm()(
               />
             </InputItem>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <Flex style={{ justifyContent: 'space-between' }}>
               <InputItem
                 placeholder="请输入验证码"
@@ -212,7 +212,7 @@ const FormWrapper = createForm()(
               </Button>
             </Flex>
           </section>
-          <section className={styles.fileid}>
+          <section className={styles.field}>
             <Flex style={{ justifyContent: 'space-between' }}>
               <Button
                 style={{ width: '45%' }}
