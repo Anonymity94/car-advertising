@@ -38,16 +38,17 @@ export default modelExtend(model, {
     *queryAds({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryAds, payload);
 
+      const list = success ? result : [];
+
       yield put({
         type: 'updateState',
         payload: {
-          list: success ? result : [],
+          list,
         },
       });
-
       return {
         success,
-        list: result,
+        list,
       };
     },
 
@@ -55,6 +56,14 @@ export default modelExtend(model, {
      * 广告详情
      */
     *queryAdContent({ payload }, { call, put }) {
+      // 先清空
+      yield put({
+        type: 'updateState',
+        payload: {
+          detail: {},
+        },
+      });
+
       const { success, result } = yield call(queryAdContent, payload);
       yield put({
         type: 'updateState',

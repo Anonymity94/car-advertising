@@ -1,8 +1,8 @@
 @import '~@/wechat.less';
+@import '~@/utils/utils.less';
 
 .wrap {
-
-  &.detail{
+  &.detail {
     padding-bottom: 60px;
   }
 
@@ -71,11 +71,7 @@
       .title {
         font-size: 14px;
         color: @color-base;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        .line-clamp(1);
       }
 
       .money {

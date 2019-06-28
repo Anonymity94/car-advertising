@@ -1,0 +1,147 @@
+@import '~@/wechat.less';
+@import '~@/utils/utils.less';
+
+.wrap {
+  &.detail {
+    padding-bottom: 60px;
+  }
+
+  .carousel {
+    margin-bottom: 10px;
+    .item {
+      height: 150px;
+      display: inline-block;
+      width: 100%;
+      border-radius: 4px;
+
+      img {
+        width: 100%;
+        vertical-align: top;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .content {
+    .item {
+      width: 100%;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      padding: 20px;
+      display: flex;
+      background: #fff;
+
+      .left {
+        flex: 1 1;
+      }
+
+      .right {
+        margin-left: 20px;
+        width: 107px;
+        height: 70px;
+        overflow: hidden;
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 6px;
+        }
+      }
+
+      .title {
+        font-size: 14px;
+        color: @color-base;
+        font-weight: bold;
+        .line-clamp(2);
+        line-height: 24px;
+        height: 48px;
+        margin-bottom: 4px;
+      }
+
+      .extra {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: @color-caption; // 辅助色
+
+        p:first-child {
+          width: 60%;
+          .line-clamp(1);
+        }
+      }
+    }
+  }
+}
+
+.article {
+  .header {
+    margin-bottom: 22px;
+
+    .title {
+      font-size: 15px;
+      color: @color-base;
+      margin-bottom: 22px;
+    }
+    .caption {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: @color-caption;
+    }
+  }
+  .content {
+    .divider {
+      position: relative;
+      padding-left: 10px;
+      color: @color-base;
+      margin: 20px 0 10px !important;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 5%;
+        height: 90%;
+        width: 4px;
+        background: #198ce1;
+      }
+    }
+
+    img {
+      display: block;
+      max-height: 200px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+  // 页面底部的参与按钮
+  .operate {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    line-height: 50px;
+
+    .operateItem {
+      width: 90%;
+      text-align: center;
+      font-size: 15px;
+      margin: 0 auto;
+      & > span {
+        border-radius: 4px;
+        display: block;
+      }
+
+      .btnCancel {
+        background: rgb(231, 223, 222);
+      }
+
+      .btnOk {
+        background: rgb(255, 52, 52);
+        color: #fff;
+      }
+    }
+  }
+}

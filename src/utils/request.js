@@ -114,5 +114,9 @@ export default function request(url, option) {
       } else if ((status <= 504 && status >= 500) || (status >= 404 && status < 422)) {
         console.log('err');
       }
+
+      return {
+        success: false
+      }
     });
 }

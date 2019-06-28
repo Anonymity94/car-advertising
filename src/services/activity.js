@@ -80,7 +80,26 @@ export async function topActivity({ id, isTop }) {
 export async function deleteActivity({ id }) {
   return request(`/api/activities/${id}`, {
     method: 'DELETE',
-    body: {
-    },
+    body: {},
+  });
+}
+
+/**
+ * 检查某个人是否已经参与过某个活动
+ * @param {String} id 活动id
+ */
+export async function checkUserJoinState({ id }) {
+  return request(`/api/activities/${id}/check-join`, {
+    method: 'GET',
+  });
+}
+
+/**
+ * 参加活动
+ * @param {String} id
+ */
+export async function joinActivity({ id }) {
+  return request(`/api/activities/${id}`, {
+    method: 'POST',
   });
 }

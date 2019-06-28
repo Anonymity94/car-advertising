@@ -9,6 +9,8 @@ import {
   topActivity,
   deleteActivity,
   queryActivityContent,
+  checkUserJoinState,
+  joinActivity,
 } from '@/services/activity';
 
 export default modelExtend(model, {
@@ -37,18 +39,33 @@ export default modelExtend(model, {
      */
     *queryActivities({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryActivities, payload);
+
+      const list = success ? result : [];
+
       yield put({
         type: 'updateState',
         payload: {
-          list: success ? result : [],
+          list,
         },
       });
+      return {
+        success,
+        list,
+      };
     },
 
     /**
      * 活动详情
      */
     *queryActivityContent({ payload }, { call, put }) {
+      // 先清空
+      yield put({
+        type: 'updateState',
+        payload: {
+          detail: {},
+        },
+      });
+
       const { success, result } = yield call(queryActivityContent, payload);
       yield put({
         type: 'updateState',
@@ -128,6 +145,26 @@ export default modelExtend(model, {
         });
       } else {
         message.error('删除失败');
+      }
+      return success;
+    },
+
+    /**
+     * 检查某个人是否已经参与过某个活动
+     */
+    *checkUserJoinState({ payload }, { call }) {
+      return yield call(checkUserJoinState, payload);
+    },
+
+    /**
+     * 参加活动
+     */
+    *joinActivity({ payload }, { call }) {
+      const { success } = yield call(joinActivity, payload);
+      if (success) {
+        message.success('参与成功');
+      } else {
+        message.error('参与失败');
       }
       return success;
     },

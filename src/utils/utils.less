@@ -32,8 +32,18 @@
   }
 }
 
+.line-clamp(@line: 1) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: @line;
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
+}
+
 .border-1px() {
-  position:relative;
+  position: relative;
   &:after {
     display: block;
     position: absolute;

@@ -103,10 +103,10 @@ class List extends PureComponent {
             <div className={styles.article}>
               {/* 标题 */}
               <div className={styles.header}>
-                <h2>{detail.title}</h2>
+                <h2 className={styles.title}>{detail.title}</h2>
                 <div className={styles.caption}>
                   <p className={styles.author}>
-                    {detail.operator}/{moment(detail.createTime).fromNow()}
+                    {detail.operator}/{moment(detail.createTime).format('YYYY-MM-DD')}
                   </p>
                   <p className={styles.visit}>阅读{detail.visitCount}</p>
                 </div>
