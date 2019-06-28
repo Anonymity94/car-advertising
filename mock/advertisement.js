@@ -1,9 +1,9 @@
 const adContent = {
   id: Math.random(),
-  title: '广告名称',
+  title: '广告名称广告名称广告名称广',
   company: '所属公司机构',
-  banner: 'https://pic4.zhimg.com/v2-4e1c5559fff9909b56c2573a79570e3a_1200x500.jpg', // banner 图片
-  cover: ['https://pic1.zhimg.com/80/v2-bd8e262756b87e56613d532076b18260_hd.jpg'], // 列表图片
+  banner: 'https://img.zcool.cn/community/01c22b5b596b74a801206a35e43a5e.png@1280w_1l_2o_100sh.png', // banner 图片
+  cover: ['https://pic4.zhimg.com/v2-4e1c5559fff9909b56c2573a79570e3a_1200x500.jpg'], // 列表图片
   clause: '/12/234/2323.pdf', // 签约条款的 pdf 文件路径
   bonus: 1000, // 签约金, xxx/月
   integral: 20, // 积分
@@ -43,6 +43,10 @@ function mockAdsList(req, res) {
   }
 
   list[3].isTop = 1;
+  list[3].title = '广告名称广告名称广告名称广告名称广告名称广告名称广告名称';
+
+  list[1].title = '广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称';
+  
   list[13].isTop = 1;
   list[23].isTop = 1;
 
@@ -52,17 +56,17 @@ function mockAdsList(req, res) {
 export default {
   'GET /api/ads': mockAdsList,
 
-  'GET /api/advertisements/:id': adContent,
+  'GET /api/ads/:id': adContent,
 
   // 发布广告
-  'POST /api/advertisements/:id': {},
+  'POST /api/ads/:id': {},
 
   // 发布广告
-  'POST /api/advertisements/:id/publish': {},
+  'POST /api/ads/:id/publish': {},
 
   // 置顶广告
-  'POST /api/advertisements/:id/top': {},
+  'POST /api/ads/:id/top': {},
 
   // 广告粘贴列表
-  'GET /api/advertisements/pastes': mockAdsList,
+  'GET /api/ads/pastes': mockAdsList,
 };

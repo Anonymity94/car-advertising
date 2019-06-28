@@ -273,3 +273,11 @@ export function showError(msg) {
     2
   );
 }
+
+export const refreshScroll = (scroll, data, prevData) => {
+  if (data === prevData) {
+    return;
+  }
+
+  if (scroll) scroll.refresh();
+};

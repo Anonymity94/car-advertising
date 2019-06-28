@@ -94,7 +94,13 @@ export default [
             name: 'ad-detail',
             component: './Wechat/AD/Detail',
           },
-        ]
+          // 广告签约
+          {
+            path: '/h5/ads/:id/signing',
+            name: 'ad-signing',
+            component: './Wechat/AD/Signing',
+          },
+        ],
       },
       // 活动
       {
@@ -113,7 +119,7 @@ export default [
             name: 'ad-detail',
             component: './Wechat/Activity/Detail',
           },
-        ]
+        ],
       },
       {
         path: '/h5/home',

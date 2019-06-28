@@ -13,7 +13,8 @@ const DEFAULT_OPTIONS = {
   scrollbar: false,
   pullDownRefresh: false,
   pullUpLoad: false,
-  mouseWheel: true
+  mouseWheel: true,
+  scrollY: true,
 };
 
 class Scroll extends Component {
@@ -41,21 +42,21 @@ class Scroll extends Component {
     this.initScroll();
   }
 
-  shouldComponentUpdate(newProps) {
-    // console.log("newProps", newProps.children && newProps.children[0].props.list.length);
-    // console.log("this", this.props.children && this.props.children[0].props.list.length);
-    if (this.scroll.options.pullDownRefresh || this.scroll.options.pullUpLoad) {
-      const { children } = this.props;
-      if (newProps.children[0].props.list.length > 0) {
-        const newList = newProps.children[0].props.list;
-        const List = children[0].props.list;
-        if (newList.length !== List.length) {
-          this.refresh();
-        }
-      }
-    }
-    return true;
-  }
+  // shouldComponentUpdate(newProps) {
+  //   // console.log("newProps", newProps.children && newProps.children[0].props.list.length);
+  //   // console.log("this", this.props.children && this.props.children[0].props.list.length);
+  //   if (this.scroll.options.pullDownRefresh || this.scroll.options.pullUpLoad) {
+  //     const { children } = this.props;
+  //     if (newProps.children[0].props.list.length > 0) {
+  //       const newList = newProps.children[0].props.list;
+  //       const List = children[0].props.list;
+  //       if (newList.length !== List.length) {
+  //         this.refresh();
+  //       }
+  //     }
+  //   }
+  //   return true;
+  // }
 
   componentWillUnmount() {
     this.scroll.destroy();
@@ -88,9 +89,9 @@ class Scroll extends Component {
 
   // 初始化
   initScroll() {
-    this.scrollWrapper = ReactDOM.findDOMNode(this.refs.scrollWrapper);
     if (!this.scroll) {
       const options = Object.assign({}, DEFAULT_OPTIONS, this.props.options);
+      console.log(options)
       this.scroll = new BScroll(this.scrollWrapper, options);
     }
     if (this.props.options.pullDownRefresh) {
@@ -119,7 +120,10 @@ class Scroll extends Component {
   render() {
     const { className = '' } = this.props;
     return (
-      <div className={`${styles['scroll-wrapper']} ${className}`} ref="scrollWrapper">
+      <div
+        className={`${styles.scrollWrapper} ${className}`}
+        ref={ref => (this.scrollWrapper = ref)}
+      >
         {/* 获取子组件 */}
         <div>{this.props.children}</div>
       </div>

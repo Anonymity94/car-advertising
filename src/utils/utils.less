@@ -32,6 +32,19 @@
   }
 }
 
+.border-1px() {
+  position:relative;
+  &:after {
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    content: '';
+  }
+}
+
 // mixins for clearfix
 // ------------------------
 .clearfix() {

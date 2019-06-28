@@ -12,6 +12,7 @@ export default props => (
           <div {...props} />
         </LocaleProvider>
       </WingBlank>
+      <WhiteSpace size="lg" />
     </Fragment>
   </div>
 );
