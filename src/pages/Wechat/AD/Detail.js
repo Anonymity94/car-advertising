@@ -4,9 +4,9 @@ import { connect } from 'dva';
 import moment from 'moment';
 import { PullToRefresh, Card, Toast } from 'antd-mobile';
 
+import router from 'umi/router';
 import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
-import router from 'umi/router';
 
 @connect(({ adModel: { detail }, loading }) => ({
   detail,
@@ -65,7 +65,8 @@ class List extends PureComponent {
       clause: '/12/234/2323.pdf',
       bonus: 1000,
       integral: 20,
-      content: '<p style="color: red">广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容</p>',
+      content:
+        '<p style="color: red">广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容</p>',
       remark: '积分备注',
       address: [
         {
@@ -98,7 +99,7 @@ class List extends PureComponent {
     return (
       <DocumentTitle title={detail.title}>
         <Fragment>
-          <div className={styles.wrap}>
+          <div className={`${styles.wrap} ${styles.detail}`}>
             <div className={styles.article}>
               {/* 标题 */}
               <div className={styles.header}>
@@ -124,7 +125,12 @@ class List extends PureComponent {
                   签约可获<span className={styles.integral}>{detail.integral}</span>积分
                 </div>
                 <div className={styles.operateItem}>
-                  <span className={styles.btn} onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}>立即签约</span>
+                  <span
+                    className={styles.btn}
+                    onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}
+                  >
+                    立即签约
+                  </span>
                 </div>
               </div>
             </div>

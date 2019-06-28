@@ -1,25 +1,18 @@
+import 'weui';
+import 'react-weui/build/packages/react-weui.css';
+
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
 import isEqual from 'lodash/isEqual';
-import { Checkbox, Toast, ActionSheet, Modal } from 'antd-mobile';
+import { Checkbox, Toast, Modal, List } from 'antd-mobile';
+import { Popup, PopupHeader } from 'react-weui';
 
 import styles from './styles.less';
 
 const { AgreeItem } = Checkbox;
-
-// fix touch to scroll background page on iOS
-// https://github.com/ant-design/ant-design-mobile/issues/307
-// https://github.com/ant-design/ant-design-mobile/issues/163
-const isIPhone = new RegExp('\\biPhone\\b|\\biPod\\b', 'i').test(window.navigator.userAgent);
-let wrapProps;
-if (isIPhone) {
-  wrapProps = {
-    onTouchStart: e => e.preventDefault(),
-  };
-}
 
 const mockDetail = {
   id: 0.5673063366855791,
@@ -62,21 +55,26 @@ const mockDetail = {
   detail: mockDetail,
   queryLoading: loading.effects['adModel/queryAdContent'],
 }))
-class List extends PureComponent {
+class Signing extends PureComponent {
   state = {
     checked: false,
 
-    detail: [],
+    detail: {},
     currentAddress: {},
+
+    open: false,
   };
 
-  componentDidMount() {
-    this.getAdContent();
+  async componentDidMount() {
+    await this.getAdContent();
   }
 
   static getDerivedStateFromProps(nextProps, state) {
-    if (!isEqual(nextProps.detail, state.detail)) {
+    if ('detail' in nextProps && !isEqual(nextProps.detail, state.detail)) {
       const { address } = nextProps.detail;
+      if (!address) {
+        return null;
+      }
       return {
         detail: nextProps.detail,
         currentAddress: Array.isArray(address) && address.length > 0 ? address[0] : {},
@@ -105,7 +103,7 @@ class List extends PureComponent {
     }));
   };
 
-  showActionSheet = () => {
+  showDrawer = () => {
     const {
       detail: { address },
     } = this.props;
@@ -114,22 +112,7 @@ class List extends PureComponent {
       return;
     }
 
-    const BUTTONS = address.map(item => item.address);
-
-    ActionSheet.showActionSheetWithOptions(
-      {
-        options: BUTTONS,
-        message: '选择粘贴广告的地址',
-        maskClosable: true,
-        'data-seed': 'addressList',
-        wrapProps,
-      },
-      buttonIndex => {
-        if (buttonIndex !== -1) {
-          this.setState({ currentAddress: address[buttonIndex] });
-        }
-      }
-    );
+    this.setState(({ open }) => ({ open: !open }));
   };
 
   doSigning = () => {
@@ -168,7 +151,7 @@ class List extends PureComponent {
   };
 
   render() {
-    const { currentAddress, checked } = this.state;
+    const { currentAddress, checked, open } = this.state;
     const { detail, queryLoading } = this.props;
 
     if (queryLoading) {
@@ -178,13 +161,13 @@ class List extends PureComponent {
     }
 
     return (
-      <DocumentTitle title={detail.title}>
+      <DocumentTitle title="签约详情">
         <Fragment>
           <div className={styles.signingWrap}>
             <div className={styles.signing}>
               <div className={styles.title}>
                 <p>贴广告地址</p>
-                <span onClick={() => this.showActionSheet()}>修改</span>
+                <span onClick={() => this.showDrawer()}>修改</span>
               </div>
               <div className={styles.address}>{currentAddress.address}</div>
 
@@ -219,10 +202,36 @@ class List extends PureComponent {
               </div>
             </div>
           </div>
+
+          <Popup
+            className={styles.popupWrap}
+            show={open}
+            onRequestClose={() => this.setState({ open: false })}
+          >
+            <PopupHeader
+              left="修改地址"
+              right={<span className={styles.popOk}>确认</span>}
+              leftOnClick={() => {}}
+              rightOnClick={() => this.setState({ open: false })}
+            />
+            <List>
+              {detail.address &&
+                Array.isArray(detail.address) &&
+                detail.address.map(i => (
+                  <Checkbox.CheckboxItem
+                    checked={currentAddress.address === i.address}
+                    key={i.address}
+                    onChange={() => this.setState({ currentAddress: i })}
+                  >
+                    {i.address}
+                  </Checkbox.CheckboxItem>
+                ))}
+            </List>
+          </Popup>
         </Fragment>
       </DocumentTitle>
     );
   }
 }
 
-export default List;
+export default Signing;
