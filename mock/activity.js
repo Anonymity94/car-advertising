@@ -2,7 +2,7 @@ const content = {
   id: Math.random(),
   title: '活动标题',
   company: '活动主办方',
-  banner: 'https://pic4.zhimg.com/v2-4e1c5559fff9909b56c2573a79570e3a_1200x500.jpg', // banner 图片
+  banner: 'http://img1.imgtn.bdimg.com/it/u=3654433097,3499970316&fm=16&gp=0.jpg', // banner 图片
   activityTime: '2019-06-20', // 活动时间
   content: '活动内容', // 富文本
   participation: '参与方式', // 富文本
