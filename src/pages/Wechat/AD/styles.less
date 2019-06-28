@@ -148,11 +148,68 @@
 }
 
 .signingWrap {
+  .signing {
+    background: #fff;
+    padding: 20px;
+
+    .title {
+      font-size: 14px;
+      color: @color-caption;
+      display: flex;
+      justify-content: space-between;
+
+      & > span {
+        width: 68px;
+        height: 25px;
+        border-radius: 25px / 2;
+        border: 1px solid @color-primary;
+        color: @color-primary;
+        text-align: center;
+        line-height: 25px;
+      }
+    }
+
+    .address {
+      padding: 20px 0;
+      color: @color-base;
+    }
+
+    .time {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-top: 1px solid @color-border;
+
+      .label {
+        color: @color-caption;
+      }
+
+      .value {
+        color: @color-base;
+      }
+    }
+
+    .clause {
+      padding: 14px 0 0;
+      border-top: 1px solid @color-border;
+      :global {
+        .am-checkbox-agree {
+          font-size: 14px !important;
+          margin-left: 0;
+        }
+        .am-checkbox-agree-label {
+          color: @color-caption;
+        }
+      }
+    }
+  }
+
   .operate {
     position: fixed;
-    bottom: 10px;
-    left: 0;
-    width: 100%;
+    left: 5%;
+    justify-content: space-around;
+    bottom: 30px;
+    width: 90%;
     display: flex;
 
     .operateItem {
@@ -162,9 +219,16 @@
       height: 44px;
       line-height: 44px;
 
-      .btn {
+      & > span {
         border-radius: 4px;
         display: block;
+      }
+
+      .btnCancel {
+        background: rgb(231, 223, 222);
+      }
+
+      .btnOk {
         background: rgb(255, 52, 52);
         color: #fff;
       }

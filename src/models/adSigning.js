@@ -11,6 +11,7 @@ import {
   queryAdSigningDetail,
   accessAdPaste,
   rejectAdPaste,
+  doSigning,
   doSigningSettlement,
 } from '@/services/advertisement';
 
@@ -23,6 +24,19 @@ export default modelExtend(model, {
   },
 
   effects: {
+    /**
+     * 广告签约
+     */
+    *doSigning({ payload = {} }, { call }) {
+      const { success } = yield call(doSigning, payload);
+      if (success) {
+        message.success('签约完成');
+      } else {
+        message.error('签约失败');
+      }
+      return success;
+    },
+
     /**
      * 获取广告粘贴列表【未结算】
      */

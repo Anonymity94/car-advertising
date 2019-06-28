@@ -6,6 +6,7 @@ import { PullToRefresh, Card, Toast } from 'antd-mobile';
 
 import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
+import router from 'umi/router';
 
 @connect(({ adModel: { detail }, loading }) => ({
   detail,
@@ -123,7 +124,7 @@ class List extends PureComponent {
                   签约可获<span className={styles.integral}>{detail.integral}</span>积分
                 </div>
                 <div className={styles.operateItem}>
-                  <span className={styles.btn}>立即签约</span>
+                  <span className={styles.btn} onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}>立即签约</span>
                 </div>
               </div>
             </div>
