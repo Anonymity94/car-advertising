@@ -83,3 +83,23 @@ export async function deleteGoods({ id }) {
     body: {},
   });
 }
+
+/**
+ * 检查商品的兑换情况
+ * @param {String} id
+ */
+export async function checkUserExchangeState({ id }) {
+  return request(`/api/goods/${id}/check-exchange`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * 兑换商品
+ * @param {String} id
+ */
+export async function exchangeGood({ id }) {
+  return request(`/api/goods/${id}/exchange`, {
+    method: 'POST',
+  });
+}

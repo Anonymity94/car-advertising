@@ -161,11 +161,6 @@ export default modelExtend(model, {
      */
     *joinActivity({ payload }, { call }) {
       const { success } = yield call(joinActivity, payload);
-      if (success) {
-        message.success('参与成功');
-      } else {
-        message.error('参与失败');
-      }
       return success;
     },
   },

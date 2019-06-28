@@ -8,6 +8,7 @@ import Link from 'umi/link';
 import router from 'umi/router';
 import isEqual from 'lodash/isEqual';
 import { Checkbox, Toast, Modal, List } from 'antd-mobile';
+import Loading from '@/components/Loading';
 import { Popup, PopupHeader } from 'react-weui';
 
 import styles from './styles.less';
@@ -142,7 +143,16 @@ class Signing extends PureComponent {
             },
           }).then(success => {
             if (success) {
-              router.go(-2);
+              Modal.alert('签约成功', '', [
+                {
+                  text: '好的',
+                  onPress: () => {
+                    router.go(-2);
+                  },
+                },
+              ]);
+            } else {
+              Modal.alert('签约失败', '', [{ text: '好的', onPress: () => {} }]);
             }
           });
         },
@@ -156,9 +166,10 @@ class Signing extends PureComponent {
 
     if (queryLoading) {
       Toast.loading('加载中....', 0);
-    } else {
-      Toast.hide();
+      return <Loading />;
     }
+      Toast.hide();
+
 
     return (
       <DocumentTitle title="签约详情">

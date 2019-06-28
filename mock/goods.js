@@ -3,13 +3,13 @@
  */
 const content = {
   id: Math.random(),
-  name: '商品名称',
-  businessName: '所属商户名称',
+  name: '北京小米有限公司-米其林轮胎',
+  businessName: '北京小米有限公司',
   endTime: '2019-06-04', // 到期时间
   integral: 20, // 商品积分
 
-  image: '223/3434/4545.jpg', // 商品头图，小图
-  shopImage: '', // 商城页片，大图
+  image: 'http://img.mp.itc.cn/upload/20161107/82077bfd896841208e16fde7e582e6f9_th.jpg', // 商品头图，小图
+  shopImage: 'http://hbimg.b0.upaiyun.com/5e392b9aa383c741197126190171b891f1227fc894a7-EkQZtG_fw658', // 商城页片，大图
 
   address: '地址',
 

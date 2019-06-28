@@ -1,0 +1,171 @@
+@import '~@/wechat.less';
+@import '~@/utils/utils.less';
+
+.wrap {
+  .content {
+    .item {
+      margin-bottom: 10px;
+      border-radius: 6px;
+
+      :global {
+        .am-card {
+          padding-bottom: 0 !important;
+        }
+      }
+
+      .title {
+        font-size: 14px;
+        color: @color-base;
+        .line-clamp(1);
+      }
+
+      &.big {
+        width: 100%;
+
+        .header {
+          position: relative;
+          height: 150px;
+
+          img {
+            border-radius: 6px;
+            height: 100%;
+            width: 100%;
+            display: block;
+          }
+        }
+
+        .footer {
+          position: absolute;
+          left: 0;
+          bottom: 5px;
+          width: 100%;
+          padding: 0 10px;
+          height: 30px;
+          line-height: 30px;
+          color: #fff;
+          font-size: 14px;
+
+          display: flex;
+          justify-content: space-between;
+
+          & > span {
+            font-size: 12px;
+            display: inline-block;
+            text-align: right;
+            width: 40%;
+            .line-clamp(1);
+          }
+        }
+      }
+
+      &.small {
+        width: ~'calc(50% - 5px)';
+        display: inline-block;
+        &:nth-child(3n-1) {
+          margin-right: 10px;
+        }
+
+        :global {
+          .am-card-body {
+            padding: 12px !important;
+          }
+        }
+
+        .header {
+          img {
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            height: 95px;
+            width: 100%;
+            display: block;
+          }
+        }
+
+        .title {
+          font-size: 14px;
+          color: @color-base;
+          line-height: 24px;
+        }
+        .businessName {
+          color: @color-caption;
+          font-size: 12px;
+          line-height: 22px;
+        }
+        .integral {
+          color: rgb(255, 52, 52);
+          font-size: 12px;
+          line-height: 22px;
+        }
+      }
+    }
+  }
+}
+
+.article {
+  .header {
+    margin-bottom: 20px;
+    border-radius: 6px;
+    background: #fff;
+
+    & > img {
+      height: 150px;
+      width: 100%;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+
+    .info {
+      min-height: 90px;
+      padding: 20px;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+
+      .title {
+        font-size: 15px;
+        color: @color-base;
+
+        & > span {
+          color: rgb(255, 52, 52);
+          margin-left: 20px;
+        }
+      }
+      .businessName {
+        font-size: 14px;
+        color: @color-caption;
+      }
+
+      .right {
+        position: relative;
+        right: 0;
+        top: 10px;
+
+        .btn {
+          display: inline-block;
+          width: 68px;
+          height: 25px;
+          border-radius: 25px / 2;
+          border: 1px solid @color-primary;
+          color: @color-primary;
+          text-align: center;
+          line-height: 25px;
+        }
+      }
+    }
+  }
+
+  .content {
+    .divider {
+      color: @color-base;
+      margin: 20px 0 10px !important;
+      font-weight: bold;
+    }
+
+    img {
+      display: block;
+      max-height: 200px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+}

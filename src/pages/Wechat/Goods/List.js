@@ -3,15 +3,44 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
-import moment from 'moment';
 import { Carousel, Card, Toast } from 'antd-mobile';
 import { TOP_STATE_YES } from '@/common/constants';
 
-import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
 
+const BigItem = memo(({ data }) => (
+  <div className={`${styles.item} ${styles.big}`}>
+    <Card onClick={() => router.push(`/h5/goods/${data.id}`)}>
+      <div className={styles.header}>
+        <img src={data.shopImage} alt={data.name} />
+        <div className={styles.footer}>
+          <p>
+            {data.name}/{data.integral}积分
+          </p>
+          <span>{data.businessName}</span>
+        </div>
+      </div>
+    </Card>
+  </div>
+));
+
+const SmallItem = memo(({ data }) => (
+  <div className={`${styles.item} ${styles.small}`}>
+    <Card onClick={() => router.push(`/h5/goods/${data.id}`)}>
+      <div className={styles.header}>
+        <img src={data.image} alt={data.name} />
+      </div>
+      <Card.Body>
+        <div className={styles.title}>{data.name}</div>
+        <div className={styles.businessName}>{data.businessName}</div>
+        <div className={styles.integral}>{data.integral}积分</div>
+      </Card.Body>
+    </Card>
+  </div>
+));
+
 @connect(({ loading }) => ({
-  queryLoading: loading.effects['activityModel/queryActivities'],
+  queryLoading: loading.effects['goodsModel/queryGoods'],
 }))
 class List extends PureComponent {
   constructor(props) {
@@ -33,12 +62,19 @@ class List extends PureComponent {
     const { dispatch } = this.props;
 
     dispatch({
-      type: 'activityModel/queryActivities',
+      type: 'goodsModel/queryGoods',
     }).then(({ success, list }) => {
       if (success) {
         const topList = [];
         const waterfallList = [];
         list.forEach(item => {
+          // 处理商品名称，商户-商品名称，去掉商户名称
+          const nameArr = item.name ? item.name.split('-') : [];
+          if (nameArr.length === 2) {
+            // eslint-disable-next-line prefer-destructuring
+            item.name = nameArr[1];
+          }
+
           if (item.isTop === TOP_STATE_YES) {
             topList.push(item);
           } else {
@@ -71,13 +107,13 @@ class List extends PureComponent {
     }
 
     return (
-      <DocumentTitle title="活动中心">
+      <DocumentTitle title="积分商城">
         <Fragment>
           <div className={styles.wrap}>
             {topList.length > 0 && (
               <Carousel autoplay={false} infinite className={styles.carousel}>
                 {topList.map(item => (
-                  <Link className={styles.item} to={`/h5/activities/${item.id}`} key={item}>
+                  <Link className={styles.item} to={`/h5/goods/${item.id}`} key={item}>
                     <img src={item.banner} alt={item.title} />
                   </Link>
                 ))}
@@ -85,23 +121,9 @@ class List extends PureComponent {
             )}
 
             <section className={styles.content}>
-              {pageData.map(item => (
-                <div
-                  className={styles.item}
-                  onClick={() => router.push(`/h5/activities/${item.id}`)}
-                >
-                  <div className={styles.left}>
-                    <div className={styles.title}>{item.title}</div>
-                    <div className={styles.extra}>
-                      <p>{item.company}</p>
-                      <p>{moment(item.publishTime).format('YYYY-MM-DD')}</p>
-                    </div>
-                  </div>
-                  <div className={styles.right}>
-                    <img src={item.banner} className={styles.cover} alt={item.title} />
-                  </div>
-                </div>
-              ))}
+              {pageData.map((item, index) =>
+                index % 3 === 0 ? <BigItem data={item} /> : <SmallItem data={item} />
+              )}
             </section>
           </div>
         </Fragment>

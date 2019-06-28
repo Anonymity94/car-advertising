@@ -85,19 +85,19 @@ export default [
           // 广告列表
           {
             path: '/h5/ads',
-            name: 'ad',
+            name: 'list',
             component: './Wechat/AD/List',
           },
           // 广告详情
           {
             path: '/h5/ads/:id',
-            name: 'ad-detail',
+            name: 'detail',
             component: './Wechat/AD/Detail',
           },
           // 广告签约
           {
             path: '/h5/ads/:id/signing',
-            name: 'ad-signing',
+            name: 'signing',
             component: './Wechat/AD/Signing',
           },
         ],
@@ -110,14 +110,33 @@ export default [
           // 活动列表
           {
             path: '/h5/activities',
-            name: 'ad',
+            name: 'list',
             component: './Wechat/Activity/List',
           },
           // 活动详情
           {
             path: '/h5/activities/:id',
-            name: 'ad-detail',
+            name: 'detail',
             component: './Wechat/Activity/Detail',
+          },
+        ],
+      },
+      // 商品
+      {
+        path: '/h5/goods',
+        name: 'goods',
+        routes: [
+          // 商品列表
+          {
+            path: '/h5/goods',
+            name: 'list',
+            component: './Wechat/Goods/List',
+          },
+          // 商品详情
+          {
+            path: '/h5/goods/:id',
+            name: 'detail',
+            component: './Wechat/Goods/Detail',
           },
         ],
       },

@@ -3,6 +3,7 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import moment from 'moment';
 import { Toast, Modal, Icon } from 'antd-mobile';
+import Loading from '@/components/Loading';
 
 import router from 'umi/router';
 import styles from './styles.less';
@@ -13,7 +14,7 @@ import styles from './styles.less';
 }))
 class Detail extends PureComponent {
   state = {
-    isJoin: 'NAN', // 未检查状态, true 未已参与，false 未未参与
+    isJoin: 'NAN', // 未检查状态, true 已参与，false 未参与
   };
 
   componentDidMount() {
@@ -74,7 +75,17 @@ class Detail extends PureComponent {
             },
           }).then(success => {
             if (success) {
-              router.goBack();
+              this.setState({ isJoin: true });
+              Modal.alert('参与成功', '请准时参与活动', [
+                {
+                  text: '好的',
+                  onPress: () => {
+                    router.goBack();
+                  },
+                },
+              ]);
+            } else {
+              Modal.alert('参与失败', '', [{ text: '好的', onPress: () => {} }]);
             }
           });
         },
@@ -88,9 +99,10 @@ class Detail extends PureComponent {
 
     if (queryLoading) {
       Toast.loading('加载中....', 0);
-    } else {
-      Toast.hide();
+      return <Loading />;
     }
+      Toast.hide();
+
 
     return (
       <DocumentTitle title={detail.title}>

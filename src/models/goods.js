@@ -9,6 +9,8 @@ import {
   publishGoods,
   topGoods,
   deleteGoods,
+  checkUserExchangeState,
+  exchangeGood,
 } from '@/services/goods';
 
 export default modelExtend(model, {
@@ -37,12 +39,19 @@ export default modelExtend(model, {
      */
     *queryGoods({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryGoods, payload);
+
+      const list = success ? result : [];
       yield put({
         type: 'updateState',
         payload: {
-          list: success ? result : [],
+          list,
         },
       });
+
+      return {
+        success,
+        list,
+      };
     },
 
     /**
@@ -139,6 +148,21 @@ export default modelExtend(model, {
       } else {
         message.error('删除失败');
       }
+      return success;
+    },
+
+    /**
+     * 检查某个人是否已经兑换或某件商品
+     */
+    *checkUserExchangeState({ payload }, { call }) {
+      return yield call(checkUserExchangeState, payload);
+    },
+
+    /**
+     * 兑换商品
+     */
+    *exchangeGood({ payload }, { call }) {
+      const { success } = yield call(exchangeGood, payload);
       return success;
     },
   },

@@ -29,11 +29,6 @@ export default modelExtend(model, {
      */
     *doSigning({ payload = {} }, { call }) {
       const { success } = yield call(doSigning, payload);
-      if (success) {
-        message.success('签约完成');
-      } else {
-        message.error('签约失败');
-      }
       return success;
     },
 

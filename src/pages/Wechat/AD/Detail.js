@@ -1,11 +1,11 @@
-import React, { PureComponent, Fragment, memo } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import moment from 'moment';
-import { PullToRefresh, Card, Toast } from 'antd-mobile';
+import Loading from '@/components/Loading';
+import { Toast } from 'antd-mobile';
 
 import router from 'umi/router';
-import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
 
 @connect(({ adModel: { detail }, loading }) => ({
@@ -92,9 +92,9 @@ class List extends PureComponent {
 
     if (queryLoading) {
       Toast.loading('加载中....', 0);
-    } else {
-      Toast.hide();
+      return <Loading />;
     }
+    Toast.hide();
 
     return (
       <DocumentTitle title={detail.title}>
