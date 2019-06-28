@@ -90,7 +90,7 @@ export async function deleteGoods({ id }) {
  */
 export async function checkUserExchangeState({ id }) {
   return request(`/api/goods/${id}/check-exchange`, {
-    method: 'POST',
+    method: 'GET',
   });
 }
 
