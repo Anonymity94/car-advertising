@@ -1,29 +1,62 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import DocumentTitle from 'react-document-title';
+import { connect } from 'dva';
+import Loading from '@/components/Loading';
+import Empty from '@/components/Empty';
 import { Card } from 'antd-mobile';
 import styles from './IntegralExchange.less';
+import { INTEGRAL_SETTLEMENT_STATE_NO } from '@/common/constants';
 
-export default class IntegralExchange extends PureComponent {
+@connect(({ driverModel: { integralExchanges }, loading }) => ({
+  integralExchanges,
+  loading: loading.effects['driverModel/queryUserExchanges'],
+}))
+class IntegralExchange extends PureComponent {
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'driverModel/queryUserExchanges',
+    });
+  }
+
   render() {
+    const { integralExchanges, loading } = this.props;
+
+    if (loading) {
+      return <Loading />;
+    }
+
     return (
       <DocumentTitle title="兑换记录">
         <div className={styles.content}>
-          <Card>
-            <Card.Header title={<span className={styles.unused}>未使用</span>} extra={<span>兑换码：343434</span>} />
-            <Card.Body>
-              <div>车载产品的使用一般需要通过车载点烟器来给予供电，车载产品已经深入。</div>
-            </Card.Body>
-            <Card.Footer content="2019-06-25/商户名" extra={<div>300积分</div>} />
-          </Card>
-          <Card>
-            <Card.Header title={<span className={styles.used}>已使用</span>} extra={<span>兑换码：343434</span>} />
-            <Card.Body>
-              <div>车载产品的使用一般需要通过车载点烟器来给予供电，车载产品已经深入。</div>
-            </Card.Body>
-            <Card.Footer content="2019-06-25/商户名" extra={<div>300积分</div>} />
-          </Card>
+          {integralExchanges.length === 0 ? (
+            <Empty />
+          ) : (
+            integralExchanges.map(item => (
+              <Card>
+                <Card.Header
+                  title={
+                    item.state === INTEGRAL_SETTLEMENT_STATE_NO ? (
+                      <span className={styles.without}>未使用</span>
+                    ) : (
+                      <span className={styles.finish}>已使用</span>
+                    )
+                  }
+                />
+                <Card.Body>
+                  <div>{item.goodsName}</div>
+                </Card.Body>
+                <Card.Footer
+                  content={`${item.createTime}/${item.businessName}`}
+                  extra={<div>{item.integral}积分</div>}
+                />
+              </Card>
+            ))
+          )}
         </div>
       </DocumentTitle>
     );
   }
 }
+
+export default IntegralExchange;

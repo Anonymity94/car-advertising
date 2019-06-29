@@ -1,0 +1,98 @@
+@import '~@/wechat.less';
+@import '~@/utils/utils.less';
+
+.signing {
+  font-size: 13px;
+  column-count: 2; // 设置显示2列
+  -webkit-column-count: 2;
+  -o-column-count: 2;
+  -ms-column-count: 2;
+  -moz-column-count: 2;
+
+  column-gap: 6px; //设置或检索对象的列与列之间的间隙
+  -webkit-column-gap: 6px;
+  -o-column-gap: 6px;
+  -ms-column-gap: 6px;
+  -moz-column-gap: 6px;
+
+  width: 100%;
+
+  .flex {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card {
+    background: #fff;
+
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    padding: 14px;
+
+    -webkit-column-break-inside: avoid; /* Chrome, Safari, Opera */
+    page-break-inside: avoid; /* Firefox */
+    break-inside: avoid; /* IE 10+, Chrome, Safari, Opera */
+
+    .title {
+      font-weight: bold;
+      font-size: 15px;
+      .line-clamp(2);
+      line-height: 24px;
+    }
+
+    .extra {
+      color: @color-caption; // 辅助色
+      font-size: 13px;
+      margin: 4px 0 10px;
+    }
+
+    .content {
+      .address {
+        margin-bottom: 4px !important;
+        img {
+          width: 13px;
+          height: 15px;
+        }
+      }
+
+      .info {
+        span:first-child {
+          color: @color-caption;
+        }
+        span:last-child {
+          color: @color-base;
+        }
+      }
+    }
+    .footer {
+      align-items: center;
+      margin-top: 20px;
+      img {
+        width: 15px;
+        height: 15px;
+      }
+      a {
+        display: flex;
+        align-items: center;
+        color: @color-caption;
+      }
+    }
+  }
+}
+
+.qrcodoWrap {
+  img {
+    width: 200px;
+    margin-bottom: 10px;
+  }
+  p {
+    color: @color-base;
+    font-size: 15px;
+    margin-bottom: 0;
+  }
+  span {
+    color: @color-caption;
+    font-size: 13px;
+  }
+}

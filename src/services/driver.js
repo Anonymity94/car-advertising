@@ -119,3 +119,24 @@ export async function changePhone(params) {
     },
   });
 }
+
+/**
+ * 微信端：我的签约记录
+ */
+export async function queryUserSignings() {
+  return request('/api/user/ad-signings');
+}
+
+/**
+ * 微信端：我的结算记录
+ */
+export async function queryUserSettlements() {
+  return request('/api/user/ad-settlements');
+}
+
+/**
+ * 微信端：我的积分兑换记录
+ */
+export async function queryUserExchanges() {
+  return request('/api/user/integral-exchanges');
+}

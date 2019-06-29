@@ -12,6 +12,9 @@ import {
   bindPhone,
   changePhone,
   getCaptcha,
+  queryUserSignings,
+  queryUserSettlements,
+  queryUserExchanges,
 } from '@/services/driver';
 
 export default modelExtend(model, {
@@ -41,6 +44,10 @@ export default modelExtend(model, {
   state: {
     list: [],
     detail: {}, // 车主详情
+
+    adSignings: [], // 我的签约记录
+    adSettlements: [], // 我的结算记录
+    integralExchanges: [], // 我的兑换记录
   },
 
   effects: {
@@ -189,6 +196,64 @@ export default modelExtend(model, {
         message.error('更换手机号失败');
       }
       return success;
+    },
+
+    /**
+     * 微信端：我的签约记录
+     */
+    *queryUserSignings({ payload }, { call, put }) {
+      const { success, result } = yield call(queryUserSignings, payload);
+
+      const adSignings = success ? result : [];
+      yield put({
+        type: 'updateState',
+        payload: {
+          adSignings,
+        },
+      });
+
+      return {
+        success,
+        adSignings,
+      };
+    },
+
+    /**
+     * 微信端：我的结算记录
+     */
+    *queryUserSettlements({ payload }, { call, put }) {
+      const { success, result } = yield call(queryUserSettlements, payload);
+      const adSettlements = success ? result : [];
+      yield put({
+        type: 'updateState',
+        payload: {
+          adSettlements,
+        },
+      });
+
+      return {
+        success,
+        adSettlements,
+      };
+    },
+
+    /**
+     * 微信端：我的积分兑换记录
+     */
+    *queryUserExchanges({ payload }, { call, put }) {
+      const { success, result } = yield call(queryUserExchanges, payload);
+      const integralExchanges = success ? result : [];
+      yield put({
+        type: 'updateState',
+        payload: {
+          integralExchanges,
+        },
+      });
+
+      return {
+        success,
+        integralExchanges,
+      };
     },
   },
 });

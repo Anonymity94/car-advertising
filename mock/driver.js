@@ -40,6 +40,81 @@ const drivers = [
   },
 ];
 
+/**
+ * 广告签约
+ */
+
+const signings = {
+  id: Math.random(),
+
+  adId: '23233', // 广告id，需要跳转到广告详情页使用
+  adTitle: '车载产品的使用一般需通过车载慰问慰问', // 广告标题
+  bonus: 2000, // 签约金
+
+  createTime: '2019-04-20', // 签约提交时间
+
+  address: '北京海淀区',
+  beginTime: '08:00',
+  endTime: '12:30', // 营业时间
+
+  // 签约有效期
+  signingExpireTime: '2019-04-20',
+
+  qrcode: 'http://www.transfu.com/uploads/image/20181227/1545897613591851.jpg', // 签约二维码图片地址或者base64都可以
+
+  // 0- 未结算
+  // 1- 已结算
+  settlementState: 0, // 结算状态
+};
+
+function mocksigningsList(req, res) {
+  const list = [];
+  for (let i = 0; i < 50; i += 1) {
+    list.push({
+      ...signings,
+      id: Math.random(),
+      settlementState: 0, // 结算
+    });
+  }
+
+  list[1].settlementState = 1
+
+  return res.json(list);
+}
+
+/**
+ * 积分兑换管理
+ */
+
+const exchange = {
+  id: Math.random(), // 兑换记录id
+  integral: 20, // 所需积分数
+
+  createTime: '2019-06-22', // 用户提交兑换的时间
+
+  exchangeCode: 34343434, // 兑换码
+
+  goodsName: 'iPhone X', // 商品名称
+  businessName: '苹果公司', // 所属商户
+
+  settlementTime: '2019-06-22', // 结算日期
+  state: 0, // 兑换状态
+  operator: '测试', // 操作人
+};
+
+function mockExchangeList(req, res) {
+  const list = [];
+  for (let i = 0; i < 50; i += 1) {
+    list.push({
+      ...exchange,
+      id: Math.random(),
+      state: Math.random() > 0.5 ? '1' : '0', // 是否结算
+    });
+  }
+
+  return res.json(list);
+}
+
 export default {
   'GET /api/user-manager/user-list': drivers,
 
@@ -68,4 +143,8 @@ export default {
   'POST /api/user-manager/user-update?id=:id': {},
 
   'POST /api/user-manager/user-remove?id=:id': {},
+
+  'GET /api/user/ad-signings': mocksigningsList,
+  'GET /api/user/ad-settlements': mocksigningsList,
+  'GET /api/user/integral-exchanges': mockExchangeList,
 };
