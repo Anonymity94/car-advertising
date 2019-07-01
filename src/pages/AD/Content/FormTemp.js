@@ -35,7 +35,10 @@ const formItemLayoutWithOutLabel = {
 
 // 分隔符
 const SEPARATOR = '$_o_$_';
+const VALUE_JOIN = '@@@@@#####@@@@@';
 let id = 0;
+
+const CURRENT_DATE = moment().format('YYYY-MM-DD');
 
 @Form.create()
 @connect()
@@ -77,7 +80,7 @@ class FormTemp extends PureComponent {
       const {
         keys,
         address,
-        startTime,
+        beginTime,
         endTime,
         content,
         banner,
@@ -89,9 +92,9 @@ class FormTemp extends PureComponent {
 
       for (let i = 0; i < keys.length; i += 1) {
         addressList.push({
-          address: address[i],
-          startTime: moment(startTime[i][0]).format('YYYY-MM-DD'),
-          endTime: moment(endTime[i][1]).format('YYYY-MM-DD'),
+          address: address[keys[i]],
+          beginTime: moment(beginTime[keys[i]]).format('HH:mm'),
+          endTime: moment(endTime[keys[i]]).format('HH:mm'),
         });
       }
 
@@ -108,7 +111,7 @@ class FormTemp extends PureComponent {
       // 删除多于的值
       delete submitData.keys;
       delete submitData.endTime;
-      delete submitData.startTime;
+      delete submitData.beginTime;
 
       Modal.confirm({
         title: '确定提交吗？',
@@ -161,97 +164,122 @@ class FormTemp extends PureComponent {
       submitLoading,
     } = this.props;
 
-    getFieldDecorator('keys', { initialValue: [0] });
+    let initKey = [`${SEPARATOR}`];
+    const addressList = Array.isArray(values.address)
+      ? // eslint-disable-next-line compat/compat
+        values.address.map(item => Object.values(item).join(VALUE_JOIN))
+      : [];
+    if (addressList.length > 0) {
+      initKey = addressList;
+    }
+
+    getFieldDecorator('keys', { initialValue: initKey });
     const keys = getFieldValue('keys');
-    const addressItems = keys.map((k, index) => (
-      <Row gutter={10} key={k}>
-        <Col span={3} className="ant-form-item-label" required>
-          {index === 0 ? '广告粘贴地址：' : ''}
-        </Col>
-        <Col span={20}>
-          <Col span={10}>
-            <Form.Item>
-              {getFieldDecorator(`address[${k}]`, {
-                validateTrigger: ['onChange', 'onBlur'],
-                rules: [
-                  {
-                    required: true,
-                    whitespace: true,
-                    message: '请输入地址',
-                  },
-                ],
-              })(<Input.TextArea rows={1} placeholder="请输入地址" />)}
-            </Form.Item>
+    const addressItems = keys.map((k, index) => {
+      let initAddress = '';
+      let initBeginTime;
+      let initEndTime;
+      if (k.indexOf(VALUE_JOIN) > -1) {
+        const splitArr = k.split(VALUE_JOIN);
+
+        initAddress = splitArr[0];
+        initBeginTime = splitArr[1] ? moment(`${CURRENT_DATE} ${splitArr[1]}`) : undefined;
+        initEndTime = splitArr[2] ? moment(`${CURRENT_DATE} ${splitArr[2]}`) : undefined;
+      }
+
+      return (
+        <Row gutter={10} key={k}>
+          <Col span={3} className="ant-form-item-label" required>
+            {index === 0 ? '广告粘贴地址：' : ''}
           </Col>
-          <Col span={12}>
-            <Form.Item style={{ display: 'inline-block' }}>
-              <span className="ant-form-text">营业时间</span>
-              {getFieldDecorator(`startTime[${k}]`, {
-                validateTrigger: ['onChange'],
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择营业开始时间',
-                  },
-                  {
-                    validator: (rule, value, callback) => {
-                      const { form } = this.props;
-                      const endTime = form.getFieldValue(`endTime[${k}]`);
-                      if (!endTime) {
-                        callback();
-                        return;
-                      }
-                      if (new Date(value) - new Date(endTime) >= 0) {
-                        callback('营业开始时间需要早于结束时间');
-                        return;
-                      }
-                      callback();
-                    },
-                  },
-                ],
-              })(<TimePicker placeholder="开始时间" format="HH:mm" minuteStep={30} />)}
-            </Form.Item>
-            <Form.Item style={{ display: 'inline-block', marginLeft: 10 }}>
-              {getFieldDecorator(`endTime[${k}]`, {
-                validateTrigger: ['onChange'],
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择营业结束时间',
-                  },
-                  {
-                    validator: (rule, value, callback) => {
-                      const { form } = this.props;
-                      const beginTime = form.getFieldValue(`beginTime${[k]}`);
-                      if (!beginTime) {
-                        callback();
-                        return;
-                      }
-                      if (new Date(value) - new Date(beginTime) <= 0) {
-                        callback('营业结束时间需要晚于开始时间');
-                        return;
-                      }
-                      callback();
-                    },
-                  },
-                ],
-              })(<TimePicker placeholder="结束时间" format="HH:mm" minuteStep={30} />)}
-            </Form.Item>
-          </Col>
-          <Col span={2}>
-            {keys.length > 1 ? (
+          <Col span={20}>
+            <Col span={10}>
               <Form.Item>
-                <Icon
-                  className="dynamic-delete-button"
-                  type="minus-circle-o"
-                  onClick={() => this.removeAddressItem(k)}
-                />
+                {getFieldDecorator(`address[${k}]`, {
+                  initialValue: initAddress,
+                  validateTrigger: ['onChange', 'onBlur'],
+                  rules: [
+                    {
+                      required: true,
+                      whitespace: true,
+                      message: '请输入地址',
+                    },
+                  ],
+                })(<Input.TextArea rows={1} placeholder="请输入地址" />)}
               </Form.Item>
-            ) : null}
+            </Col>
+            <Col span={12}>
+              <Form.Item style={{ display: 'inline-block' }}>
+                <span className="ant-form-text">营业时间</span>
+                {getFieldDecorator(`beginTime[${k}]`, {
+                  initialValue: initBeginTime,
+                  validateTrigger: ['onChange'],
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择营业开始时间',
+                    },
+                    {
+                      validator: (rule, value, callback) => {
+                        const { form } = this.props;
+                        const endTime = form.getFieldValue(`endTime[${k}]`);
+                        if (!endTime) {
+                          callback();
+                          return;
+                        }
+                        if (new Date(value) - new Date(endTime) >= 0) {
+                          callback('营业开始时间需要早于结束时间');
+                          return;
+                        }
+                        callback();
+                      },
+                    },
+                  ],
+                })(<TimePicker placeholder="开始时间" format="HH:mm" minuteStep={30} />)}
+              </Form.Item>
+              <Form.Item style={{ display: 'inline-block', marginLeft: 10 }}>
+                {getFieldDecorator(`endTime[${k}]`, {
+                  initialValue: initEndTime,
+                  validateTrigger: ['onChange'],
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择营业结束时间',
+                    },
+                    {
+                      validator: (rule, value, callback) => {
+                        const { form } = this.props;
+                        const beginTime = form.getFieldValue(`beginTime${[k]}`);
+                        if (!beginTime) {
+                          callback();
+                          return;
+                        }
+                        if (new Date(value) - new Date(beginTime) <= 0) {
+                          callback('营业结束时间需要晚于开始时间');
+                          return;
+                        }
+                        callback();
+                      },
+                    },
+                  ],
+                })(<TimePicker placeholder="结束时间" format="HH:mm" minuteStep={30} />)}
+              </Form.Item>
+            </Col>
+            <Col span={2}>
+              {keys.length > 1 ? (
+                <Form.Item>
+                  <Icon
+                    className="dynamic-delete-button"
+                    type="minus-circle-o"
+                    onClick={() => this.removeAddressItem(k)}
+                  />
+                </Form.Item>
+              ) : null}
+            </Col>
           </Col>
-        </Col>
-      </Row>
-    ));
+        </Row>
+      );
+    });
 
     return (
       <Form onSubmit={this.handleSubmit}>
@@ -314,6 +342,9 @@ class FormTemp extends PureComponent {
         </FormItem>
         <Form.Item label="签约条款" {...formItemLayout}>
           {getFieldDecorator('clause', {
+            initialValue: values.banner
+              ? [{ uid: values.clause, url: values.clause, name: values.clause }]
+              : [],
             valuePropName: 'fileList',
             getValueFromEvent: this.handleUploadChange,
             rules: [
@@ -330,7 +361,7 @@ class FormTemp extends PureComponent {
           {getFieldDecorator('signingExpireTime', {
             initialValue: values.signingExpireTime ? moment(values.signingExpireTime) : undefined,
             validateFirst: true,
-            rules: [{ required: false, message: '请选择签约有效期' }],
+            rules: [{ required: true, message: '请选择签约有效期' }],
           })(<DatePicker format="YYYY-MM-DD" />)}
         </Form.Item>
         <Form.Item label="签约金" {...formItemLayout}>

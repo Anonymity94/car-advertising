@@ -281,3 +281,29 @@ export const refreshScroll = (scroll, data, prevData) => {
 
   if (scroll) scroll.refresh();
 };
+
+/**
+ * 数字格式化
+ * eg. 100 => 0
+ *
+ * eg. 1500 => 1.5k
+ *
+ * eg. 5550 => 5.6k
+ *
+ * eg 10000 => 1w
+ *
+ * @param {Number} count
+ */
+export function countFormatter(count) {
+  if (!count) return 0;
+  const result = +count;
+  if (result < 1000) {
+    return result;
+  }
+
+  if (result < 10000) {
+    return `${(result / 1000).toFixed(1)}k`;
+  }
+
+  return `${(result / 10000).toFixed(1)}k`;
+}

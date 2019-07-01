@@ -15,45 +15,8 @@ import styles from './styles.less';
 
 const { AgreeItem } = Checkbox;
 
-const mockDetail = {
-  id: 0.5673063366855791,
-  title: '广告名称广告名称广告名称广',
-  company: '所属公司机构',
-  banner: 'https://img.zcool.cn/community/01c22b5b596b74a801206a35e43a5e.png@1280w_1l_2o_100sh.png',
-  cover: [
-    'https://img.zcool.cn/community/01c22b5b596b74a801206a35e43a5e.png@1280w_1l_2o_100sh.png',
-    'https://img.zcool.cn/community/01c22b5b596b74a801206a35e43a5e.png@1280w_1l_2o_100sh.png',
-  ],
-  clause: '/upload/ec858bac-48ce-4624-a4c8-fa09a91270b5.pdf',
-  bonus: 1000,
-  integral: 20,
-  content:
-    '<p style="color: red">广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容</p>',
-  remark: '积分备注',
-  address: [
-    {
-      address: '北京市海淀区北京市海淀区北京市海淀区北京市海淀区北京市海淀区北京市海淀区',
-      beginTime: '12:43',
-      endTime: '14:45',
-    },
-    {
-      address: '北京市朝阳区',
-      beginTime: '08:00',
-      endTime: '10:12',
-    },
-  ],
-  publishTime: '2019-06-19 17:59:44',
-  createTime: '2019-06-19 17:59:44',
-  modifyTime: '2019-06-19 17:59:44',
-  isTop: 1,
-  isPublish: 0,
-  operator: '测试',
-  visitCount: 20,
-  signingCount: 340,
-};
-
 @connect(({ adModel: { detail }, loading }) => ({
-  detail: mockDetail,
+  detail,
   queryLoading: loading.effects['adModel/queryAdContent'],
 }))
 class Signing extends PureComponent {
@@ -168,8 +131,7 @@ class Signing extends PureComponent {
       Toast.loading('加载中....', 0);
       return <Loading />;
     }
-      Toast.hide();
-
+    Toast.hide();
 
     return (
       <DocumentTitle title="签约详情">

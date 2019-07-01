@@ -86,11 +86,10 @@ export default function request(url, option) {
     .then(response => {
       // DELETE and 204 do not return data by default
       // using .json will report an error.
-      if (newOptions.method === 'DELETE' || response.status === 204) {
-        return response.text();
-      }
       if (
-        (newOptions.method === 'POST' || newOptions.method === 'PUT') &&
+        (newOptions.method === 'DELETE' ||
+          newOptions.method === 'POST' ||
+          newOptions.method === 'PUT') &&
         response.status === 200
       ) {
         return {
@@ -116,7 +115,7 @@ export default function request(url, option) {
       }
 
       return {
-        success: false
-      }
+        success: false,
+      };
     });
 }

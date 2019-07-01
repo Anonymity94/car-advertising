@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import moment from 'moment';
 import Loading from '@/components/Loading';
 import { Toast } from 'antd-mobile';
+import { countFormatter } from '@/utils/utils';
 
 import router from 'umi/router';
 import styles from './styles.less';
@@ -12,22 +13,13 @@ import styles from './styles.less';
   detail,
   queryLoading: loading.effects['adModel/queryAdContent'],
 }))
-class List extends PureComponent {
+class Detail extends PureComponent {
   state = {
     refreshing: false,
-    height: document.documentElement.clientHeight,
   };
 
   componentDidMount() {
     this.getAdContent();
-    // const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
-    setTimeout(
-      () =>
-        this.setState({
-          // height: hei - 30,
-        }),
-      0
-    );
   }
 
   getAdContent = () => {
@@ -50,45 +42,7 @@ class List extends PureComponent {
   };
 
   render() {
-    const { queryLoading } = this.props;
-
-    const detail = {
-      id: 0.5673063366855791,
-      title: '广告名称广告名称广告名称广',
-      company: '所属公司机构',
-      banner:
-        'https://img.zcool.cn/community/01c22b5b596b74a801206a35e43a5e.png@1280w_1l_2o_100sh.png',
-      cover: [
-        'https://img.zcool.cn/community/01c22b5b596b74a801206a35e43a5e.png@1280w_1l_2o_100sh.png',
-        'https://img.zcool.cn/community/01c22b5b596b74a801206a35e43a5e.png@1280w_1l_2o_100sh.png',
-      ],
-      clause: '/12/234/2323.pdf',
-      bonus: 1000,
-      integral: 20,
-      content:
-        '<p style="color: red">广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容广告内容</p>',
-      remark: '积分备注',
-      address: [
-        {
-          address: '北京市海淀区',
-          beginTime: '2019-06-19',
-          endTime: '2019-07-19',
-        },
-        {
-          address: '北京市海淀区',
-          beginTime: '2019-06-19',
-          endTime: '2019-07-19',
-        },
-      ],
-      publishTime: '2019-06-19 17:59:44',
-      createTime: '2019-06-19 17:59:44',
-      modifyTime: '2019-06-19 17:59:44',
-      isTop: 1,
-      isPublish: 0,
-      operator: '测试',
-      visitCount: 20,
-      signingCount: 340,
-    };
+    const { queryLoading, detail } = this.props;
 
     if (queryLoading) {
       Toast.loading('加载中....', 0);
@@ -108,15 +62,14 @@ class List extends PureComponent {
                   <p className={styles.author}>
                     {detail.operator}/{moment(detail.createTime).format('YYYY-MM-DD')}
                   </p>
-                  <p className={styles.visit}>阅读{detail.visitCount}</p>
+                  <p className={styles.visit}>阅读{countFormatter(detail.visitCount)}</p>
                 </div>
               </div>
               {/* 内容 */}
               <div className={styles.content}>
                 {/* 内容列表图片 */}
-                {detail.cover.map(img => (
-                  <img src={img} alt="" />
-                ))}
+                {Array.isArray(detail.cover) &&
+                  detail.cover.map(img => <img src={img} alt="图片" />)}
                 <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
               </div>
 
@@ -141,4 +94,4 @@ class List extends PureComponent {
   }
 }
 
-export default List;
+export default Detail;

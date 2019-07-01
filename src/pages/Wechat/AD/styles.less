@@ -8,13 +8,18 @@
 
   .carousel {
     margin-bottom: 10px;
+    :global {
+      .slider-list {
+        height: 150px !important;
+      }
+    }
     .item {
-      height: 150px;
       display: inline-block;
       width: 100%;
       border-radius: 4px;
 
       img {
+        height: 100%;
         width: 100%;
         vertical-align: top;
         border-radius: 4px;
@@ -69,9 +74,15 @@
       }
 
       .title {
-        font-size: 14px;
+        font-size: 15px;
         color: @color-base;
-        .line-clamp(1);
+        .line-clamp(2);
+        margin-bottom: 4px;
+      }
+
+      .desc {
+        color: @color-caption;
+        font-size: 13px;
       }
 
       .money {

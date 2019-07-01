@@ -1,10 +1,11 @@
-import React, { PureComponent, Fragment, memo } from 'react';
+import React, { PureComponent, memo } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
 import { Carousel, Card, Toast } from 'antd-mobile';
-import { TOP_STATE_YES } from '@/common/constants';
+import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
+import { countFormatter } from '@/utils/utils';
 // import Scroll from '@/components/Scroll';
 
 import signingIcon from '../icons/icon_signing@2x.png';
@@ -20,13 +21,14 @@ const ColumnList = memo(({ list }) => (
           </div>
           <Card.Body>
             <div className={styles.title}>{item.title}</div>
+            <div className={styles.desc}>{item.company}</div>
           </Card.Body>
           <Card.Footer
             content={<div className={styles.money}>￥{item.bonus}</div>}
             extra={
               <div className={styles.extra}>
                 <img className={styles.icon} src={signingIcon} alt="签约人数" />
-                34
+                {countFormatter(item.signingCount)}
               </div>
             }
           />
@@ -60,6 +62,9 @@ class List extends PureComponent {
 
     dispatch({
       type: 'adModel/queryAds',
+      payload: {
+        isPublish: PUBLISH_STATE_YES,
+      },
     }).then(({ success, list }) => {
       if (success) {
         const topList = [];
