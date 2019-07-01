@@ -5,6 +5,7 @@ import Link from 'umi/link';
 import router from 'umi/router';
 import { Carousel, Card, Toast } from 'antd-mobile';
 import { TOP_STATE_YES } from '@/common/constants';
+import Scroll from '@/components/Scroll';
 
 import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
@@ -97,29 +98,25 @@ class List extends PureComponent {
 
     return (
       <DocumentTitle title="广告签约">
-        <Fragment>
-          <div className={styles.wrap}>
-            {topList.length > 0 && (
-              <Carousel autoplay={false} infinite className={styles.carousel}>
-                {topList.map(item => (
-                  <Link className={styles.item} to={`/h5/ads/${item.id}`} key={item}>
-                    <img src={item.banner} alt={item.title} />
-                  </Link>
-                ))}
-              </Carousel>
-            )}
+        <Scroll>
+          <div>
+            <div className={styles.wrap}>
+              {/* {topList.length > 0 && (
+                <Carousel autoplay={false} infinite className={styles.carousel}>
+                  {topList.map(item => (
+                    <Link className={styles.item} to={`/h5/ads/${item.id}`} key={item}>
+                      <img src={item.banner} alt={item.title} />
+                    </Link>
+                  ))}
+                </Carousel>
+              )} */}
 
-            <section className={styles.content}>
-              <ColumnList list={pageData} />
-            </section>
-
-            {/* <Scroll
-              options={options}
-              pullUpLoad={this.pullUpLoad}
-              pullDownRefresh={this.pullDownRefresh}
-            /> */}
+              <section className={styles.content}>
+                <ColumnList list={pageData} />
+              </section>
+            </div>
           </div>
-        </Fragment>
+        </Scroll>
       </DocumentTitle>
     );
   }
