@@ -25,6 +25,7 @@ class Scroll extends React.Component {
     if (!this.bScroll) {
       const { pullUpLoad, pullDownRefresh, click } = this.props;
       this.bScroll = new BScroll(this.scrollViewRef.current, {
+        observeDom: true,
         // 实时派发scroll事件
         probeType: 3,
         scrollY: true,
