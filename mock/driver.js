@@ -144,7 +144,7 @@ export default {
 
   'POST /api/user-manager/user-remove?id=:id': {},
 
-  'GET /api/user/ad-signings': mocksigningsList,
-  'GET /api/user/ad-settlements': mocksigningsList,
-  'GET /api/user/integral-exchanges': mockExchangeList,
+  'GET /api/ad-signings/user': mocksigningsList,
+  'GET /api/ad-signings/user-settle': mocksigningsList,
+  'GET /api/integrals/user': mockExchangeList,
 };

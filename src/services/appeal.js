@@ -36,7 +36,7 @@ export async function updateAppealState({ id, state, reason }) {
     method: 'PUT',
     body: {
       state,
-      reason,
+      remark: reason,
     },
   });
 }

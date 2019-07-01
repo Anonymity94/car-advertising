@@ -41,7 +41,7 @@ POST /api/goods/${id}/exchange
 
 ## 微信端：我的签约记录
 ```
- GET /api/user/ad-signings
+ GET /api/ad-signings/user
  
  参数：无
 
@@ -75,7 +75,7 @@ POST /api/goods/${id}/exchange
 
 ## 微信端：我的结算记录
 ```
- GET /api/user/ad-settlements
+ GET /api/ad-signings/user-settle
  
  参数：无
 
@@ -109,7 +109,7 @@ POST /api/goods/${id}/exchange
 
 ## 微信端：我的积分兑换记录
 ```
- GET /api/user/integral-exchanges
+ GET /api/integrals/user
  
  参数：无
 
@@ -129,4 +129,61 @@ POST /api/goods/${id}/exchange
   state: 0, // 兑换状态
   operator: '测试', // 操作人
 }
+```
+
+
+## 后台：查询所有申诉
+
+```
+GET /api/appeals
+
+参数：
+{
+  name: '', // 用户名称
+  createTime: '', // 用户提交日期
+  state: '', // 申诉的状态
+}
+
+返回值：
+[
+  {
+    id: Math.random(),
+    name: '刘婉茹', 
+    oldPhone: '138542345947',
+    phone: '138542345947',
+    createTime: '2019-06-18T20:30:57+08:00',
+    description: '手机丢了，换了新手机号',
+    state: '0',
+    stateText: '未审核',
+    operator: '',
+  }
+]
+
+```
+## 后台：申诉审核
+
+```
+PUT /api/appeals/{id}/state
+
+body参数：
+{
+  remark: '', // 管理员同意或拒绝的备注 
+  state: '', // 申诉的状态
+}
+
+
+```
+
+## 微信端用户提交申诉
+```
+POST /api/appeals
+
+body 参数
+{
+  openid: '' , // 用户有可能登录失效了，然后跳转到绑定页面，这时候以前的手机换掉了，所以需要 openid 来找到以前的用户
+  oldPhone: '', // 老的手机号
+  phone: '', // 新的手机号
+  captcha: '', // 新手机号接收的验证码
+}
+
 ```

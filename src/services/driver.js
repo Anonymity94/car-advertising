@@ -124,19 +124,19 @@ export async function changePhone(params) {
  * 微信端：我的签约记录
  */
 export async function queryUserSignings() {
-  return request('/api/user/ad-signings');
+  return request('/api/ad-signings/user');
 }
 
 /**
  * 微信端：我的结算记录
  */
 export async function queryUserSettlements() {
-  return request('/api/user/ad-settlements');
+  return request('/api/ad-signings/user-settle');
 }
 
 /**
  * 微信端：我的积分兑换记录
  */
 export async function queryUserExchanges() {
-  return request('/api/user/integral-exchanges');
+  return request('/api/integrals/user');
 }
