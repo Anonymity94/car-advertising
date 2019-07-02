@@ -5,7 +5,7 @@ import { connect } from 'dva';
 import { Form, Input, Button, DatePicker, Modal, Icon } from 'antd';
 import moment from 'moment';
 import router from 'umi/router';
-import { phoneReg } from '@/utils/utils';
+import { phoneReg, passwordReg } from '@/utils/utils';
 
 const FormItem = Form.Item;
 
@@ -206,7 +206,7 @@ class FormTemp extends PureComponent {
             initialValue: values.id || '',
           })(<Input placeholder="商户id" />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="商户名称">
+        <FormItem {...formItemLayout} label="商户名称" extra="商户名称也用作商户登陆名称使用">
           {getFieldDecorator('name', {
             initialValue: values.name || '',
             rules: [
@@ -217,6 +217,22 @@ class FormTemp extends PureComponent {
               },
             ],
           })(<Input placeholder="请输入商户名称" />)}
+        </FormItem>
+        <FormItem {...formItemLayout} label="登录密码" extra="以字母开头，长度在6~18之间，只能包含字母、数字和下划线">
+          {getFieldDecorator('password', {
+            initialValue: values.password || '',
+            rules: [
+              {
+                required: true,
+                whitespace: true,
+                message: '请输入登录密码',
+              },
+              {
+                pattern: passwordReg,
+                message: '以字母开头，长度在6~18之间，只能包含字母、数字和下划线',
+              },
+            ],
+          })(<Input.Password placeholder="请输入登录密码" />)}
         </FormItem>
         <FormItem {...formItemLayout} label="联系人">
           {getFieldDecorator('contact', {

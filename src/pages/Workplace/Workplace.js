@@ -2,6 +2,7 @@
 /* eslint-disable global-require */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
+import moment from 'moment';
 import { Row, Col, Card, Spin, Icon, Badge } from 'antd';
 import { Bar } from '@/components/Charts';
 
@@ -38,6 +39,11 @@ const modules = [
   },
 ];
 
+const aWeekAgo = moment()
+  .subtract(6, 'days')
+  .format('YYYY-MM-DD');
+const today = moment().format('YYYY-MM-DD');
+
 @connect(({ reportModel: { registerMetrics, todoMetrics, signingMetrics }, loading }) => ({
   registerMetrics,
   todoMetrics,
@@ -45,7 +51,26 @@ const modules = [
   loading,
 }))
 class Workplace extends PureComponent {
-  componentDidMount() {}
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'reportModel/countRegisterMetrics',
+      payload: {
+        startTime: aWeekAgo,
+        endTime: today,
+      },
+    });
+    dispatch({
+      type: 'reportModel/countSigningMetrics',
+      payload: {
+        startTime: aWeekAgo,
+        endTime: today,
+      },
+    });
+    dispatch({
+      type: 'reportModel/countTodos',
+    });
+  }
 
   componentWillUnmount() {}
 
