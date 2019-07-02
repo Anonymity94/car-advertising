@@ -152,20 +152,36 @@ export default [
     path: '/',
     component: '../layouts/BasicLayout',
     Routes: ['src/pages/Authorized'],
-    authority: ['admin', 'user'],
     routes: [
       // 工作台
-      { path: '/', redirect: '/workplace' },
+      { path: '/', redirect: '/redirect' },
+      {
+        path: '/redirect',
+        name: 'workplace',
+        hideInMenu: true,
+        component: './Redirect',
+      },
+      // 商户工作台
+      {
+        path: '/index',
+        name: 'workplace',
+        icon: 'dashboard',
+        component: './Workplace/Business',
+        authority: ['business'],
+      },
+      // 管理员工作台
       {
         path: '/workplace',
         name: 'workplace',
         icon: 'dashboard',
         component: './Workplace/Workplace',
+        authority: ['admin'],
       },
       {
         path: '/application',
         name: 'application',
         icon: 'audit',
+        authority: ['admin'],
         routes: [
           // 用户审核
           {
@@ -308,6 +324,7 @@ export default [
         path: '/integral',
         name: 'integral',
         icon: 'gift',
+        authority: ['admin'],
         routes: [
           // 商户列表
           {
@@ -361,6 +378,7 @@ export default [
         path: '/user',
         name: 'user',
         icon: 'team',
+        authority: ['admin'],
         routes: [
           // 车主档案
           {

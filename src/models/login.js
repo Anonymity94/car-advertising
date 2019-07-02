@@ -1,8 +1,8 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { adminLogin, adminLogout } from '@/services/login';
+import router from 'umi/router';
+import { login, logout, queryCurrent } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
-import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 import { message } from 'antd';
 
@@ -10,65 +10,69 @@ export default {
   namespace: 'login',
 
   state: {
+    isInit: false,
     status: undefined,
+    currentUser: {}, // currentUser
   },
 
   effects: {
     *login({ payload }, { call, put }) {
-      const { result } = yield call(adminLogin, payload);
-      const isSuccess = result.result === 'success';
+      const { success, result } = yield call(login, payload);
 
-      if (!isSuccess) {
+      if (!success) {
         message.error(result.message);
         return;
       }
-
-      yield put({
-        type: 'changeLoginStatus',
-        payload: {
-          status: isSuccess,
-          currentAuthority: isSuccess ? 'admin' : 'guest',
-        },
-      });
       // Login successfully
-      if (isSuccess) {
-        reloadAuthorized();
-        const urlParams = new URL(window.location.href);
-        const params = getPageQuery();
-        let { redirect } = params;
-        if (redirect) {
-          const redirectUrlParams = new URL(redirect);
-          if (redirectUrlParams.origin === urlParams.origin) {
-            redirect = redirect.substr(urlParams.origin.length);
-            if (redirect.match(/^\/.*#/)) {
-              redirect = redirect.substr(redirect.indexOf('#') + 1);
-            }
-          } else {
-            window.location.href = redirect;
-            return;
-          }
-        }
-        yield put(routerRedux.replace(redirect || '/'));
+      // 获取登陆用户信息
+      yield put({
+        type: 'queryCurrentUser',
+      });
+    },
+
+    *queryCurrentUser({ payload }, { call, put, select }) {
+      const { isInit } = yield select(_ => _.global);
+      if (isInit) return;
+
+      const { success, result } = yield call(queryCurrent, payload);
+      if (success && result.name !== 'unknow') {
+        // 刷新权限
+        setAuthority(result.type);
+
+        // 填充当前登录人
+        yield put({
+          type: 'changeState',
+          payload: {
+            currentUser: result,
+            status: true,
+          },
+        });
+        // 跳转到主页
+        router.push({
+          pathname: '/',
+        });
+      } else {
+        router.push({
+          pathname: '/login',
+        });
       }
     },
 
     *logout(_, { call, put }) {
-      const { success } = yield call(adminLogout);
+      const { success } = yield call(logout);
       if (success) {
         yield put({
           type: 'changeLoginStatus',
           payload: {
             status: false,
-            currentAuthority: 'guest',
+            currentAuthority: 'NO_AUTH',
           },
         });
         reloadAuthorized();
         yield put(
           routerRedux.push({
             pathname: '/login',
-            search: stringify({
-              redirect: window.location.href,
-            }),
+            search: stringify(),
           })
         );
       }
@@ -76,6 +80,12 @@ export default {
   },
 
   reducers: {
+    changeState(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
+    },
     changeLoginStatus(state, { payload }) {
       setAuthority(payload.currentAuthority);
       return {
