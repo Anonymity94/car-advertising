@@ -50,8 +50,8 @@ class LoginPage extends Component {
             this.loginForm = form;
           }}
         >
-          <Tab key="admin" tab="管理员登陆" />
-          <Tab key="business" tab="商户登陆" />
+          <Tab key="admin" tab="管理员登录" />
+          <Tab key="business" tab="商户登录" />
           <UserName
             name="username"
             placeholder={`${text}`}
@@ -73,7 +73,7 @@ class LoginPage extends Component {
             ]}
             onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
           />
-          <Submit loading={submitting}>登陆</Submit>
+          <Submit loading={submitting}>登录</Submit>
         </Login>
       </div>
     );

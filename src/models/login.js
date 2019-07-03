@@ -38,6 +38,7 @@ export default {
       if (success && result.name !== 'unknow') {
         // 刷新权限
         setAuthority(result.type);
+        reloadAuthorized();
 
         // 填充当前登录人
         yield put({
