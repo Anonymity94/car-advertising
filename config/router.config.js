@@ -8,7 +8,6 @@ export default [
   {
     path: '/h5',
     component: '../layouts/WechatLayout',
-    Routes: ['src/pages/Authorized'],
     name: 'h5',
     routes: [
       {

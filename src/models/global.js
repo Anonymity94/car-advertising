@@ -6,13 +6,15 @@ export default {
   },
 
   subscriptions: {
-    setup({ dispatch }) {
-      dispatch({ type: 'login/queryCurrentUser' });
+    async setup({ dispatch, history }) {
+      const { pathname } = history.location;
+      if (pathname.indexOf('/h5') === -1) {
+        await dispatch({ type: 'login/queryCurrentUser' });
+      }
     },
   },
 
-  effects: {
-  },
+  effects: {},
 
   reducers: {
     changeState(state, { payload }) {

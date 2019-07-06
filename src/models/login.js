@@ -35,7 +35,7 @@ export default {
       if (isInit) return;
 
       const { success, result } = yield call(queryCurrent, payload);
-      if (success && result.name !== 'unknow') {
+      if (success && result.name && result.type !== 'unknow') {
         // 刷新权限
         setAuthority(result.type);
         reloadAuthorized();
