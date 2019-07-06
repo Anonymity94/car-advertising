@@ -8,6 +8,8 @@ import { countFormatter } from '@/utils/utils';
 
 import router from 'umi/router';
 import styles from './styles.less';
+import Empty from '@/components/Empty';
+import { PUBLISH_STATE_NO } from '@/common/constants';
 
 @connect(({ adModel: { detail }, loading }) => ({
   detail,
@@ -49,6 +51,22 @@ class Detail extends PureComponent {
       return <Loading />;
     }
     Toast.hide();
+
+    if (!detail.id) {
+      return (
+        <Fragment>
+          <Empty text="广告不存在或已被删除" />
+        </Fragment>
+      );
+    }
+
+    if (detail.isPublish === PUBLISH_STATE_NO) {
+      return (
+        <Fragment>
+          <Empty text="广告已下线" />
+        </Fragment>
+      );
+    }
 
     return (
       <DocumentTitle title={detail.title}>

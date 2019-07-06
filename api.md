@@ -187,3 +187,63 @@ body 参数
 }
 
 ```
+
+---
+# 2019-07-06 缺失汇总
+---
+
+## 微信端注册用户，404
+```
+POST /api/user/register
+
+body 参数
+{
+	"username": "测试人员",
+	"phone": "18366133937",
+	"idcard": "371321199502163598",
+	"idardBackImage": "/upload/7e895df8-a2d5-4f13-8689-2d07fdddaed9.jpg", #身份证人像面
+	"idardFrontImage": "/upload/18b3056b-3c3b-45d4-b38e-62a8071cf9e3.jpeg", #身份证国徽面
+	"carCodeImage": "/upload/3d619d26-c857-41ee-914f-572eb925ee3f.jpeg", #行驶证照片
+	"driverLicenseImage": "/upload/e5f0f92f-2877-4113-a6a9-078026b302a2.jpg", #驾驶证照片
+
+  "carType": '小型汽车',
+  "carCode": '23232323', # 行驶证号
+  "expireTime": '2019-07-06', # 车辆到期时间，也就是行驶证到期时间
+	"carImage": "/upload/11124e10-f43e-4eae-8d31-7b49f50ddae9.jpeg"
+}
+
+```
+## 申诉审核管理，缺失字段
+```
+GET /api/appeals 
+
+返回字段缺少 
+reason 申诉理由
+createTime 申诉提交时间
+state 状态，返回的是字符串？需要统一一下，状态类的，返回的字符串还是数字
+
+```
+
+## 申诉审核管理，返回200状态，但是审核未生效
+```
+PUT /api/appeals/5d2047d53a20860006d07c5c/state
+
+不通过时，没有生效
+
+body
+{
+remark: "232323"
+state: "2"
+}
+
+```
+
+## 后台管理：新增广告和编辑广告
+
+签约有效期 signingExpireTime 保存失败
+营业开始时间beginTime 保存失败
+
+## 广告详情接口  blocked
+```
+/api/ads/5d11b8ce2ddcfe000621b32d (blocked:other)
+```

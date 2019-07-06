@@ -1,14 +1,17 @@
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
-import Loading from '@/components/Loading';
 import { Toast, Modal } from 'antd-mobile';
+import Loading from '@/components/Loading';
+import Empty from '@/components/Empty';
+import { PUBLISH_STATE_YES } from '@/common/constants';
 
 import router from 'umi/router';
 import styles from './styles.less';
 
-@connect(({ goodsModel: { detail }, loading }) => ({
+@connect(({ goodsModel: { detail }, login: { wechatUser }, loading }) => ({
   detail,
+  wechatUser,
   queryLoading: loading.effects['goodsModel/queryGoodsContent'],
 }))
 class Detail extends PureComponent {
@@ -58,11 +61,14 @@ class Detail extends PureComponent {
   };
 
   exchangeGood = () => {
-    const { dispatch, detail } = this.props;
-
+    const { dispatch, detail, wechatUser } = this.props;
     if (!detail.id) return;
 
-    // TODO: 检查自己的积分是否足够兑换
+    // 检查自己的积分是否足够兑换
+    if (!(wechatUser.userIntegral && wechatUser.userIntegral >= detail.integral)) {
+      Modal.alert('兑换失败', '积分不足', [{ text: '好的', onPress: () => {} }]);
+      return;
+    }
 
     Modal.alert('确定兑换商品吗？', '', [
       { text: '取消', onPress: () => {}, style: 'default' },
@@ -82,6 +88,11 @@ class Detail extends PureComponent {
                   text: '好的',
                   onPress: () => {
                     router.goBack();
+
+                    // 重新获取用户信息，刷新积分情况
+                    dispatch({
+                      type: 'login/queryWechatUser',
+                    });
                   },
                 },
               ]);
@@ -104,6 +115,22 @@ class Detail extends PureComponent {
     }
     Toast.hide();
 
+    if (!detail.id) {
+      return (
+        <Fragment>
+          <Empty text="广告不存在或已被删除" />
+        </Fragment>
+      );
+    }
+
+    if (detail.isPublish === PUBLISH_STATE_YES) {
+      return (
+        <Fragment>
+          <Empty text="广告已下线" />
+        </Fragment>
+      );
+    }
+
     return (
       <DocumentTitle title="积分商品详情">
         <Fragment>
@@ -121,8 +148,11 @@ class Detail extends PureComponent {
                     <p className={styles.businessName}>{detail.businessName}</p>
                   </div>
                   <div className={styles.right}>
-                    <span className={styles.btn} onClick={() => this.exchangeGood()}>
-                      兑换
+                    <span
+                      className={styles.btn}
+                      onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
+                    >
+                      {isExchanged === false ? '兑换' : '已兑换'}
                     </span>
                   </div>
                 </div>

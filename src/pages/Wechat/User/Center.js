@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
+import { connect } from 'dva';
 import { Flex } from 'antd-mobile';
 
 import Link from 'umi/link';
@@ -34,28 +35,31 @@ const entries = [
   },
 ];
 
-// eslint-disable-next-line react/no-multi-comp
-export default class UserCenter extends PureComponent {
+@connect(({ login: { wechatUser } }) => ({
+  wechatUser,
+}))
+class UserCenter extends PureComponent {
   render() {
+    const { wechatUser } = this.props;
     return (
       <DocumentTitle title="个人中心">
         <Fragment>
           <section className={styles.header}>
             <div className={styles.info}>
-              <img alt="姓名" src="https://avatars2.githubusercontent.com/u/13148447?s=56&v=4" />
-              <p>姓名</p>
+              <img alt={wechatUser.name} src={wechatUser.avatar} />
+              <p>{wechatUser.name}</p>
             </div>
             <div>
               <Flex>
                 <Flex.Item>
                   <div className={styles.integral}>
-                    <p className={`${styles.number} ${styles.rest}`}>2000</p>
+                    <p className={`${styles.number} ${styles.rest}`}>{wechatUser.restIntegral}</p>
                     <p>可使用</p>
                   </div>
                 </Flex.Item>
                 <Flex.Item>
                   <div className={styles.integral}>
-                    <p className={`${styles.number} ${styles.used}`}>2000</p>
+                    <p className={`${styles.number} ${styles.used}`}>{wechatUser.userIntegral}</p>
                     <p>已兑换</p>
                   </div>
                 </Flex.Item>
@@ -75,3 +79,5 @@ export default class UserCenter extends PureComponent {
     );
   }
 }
+
+export default UserCenter;

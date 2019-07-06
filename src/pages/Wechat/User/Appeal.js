@@ -94,7 +94,7 @@ const FormWrapper = createForm()(
       const { form } = this.props;
       const { getFieldProps } = form;
       return (
-        <div className={styles.fromWrap}>
+        <div className={styles.formWrap}>
           <section className={styles.field}>
             <InputItem
               placeholder="请输入旧手机号码"
@@ -178,7 +178,7 @@ const FormWrapper = createForm()(
             <TextareaItem
               placeholder="填写申诉理由，不得少于8个字，最多200字（选填）"
               rows={4}
-              {...getFieldProps('description', {
+              {...getFieldProps('reason', {
                 rules: [
                   { required: false, whitespace: true, message: '请填写申诉理由' },
                   { min: 8, message: '申诉理由不得少于8个字' },

@@ -378,6 +378,7 @@ export const CarForm = createForm()(
 
         if (onSubmit) {
           onSubmit({
+            ...values,
             carCodeImage: getUploadImageUrl(carCodeImage),
             driverLicenseImage: getUploadImageUrl(driverLicenseImage),
             carImage: getUploadImageUrl(carImage),

@@ -10,9 +10,9 @@ export default {
   namespace: 'login',
 
   state: {
-    isInit: false,
     status: undefined,
-    currentUser: {}, // currentUser
+    currentUser: {},
+    wechatUser: {},
   },
 
   effects: {
@@ -26,15 +26,36 @@ export default {
       // Login successfully
       // 获取登陆用户信息
       yield put({
-        type: 'queryCurrentUser',
+        type: 'queryLoggedUser',
+        payload: {
+          from: 'login',
+        },
       });
     },
 
-    *queryCurrentUser({ payload }, { call, put, select }) {
-      const { isInit } = yield select(_ => _.global);
-      if (isInit) return;
+    *queryWechatUser(_, { call, put }) {
+      const { success, result } = yield call(queryCurrent);
 
-      const { success, result } = yield call(queryCurrent, payload);
+      if (success && result.name && result.type !== 'unknow') {
+        // 填充当前登录人
+        yield put({
+          type: 'changeState',
+          payload: {
+            wechatUser: result,
+            status: true,
+          },
+        });
+      } else {
+        router.push({
+          pathname: '/h5/user/bind',
+        });
+      }
+    },
+
+    *queryLoggedUser({ payload = {} }, { call, put }) {
+      const { from } = payload;
+      const { success, result } = yield call(queryCurrent);
+
       if (success && result.name && result.type !== 'unknow') {
         // 刷新权限
         setAuthority(result.type);
@@ -48,10 +69,12 @@ export default {
             status: true,
           },
         });
-        // 跳转到主页
-        router.push({
-          pathname: '/',
-        });
+        if (from === 'login') {
+          // 跳转到主页
+          router.push({
+            pathname: '/',
+          });
+        }
       } else {
         router.push({
           pathname: '/login',

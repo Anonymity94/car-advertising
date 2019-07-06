@@ -225,12 +225,12 @@ class AppealList extends PureComponent {
       },
       {
         title: '旧手机号',
-        dataIndex: 'oldTelephone',
+        dataIndex: 'oldPhone',
         align: 'center',
       },
       {
         title: '新手机号',
-        dataIndex: 'telephone',
+        dataIndex: 'phone',
         align: 'center',
       },
       {
@@ -246,8 +246,13 @@ class AppealList extends PureComponent {
       },
       {
         title: '状态',
-        dataIndex: 'stateText',
+        dataIndex: 'state',
         align: 'center',
+        render: text => {
+          if (text === AUDIT_STATE_PASSED) return '通过';
+          if (text === AUDIT_STATE_REFUSE) return '不通过';
+          return '待审核';
+        },
       },
       {
         title: '审核人',

@@ -40,7 +40,12 @@ export default modelExtend(model, {
     *queryGoods({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryGoods, payload);
 
-      const list = success ? result : [];
+      let list = success ? result : [];
+      // 微信端过滤出已发布的
+      if (payload.isPublish) {
+        list = list.filter(item => item.isPublish === payload.isPublish);
+      }
+
       yield put({
         type: 'updateState',
         payload: {

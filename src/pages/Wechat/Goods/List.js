@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
 import { Carousel, Card, Toast } from 'antd-mobile';
-import { TOP_STATE_YES } from '@/common/constants';
+import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 
 import styles from './styles.less';
 
@@ -63,22 +63,26 @@ class List extends PureComponent {
 
     dispatch({
       type: 'goodsModel/queryGoods',
+      payload: {
+        isPublish: PUBLISH_STATE_YES,
+      },
     }).then(({ success, list }) => {
       if (success) {
         const topList = [];
         const waterfallList = [];
         list.forEach(item => {
+          const newItem = { ...item };
           // 处理商品名称，商户-商品名称，去掉商户名称
-          const nameArr = item.name ? item.name.split('-') : [];
+          const nameArr = newItem.name ? newItem.name.split('-') : [];
           if (nameArr.length === 2) {
             // eslint-disable-next-line prefer-destructuring
-            item.name = nameArr[1];
+            newItem.name = nameArr[1];
           }
 
-          if (item.isTop === TOP_STATE_YES) {
-            topList.push(item);
+          if (newItem.isTop === TOP_STATE_YES) {
+            topList.push(newItem);
           } else {
-            waterfallList.push(item);
+            waterfallList.push(newItem);
           }
         });
 

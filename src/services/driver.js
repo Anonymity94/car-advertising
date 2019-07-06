@@ -71,17 +71,12 @@ export async function deleteDriver({ id }) {
 }
 
 /**
- * 查询当前登陆人
- */
-export async function queryCurrentUser() {
-  return request('/api/user/current');
-}
-
-/**
  * 获取验证码
  */
 export async function getCaptcha({ phone }) {
-  return request(`/api/captcha?phone=${phone}`);
+  return request(`/api/captcha?phone=${phone}`, {
+    method: 'POST',
+  });
 }
 
 /**

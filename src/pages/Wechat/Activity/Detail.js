@@ -3,7 +3,9 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import moment from 'moment';
 import { Toast, Modal, Icon } from 'antd-mobile';
+import { PUBLISH_STATE_NO } from '@/common/constants';
 import Loading from '@/components/Loading';
+import Empty from '@/components/Empty';
 
 import router from 'umi/router';
 import styles from './styles.less';
@@ -101,8 +103,23 @@ class Detail extends PureComponent {
       Toast.loading('加载中....', 0);
       return <Loading />;
     }
-      Toast.hide();
+    Toast.hide();
 
+    if (!detail.id) {
+      return (
+        <Fragment>
+          <Empty text="活动不存在或已被删除" />
+        </Fragment>
+      );
+    }
+
+    if (detail.isPublish === PUBLISH_STATE_NO) {
+      return (
+        <Fragment>
+          <Empty text="活动已下线" />
+        </Fragment>
+      );
+    }
 
     return (
       <DocumentTitle title={detail.title}>

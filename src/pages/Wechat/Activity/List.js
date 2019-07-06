@@ -1,13 +1,12 @@
-import React, { PureComponent, Fragment, memo } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
 import moment from 'moment';
-import { Carousel, Card, Toast } from 'antd-mobile';
-import { TOP_STATE_YES } from '@/common/constants';
+import { Carousel, Toast } from 'antd-mobile';
+import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 
-import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
 
 @connect(({ loading }) => ({
@@ -34,6 +33,9 @@ class List extends PureComponent {
 
     dispatch({
       type: 'activityModel/queryActivities',
+      payload: {
+        isPublish: PUBLISH_STATE_YES,
+      },
     }).then(({ success, list }) => {
       if (success) {
         const topList = [];

@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { getAuthority } from '@/utils/authority';
 import Redirect from 'umi/redirect';
 
-const RedirectPage = memo(() => {
+export default () => {
   const auth = getAuthority();
   if (auth.indexOf('admin') > -1) {
     return <Redirect to="/workplace" />;
@@ -12,6 +12,4 @@ const RedirectPage = memo(() => {
   }
 
   return <Redirect to="/login" />;
-});
-
-export default RedirectPage;
+};

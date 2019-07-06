@@ -16,12 +16,12 @@ export const BOOLEAN_YES = 1;
 /**
  * 用户审核状态：未审核
  */
-export const AUDIT_STATE_UNREVIEWED = BOOLEAN_NO;
+export const AUDIT_STATE_UNREVIEWED = '0';
 
 /**
  * 用户审核状态：已通过
  */
-export const AUDIT_STATE_PASSED = BOOLEAN_YES;
+export const AUDIT_STATE_PASSED = '1';
 
 /**
  * 用户审核状态：未通过

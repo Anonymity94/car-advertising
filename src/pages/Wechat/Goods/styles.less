@@ -2,6 +2,27 @@
 @import '~@/utils/utils.less';
 
 .wrap {
+  .carousel {
+    margin-bottom: 10px;
+    :global {
+      .slider-list {
+        height: 150px !important;
+      }
+    }
+    .item {
+      height: 150px;
+      display: inline-block;
+      width: 100%;
+      border-radius: 4px;
+
+      img {
+        width: 100%;
+        vertical-align: top;
+        border-radius: 4px;
+      }
+    }
+  }
+
   .content {
     .item {
       margin-bottom: 10px;

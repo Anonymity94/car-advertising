@@ -5,15 +5,6 @@ export default {
     collapsed: false,
   },
 
-  subscriptions: {
-    async setup({ dispatch, history }) {
-      const { pathname } = history.location;
-      if (pathname.indexOf('/h5') === -1) {
-        await dispatch({ type: 'login/queryCurrentUser' });
-      }
-    },
-  },
-
   effects: {},
 
   reducers: {
@@ -28,6 +19,17 @@ export default {
         ...state,
         collapsed: payload,
       };
+    },
+  },
+
+  subscriptions: {
+    setup({ dispatch, history }) {
+      const { pathname } = history.location;
+      if (pathname.indexOf('h5') === -1) {
+        dispatch({ type: 'login/queryLoggedUser' });
+      } else {
+        dispatch({ type: 'login/queryWechatUser' });
+      }
     },
   },
 };
