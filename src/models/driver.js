@@ -1,4 +1,4 @@
-import { message, Tooltip } from 'antd';
+import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import router from 'umi/router';
@@ -7,7 +7,7 @@ import {
   queryDrivers,
   queryDriverById,
   auditDriver,
-  updateDriverExpireTime,
+  updateDriver,
   deleteDriver,
   register,
   bindPhone,
@@ -108,21 +108,23 @@ export default modelExtend(model, {
     },
 
     /**
-     * 修改行驶证到期时间
+     * 修改人员
      */
-    *updateDriverExpireTime({ payload }, { call, put }) {
+    *updateDriver({ payload }, { call, put }) {
       const { id } = payload;
-      const { success } = yield call(updateDriverExpireTime, payload);
-      if (success) {
-        message.success('更新成功');
-        yield put({
-          type: 'queryDriverDetail',
-          payload: {
-            id,
-          },
-        });
-      } else {
-        message.error('更新失败');
+      const { success } = yield call(updateDriver, payload);
+      if (window.location.href.indexOf('/h5/') === -1) {
+        if (success) {
+          message.success('更新成功');
+          yield put({
+            type: 'queryDriverDetail',
+            payload: {
+              id,
+            },
+          });
+        } else {
+          message.error('更新失败');
+        }
       }
       return success;
     },

@@ -200,6 +200,11 @@ export default [
                 component: './Driver/Audit',
               },
               {
+                path: '/application/drivers/:id/update',
+                name: 'audit',
+                component: './Driver/Update',
+              },
+              {
                 path: '/application/drivers/:id',
                 name: 'info',
                 component: './Driver/Info',

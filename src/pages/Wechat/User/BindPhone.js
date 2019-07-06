@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { InputItem, Button, Modal, Flex } from 'antd-mobile';
 import router from 'umi/router';
 import { phoneReg, showError } from '@/utils/utils';
@@ -144,7 +144,7 @@ const FormWrapper = createForm()(
               <Button
                 style={{ width: '45%' }}
                 className="button-cancel"
-                onClick={() => router.replace('/h5/home')}
+                onClick={() => router.goBack()}
               >
                 取消
               </Button>

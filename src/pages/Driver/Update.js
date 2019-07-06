@@ -11,7 +11,7 @@ import styles from './styles.less';
 @connect(({ driverModel: { detail }, loading }) => ({
   detail,
   loading: loading.effects['driverModel/queryDriverDetail'],
-  submitting: loading.effects['driverModel/updateDriverExpireTime'],
+  submitting: loading.effects['driverModel/updateDriver'],
 }))
 class Audit extends PureComponent {
   state = {
@@ -67,7 +67,7 @@ class Audit extends PureComponent {
       ),
       onOk: () => {
         dispatch({
-          type: 'driverModel/updateDriverExpireTime',
+          type: 'driverModel/updateDriver',
           payload: {
             id,
             expireTime: dueDate || expireTime,

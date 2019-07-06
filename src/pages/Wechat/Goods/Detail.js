@@ -110,7 +110,7 @@ class Detail extends PureComponent {
     const { queryLoading, detail } = this.props;
 
     if (queryLoading) {
-      Toast.loading('加载中....', 0);
+      Toast.loading('加载中....', 1000);
       return <Loading />;
     }
     Toast.hide();

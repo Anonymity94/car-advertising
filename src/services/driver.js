@@ -50,11 +50,11 @@ export async function auditDriver({ id, status, reason = '' }) {
  * @param {Stirng} id 用户id
  * @param {Stirng} expireTime  行驶证的到期日期
  */
-export async function updateDriverExpireTime({ id, expireTime }) {
+export async function updateDriver({ id, ...reset }) {
   return request(`/api/user-manager/user-manager/user-update?id=${id}`, {
     method: 'PUT',
     body: {
-      expireTime,
+      ...reset,
     },
   });
 }
@@ -74,9 +74,7 @@ export async function deleteDriver({ id }) {
  * 获取验证码
  */
 export async function getCaptcha({ phone }) {
-  return request(`/api/captcha?phone=${phone}`, {
-    method: 'POST',
-  });
+  return request(`/api/captcha?phone=${phone}`);
 }
 
 /**

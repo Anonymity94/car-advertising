@@ -35,7 +35,7 @@ const UserDetail = memo(({ detail, loading, editable = false, onDataChange }) =>
             <DatePicker
               allowClear={false}
               defaultValue={
-                detail.expireTime ? moment(detail.expireTime).format('YYYY-MM-DD') : undefined
+                detail.expireTime ? moment(detail.expireTime) : undefined
               }
               onChange={onDataChange}
             />

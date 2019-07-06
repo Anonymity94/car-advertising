@@ -1,7 +1,7 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/prefer-stateless-function */
 import React, { PureComponent, Fragment } from 'react';
-import { InputItem, Button, List, Steps, WhiteSpace, DatePicker, Modal } from 'antd-mobile';
+import { InputItem, Button, List, Steps, WhiteSpace, DatePicker, Modal, Flex } from 'antd-mobile';
 import { Upload } from 'antd';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
@@ -16,6 +16,7 @@ import styles from './style.less';
 import userIcon from './icons/icon_user@2x.png';
 import idcardIcon from './icons/icon_idcard@2x.png';
 import phoneIcon from './icons/icon_phone@2x.png';
+import captchaIcon from './icons/icon_captcha@2x.png';
 
 // 边框背景图
 import uploadBgImage from './icons/upload_bg@2x.png';
@@ -179,6 +180,49 @@ const steps = [
 
 export const UserInfoForm = createForm()(
   class FormWrapper extends React.Component {
+    state = {
+      count: 0,
+    };
+
+    componentWillUnmount() {
+      clearInterval(this.interval);
+    }
+
+    runGetCaptchaCountDown = () => {
+      let count = 59;
+      this.setState({ count });
+      this.interval = setInterval(() => {
+        count -= 1;
+        this.setState({ count });
+        if (count === 0) {
+          clearInterval(this.interval);
+        }
+      }, 1000);
+    };
+
+    getCaptcha = () => {
+      const { form, dispatch } = this.props;
+      form.validateFields(['phone']);
+      const phoneError = form.getFieldError('phone');
+      if (phoneError) {
+        showError(phoneError[0]);
+        return;
+      }
+
+      const phone = form.getFieldValue('phone');
+
+      dispatch({
+        type: 'driverModel/getCaptcha',
+        payload: {
+          phone,
+        },
+      }).then(success => {
+        if (success) {
+          this.runGetCaptchaCountDown();
+        }
+      });
+    };
+
     handleOk = () => {
       const { form, onSubmit } = this.props;
       form.validateFields((error, values) => {
@@ -193,6 +237,7 @@ export const UserInfoForm = createForm()(
     };
 
     render() {
+      const { count } = this.state;
       const { form } = this.props;
       const { getFieldProps } = form;
       return (
@@ -241,6 +286,37 @@ export const UserInfoForm = createForm()(
             </InputItem>
           </section>
           <section className={styles.field}>
+            <Flex style={{ justifyContent: 'space-between' }}>
+              <InputItem
+                placeholder="请输入验证码"
+                className={`${styles.captchaItem} required`}
+                {...getFieldProps('captcha', {
+                  validateFirst: true,
+                  rules: [{ required: true, whitespace: true, message: '请输入验证码' }],
+                })}
+              >
+                <div
+                  className={`${styles.icon}`}
+                  style={{
+                    backgroundImage: `url(${captchaIcon})`,
+                    ...iconPorps,
+                    width: '21px',
+                    height: '27px',
+                  }}
+                />
+              </InputItem>
+              <Button
+                inline
+                className={styles.captchaBtn}
+                disabled={count > 0}
+                loading={count > 0}
+                onClick={this.getCaptcha}
+              >
+                {count ? `${count}秒后重试` : '获取验证码'}
+              </Button>
+            </Flex>
+          </section>
+          <section className={styles.field}>
             <InputItem
               placeholder="请输入您的身份证号"
               className="required"
@@ -275,14 +351,17 @@ export const IdcardForm = createForm()(
   class FormWrapper extends React.Component {
     constructor(props) {
       super(props);
+
+      const { idcardBackImage, idcardFrontImage } = this.props;
+
       this.state = {
         // 反面，人像面
         idcardBackImageLoading: false,
-        idcardBackImage: [],
+        idcardBackImage: idcardBackImage ? [{ url: idcardBackImage }] : [],
 
         // 正面，国徽面
         idcardFrontImageLoading: false,
-        idcardFrontImage: [],
+        idcardFrontImage: idcardFrontImage ? [{ url: idcardFrontImage }] : [],
       };
 
       this.renderUploadHtml = renderUploadHtml.bind(this);
@@ -347,18 +426,19 @@ export const CarForm = createForm()(
   class FormWrapper extends React.Component {
     constructor(props) {
       super(props);
+      const { carCodeImage, driverLicenseImage, carImage } = this.props;
       this.state = {
         // 行驶证照片
         carCodeLoading: false,
-        carCodeImage: [],
+        carCodeImage: carCodeImage ? [{ url: carCodeImage }] : [],
 
         // 驾驶证照片
         driverLicenseLoading: false,
-        driverLicenseImage: [],
+        driverLicenseImage: driverLicenseImage ? [{ url: driverLicenseImage }] : [],
 
         // 车辆照片
         carImageLoading: false,
-        carImage: [],
+        carImage: carImage ? [{ url: carImage }] : [],
       };
 
       this.renderUploadHtml = renderUploadHtml.bind(this);
@@ -557,6 +637,7 @@ class BindPhone extends PureComponent {
 
   render() {
     const { current } = this.state;
+    const { dispatch } = this.props;
 
     return (
       <DocumentTitle title="注册会员">
@@ -572,7 +653,7 @@ class BindPhone extends PureComponent {
           </Steps>
           <WhiteSpace size="lg" />
           <section style={{ display: `${current === 0 ? '' : 'none'}` }}>
-            <UserInfoForm onSubmit={this.handleSubmitUserInfo} />
+            <UserInfoForm dispatch={dispatch} onSubmit={this.handleSubmitUserInfo} />
           </section>
           <section style={{ display: `${current === 1 ? '' : 'none'}` }}>
             <IdcardForm onSubmit={this.handleSubmitIdcard} />

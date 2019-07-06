@@ -67,7 +67,11 @@ const tableColumns = [
     align: 'center',
     render: (text, record) => (
       <Fragment>
-        <Link to={`/application/drivers/${record.id}/audit`}>审核</Link>
+        {record.status === AUDIT_STATE_PASSED ? (
+          <Link to={`/application/drivers/${record.id}/update`}>修改</Link>
+        ) : (
+          <Link to={`/application/drivers/${record.id}/audit`}>审核</Link>
+        )}
         <Divider type="vertical" />
         <Link to={`/application/drivers/${record.id}`}>查看</Link>
       </Fragment>

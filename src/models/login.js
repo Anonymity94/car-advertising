@@ -48,9 +48,16 @@ export default {
           },
         });
       } else {
-        router.push({
-          pathname: '/h5/user/bind',
+        yield put({
+          type: 'changeState',
+          payload: {
+            wechatUser: {},
+            status: false,
+          },
         });
+        // router.push({
+        //   pathname: '/h5/user/bind',
+        // });
       }
     },
 

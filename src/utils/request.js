@@ -1,7 +1,5 @@
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
-import router from 'umi/router';
-import hash from 'hash.js';
 import { MOCK_API_PREFIX } from '@/common/app';
 
 const codeMessage = {
@@ -22,14 +20,17 @@ const codeMessage = {
   504: '网关超时。',
 };
 
+const isWechatPage = window.location.href.indexOf('/h5/') > -1;
+
 const checkStatus = response => {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
+
   const errortext = codeMessage[response.status] || response.statusText;
 
   // 微信端不提示
-  if (window.location.href.indexOf('/h5/') === -1) {
+  if (!isWechatPage) {
     notification.error({
       message: `请求错误 ${response.status}: ${response.url}`,
       description: errortext,
@@ -39,6 +40,7 @@ const checkStatus = response => {
   const error = new Error(errortext);
   error.name = response.status;
   error.response = response;
+  console.log('error', error);
   throw error;
 };
 
@@ -89,25 +91,19 @@ export default function request(url, option) {
   return fetch(url, newOptions)
     .then(checkStatus)
     .then(response => {
-      // DELETE and 204 do not return data by default
-      // using .json will report an error.
-      if (
-        (newOptions.method === 'DELETE' ||
-          newOptions.method === 'POST' ||
-          newOptions.method === 'PUT') &&
-        response.status === 200
-      ) {
-        return {
-          success: true,
-        };
+      const contentType = response.headers.get('content-type');
+      if (!contentType) return response;
+      if (contentType.includes('application/json')) {
+        return response.json();
       }
-      return response.json();
+      return response;
     })
-    .then(response => ({
+    .then(result => ({
       success: true,
-      result: response,
+      result,
     }))
     .catch(e => {
+      console.log(e);
       const status = e.name;
       if (status === 401) {
         // @HACK
@@ -116,9 +112,7 @@ export default function request(url, option) {
         //   type: 'login/logout',
         // });
       } else if ((status <= 504 && status >= 500) || (status >= 404 && status < 422)) {
-        console.log('err');
       }
-
       return {
         success: false,
       };

@@ -265,4 +265,17 @@ state: 2
 用户审核，返回了200 状态码，但是status没有修改
 /api/user-manager/user-manager/user-access
 /api/user-manager/user-manager/user-reject
+
+现在拒绝好像也是通过了~~~
+
 ```
+
+## 讨论一个问题，微信端个人信息。
+
+需要2个接口，一个是查当前登陆人的详情信息。
+和 后台管理`/api/user-manager/user-single?id=${id}`  返回一模一样
+
+第二个是，修改个人信息，`/api/user-manager/user-manager/user-update?id=${id}` 这个也能复用
+
+
+但是id，怎么处理
