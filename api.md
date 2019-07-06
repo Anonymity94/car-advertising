@@ -233,7 +233,7 @@ PUT /api/appeals/5d2047d53a20860006d07c5c/state
 body
 {
 remark: "232323"
-state: "2"
+state: 2
 }
 
 ```
@@ -246,4 +246,23 @@ state: "2"
 ## 广告详情接口  blocked
 ```
 /api/ads/5d11b8ce2ddcfe000621b32d (blocked:other)
+```
+
+
+## 获取验证码 405
+```
+/api/captcha?phone=18612133937
+```
+
+
+## 用户审核
+```
+/api/user-manager/user-manager/user-access?id=5d20cb84caec620007d0fbce
+你多嵌套了一层 /user-manager
+
+--- 
+
+用户审核，返回了200 状态码，但是status没有修改
+/api/user-manager/user-manager/user-access
+/api/user-manager/user-manager/user-reject
 ```

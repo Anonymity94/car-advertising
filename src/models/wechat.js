@@ -1,6 +1,6 @@
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
-import { wechatAuthorize } from '@/services/wechat';
+import { wechatAuthorize, wechatAccess } from '@/services/wechat';
 
 export default modelExtend(model, {
   namespace: 'wechatModel',
@@ -11,12 +11,15 @@ export default modelExtend(model, {
 
   effects: {
     *wechatAuthorize(_, { call }) {
-      const { success, result } = yield call(wechatAuthorize, {
+      yield call(wechatAuthorize, {
         scope: 'snsapi_base',
-        state: '123#wechat_redirect',
+        state: 'STATE',
       });
-
-      console.log(success, result);
+    },
+    *wechatAccess({ payload }, { call }) {
+      yield call(wechatAccess, {
+        code: payload.code,
+      });
     },
   },
 });

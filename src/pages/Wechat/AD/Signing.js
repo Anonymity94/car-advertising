@@ -1,6 +1,3 @@
-import 'weui';
-import 'react-weui/build/packages/react-weui.css';
-
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
@@ -9,9 +6,13 @@ import router from 'umi/router';
 import isEqual from 'lodash/isEqual';
 import { Checkbox, Toast, Modal, List } from 'antd-mobile';
 import Loading from '@/components/Loading';
+import 'weui';
+import 'react-weui/build/packages/react-weui.css';
 import { Popup, PopupHeader } from 'react-weui';
 
 import styles from './styles.less';
+import Empty from '@/components/Empty';
+import { PUBLISH_STATE_NO } from '@/common/constants';
 
 const { AgreeItem } = Checkbox;
 
@@ -29,8 +30,8 @@ class Signing extends PureComponent {
     open: false,
   };
 
-  async componentDidMount() {
-    await this.getAdContent();
+  componentDidMount() {
+    this.getAdContent();
   }
 
   static getDerivedStateFromProps(nextProps, state) {
@@ -52,6 +53,7 @@ class Signing extends PureComponent {
       dispatch,
       match: { params },
     } = this.props;
+    console.log(params);
 
     dispatch({
       type: 'adModel/queryAdContent',
@@ -133,6 +135,22 @@ class Signing extends PureComponent {
     }
     Toast.hide();
 
+    if (!detail.id) {
+      return (
+        <Fragment>
+          <Empty text="广告不存在或已被删除" />
+        </Fragment>
+      );
+    }
+
+    if (detail.isPublish === PUBLISH_STATE_NO) {
+      return (
+        <Fragment>
+          <Empty text="广告已下线" />
+        </Fragment>
+      );
+    }
+
     return (
       <DocumentTitle title="签约详情">
         <Fragment>
@@ -179,13 +197,18 @@ class Signing extends PureComponent {
           <Popup
             className={styles.popupWrap}
             show={open}
-            onRequestClose={() => this.setState({ open: false })}
+            onRequestClose={() => {
+              this.setState({ open: false });
+              return false;
+            }}
           >
             <PopupHeader
               left="修改地址"
               right={<span className={styles.popOk}>确认</span>}
-              leftOnClick={() => {}}
-              rightOnClick={() => this.setState({ open: false })}
+              rightOnClick={() => {
+                this.setState({ open: false });
+                return false;
+              }}
             />
             <List>
               {detail.address &&
@@ -194,7 +217,10 @@ class Signing extends PureComponent {
                   <Checkbox.CheckboxItem
                     checked={currentAddress.address === i.address}
                     key={i.address}
-                    onChange={() => this.setState({ currentAddress: i })}
+                    onChange={() => {
+                      this.setState({ currentAddress: i });
+                      return false;
+                    }}
                   >
                     {i.address}
                   </Checkbox.CheckboxItem>

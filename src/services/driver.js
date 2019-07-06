@@ -35,9 +35,9 @@ export async function queryDriverById({ id }) {
  * @param {String} state
  * @param {String} reason
  */
-export async function auditDriver({ id, state, reason }) {
-  const api = state === AUDIT_STATE_PASSED ? 'user-access' : 'user-reject';
-  return request(`/api/user-manager/${api}?id=${id}`, {
+export async function auditDriver({ id, status, reason = '' }) {
+  const api = status === AUDIT_STATE_PASSED ? 'user-access' : 'user-reject';
+  return request(`/api/user-manager/user-manager/${api}?id=${id}`, {
     method: 'PUT',
     body: {
       reason,
@@ -51,7 +51,7 @@ export async function auditDriver({ id, state, reason }) {
  * @param {Stirng} expireTime  行驶证的到期日期
  */
 export async function updateDriverExpireTime({ id, expireTime }) {
-  return request(`/api/user-manager/user-update?id=${id}`, {
+  return request(`/api/user-manager/user-manager/user-update?id=${id}`, {
     method: 'PUT',
     body: {
       expireTime,

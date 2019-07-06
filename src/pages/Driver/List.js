@@ -8,7 +8,12 @@ import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
 
-import { AUDIT_STATE_LIST, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
+import {
+  AUDIT_STATE_LIST,
+  AUDIT_STATE_UNREVIEWED,
+  AUDIT_STATE_PASSED,
+  AUDIT_STATE_REFUSE,
+} from '@/common/constants';
 
 const FormItem = Form.Item;
 
@@ -17,10 +22,11 @@ const tableColumns = [
     title: '会员编号',
     dataIndex: 'id',
     align: 'center',
+    width: 240,
   },
   {
     title: '姓名',
-    dataIndex: 'name',
+    dataIndex: 'username',
     align: 'center',
   },
   {
@@ -37,12 +43,17 @@ const tableColumns = [
     title: '提交日期',
     dataIndex: 'createTime',
     align: 'center',
-    render: text => text && moment(text).format('YYYY-MM-DD'),
   },
   {
     title: '状态',
-    dataIndex: 'stateText',
+    dataIndex: 'status',
     align: 'center',
+    render: text => {
+      if (!text || text === AUDIT_STATE_UNREVIEWED) return '未审核';
+      if (text === AUDIT_STATE_PASSED) return '已通过';
+      if (text === AUDIT_STATE_REFUSE) return '未通过';
+      return '';
+    },
   },
   {
     title: '审核人',

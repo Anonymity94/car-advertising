@@ -232,6 +232,10 @@ const FormWrapper = createForm()(
   }
 );
 
+connect(({ dispatch }) => ({
+  dispatch,
+}))(FormWrapper);
+
 // eslint-disable-next-line react/no-multi-comp
 @connect()
 class ChangePhone extends PureComponent {

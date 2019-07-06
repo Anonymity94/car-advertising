@@ -1,13 +1,14 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/prefer-stateless-function */
 import React, { PureComponent, Fragment } from 'react';
-import { InputItem, Button, List, Steps, WhiteSpace, DatePicker, Toast, Modal } from 'antd-mobile';
+import { InputItem, Button, List, Steps, WhiteSpace, DatePicker, Modal } from 'antd-mobile';
 import { Upload } from 'antd';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { MOCK_API_PREFIX } from '@/common/app';
+import moment from 'moment';
 import UploadLoading from './UploadLoading';
 
 import styles from './style.less';
@@ -19,8 +20,8 @@ import phoneIcon from './icons/icon_phone@2x.png';
 // 边框背景图
 import uploadBgImage from './icons/upload_bg@2x.png';
 // 身份证示例
-import idardBackDemo from './icons/idcard_back_demo@2x.png';
-import idardFrontDemo from './icons/idcard_front_demo@2x.png';
+import idcardBackDemo from './icons/idcard_back_demo@2x.png';
+import idcardFrontDemo from './icons/idcard_front_demo@2x.png';
 
 // 行驶证
 import carCodeDemo from './icons/car_license_demo@2x.png';
@@ -276,12 +277,12 @@ export const IdcardForm = createForm()(
       super(props);
       this.state = {
         // 反面，人像面
-        idardBackImageLoading: false,
-        idardBackImage: [],
+        idcardBackImageLoading: false,
+        idcardBackImage: [],
 
         // 正面，国徽面
-        idardFrontImageLoading: false,
-        idardFrontImage: [],
+        idcardFrontImageLoading: false,
+        idcardFrontImage: [],
       };
 
       this.renderUploadHtml = renderUploadHtml.bind(this);
@@ -298,12 +299,12 @@ export const IdcardForm = createForm()(
           return;
         }
 
-        const { idardBackImage, idardFrontImage } = values;
+        const { idcardBackImage, idcardFrontImage } = values;
 
         if (onSubmit) {
           onSubmit({
-            idardBackImage: getUploadImageUrl(idardBackImage),
-            idardFrontImage: getUploadImageUrl(idardFrontImage),
+            idcardBackImage: getUploadImageUrl(idcardBackImage),
+            idcardFrontImage: getUploadImageUrl(idcardFrontImage),
           });
         }
       });
@@ -313,15 +314,15 @@ export const IdcardForm = createForm()(
       const { showbtn = true } = this.props;
       const renderUpload = [
         {
-          field: 'idardBackImage', // 表单的值
-          loading: 'idardBackImageLoading',
-          demoImage: idardBackDemo,
+          field: 'idcardBackImage', // 表单的值
+          loading: 'idcardBackImageLoading',
+          demoImage: idcardBackDemo,
           placeholder: '上传身份证人像面',
         },
         {
-          field: 'idardFrontImage',
-          loading: 'idardFrontImageLoading',
-          demoImage: idardFrontDemo,
+          field: 'idcardFrontImage',
+          loading: 'idcardFrontImageLoading',
+          demoImage: idcardFrontDemo,
           placeholder: '上传身份证国徽面',
         },
       ].map(item => this.renderUploadHtml(item));
@@ -374,11 +375,12 @@ export const CarForm = createForm()(
           return;
         }
 
-        const { carCodeImage, driverLicenseImage, carImage } = values;
+        const { carCodeImage, driverLicenseImage, carImage, expireTime } = values;
 
         if (onSubmit) {
           onSubmit({
             ...values,
+            expireTime: moment(expireTime).format('YYYY-MM-DD'),
             carCodeImage: getUploadImageUrl(carCodeImage),
             driverLicenseImage: getUploadImageUrl(driverLicenseImage),
             carImage: getUploadImageUrl(carImage),
@@ -555,13 +557,6 @@ class BindPhone extends PureComponent {
 
   render() {
     const { current } = this.state;
-    const { submitLoading } = this.props;
-
-    if (submitLoading) {
-      Toast.loading('保存中....', 0);
-    } else {
-      Toast.hide();
-    }
 
     return (
       <DocumentTitle title="注册会员">

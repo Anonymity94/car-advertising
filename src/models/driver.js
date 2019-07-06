@@ -1,7 +1,8 @@
-import { message } from 'antd';
+import { message, Tooltip } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import router from 'umi/router';
+import { Toast } from 'antd-mobile';
 import {
   queryDrivers,
   queryDriverById,
@@ -161,6 +162,7 @@ export default modelExtend(model, {
      * 用户注册
      */
     *register({ payload }, { call }) {
+      Toast.loading('保存中....', 0);
       const { success } = yield call(register, payload);
       if (success) {
         // 跳转到成功提示
@@ -168,6 +170,7 @@ export default modelExtend(model, {
       } else {
         message.error('注册失败');
       }
+      Toast.hide();
       return success;
     },
 

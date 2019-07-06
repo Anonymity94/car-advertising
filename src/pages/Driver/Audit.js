@@ -1,15 +1,11 @@
 import React, { PureComponent, Suspense, Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Modal, Input } from 'antd';
+import { Button, Modal, Input, Empty } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import FooterToolbar from '@/components/FooterToolbar';
 import router from 'umi/router';
 import UserDetail from './UserDetail';
-import {
-  AUDIT_STATE_UNREVIEWED,
-  AUDIT_STATE_PASSED,
-  AUDIT_STATE_REFUSE,
-} from '@/common/constants';
+import { AUDIT_STATE_UNREVIEWED, AUDIT_STATE_PASSED, AUDIT_STATE_REFUSE } from '@/common/constants';
 
 import styles from './styles.less';
 
@@ -54,7 +50,7 @@ class Audit extends PureComponent {
     });
   };
 
-  handleAudit = state => {
+  handleAudit = status => {
     const {
       dispatch,
       detail: { id },
@@ -74,7 +70,7 @@ class Audit extends PureComponent {
         type: 'driverModel/auditDriver',
         payload: {
           id,
-          state,
+          status,
           reason,
         },
       }).then(success => {
@@ -101,7 +97,7 @@ class Audit extends PureComponent {
       loading: false,
     };
 
-    if (state === AUDIT_STATE_PASSED) {
+    if (status === AUDIT_STATE_PASSED) {
       confirmModal = Modal.confirm({
         title: '确定通过此条申请吗？',
         ...confirmProps,
@@ -146,13 +142,17 @@ class Audit extends PureComponent {
     const { width } = this.state;
     const { loading, detail, submitting } = this.props;
 
+    if (!loading && !detail.id) {
+      return <Empty description="用户不存在或已被删除" />;
+    }
+
     return (
       <PageHeaderWrapper showback>
         <Suspense fallback={null}>
           <UserDetail detail={detail} loading={loading} />
         </Suspense>
 
-        {detail.id && detail.state === AUDIT_STATE_UNREVIEWED && (
+        {detail.id && (!detail.status || detail.status === AUDIT_STATE_UNREVIEWED) && (
           <FooterToolbar style={{ width }}>
             <section className={styles.operateWrap}>
               <Button

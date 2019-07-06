@@ -29,7 +29,7 @@ export default {
         dispatch({ type: 'login/queryLoggedUser' });
       } else {
         dispatch({ type: 'wechatModel/wechatAuthorize' });
-        dispatch({ type: 'login/queryWechatUser' });
+        // dispatch({ type: 'login/queryWechatUser' });
       }
     },
   },

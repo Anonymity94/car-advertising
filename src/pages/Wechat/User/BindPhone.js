@@ -3,8 +3,8 @@ import { InputItem, Button, Modal, Flex } from 'antd-mobile';
 import router from 'umi/router';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
-import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
+import DocumentTitle from 'react-document-title';
 
 import styles from './style.less';
 
@@ -160,28 +160,28 @@ const FormWrapper = createForm()(
 );
 
 // eslint-disable-next-line react/no-multi-comp
-@connect(({ login: { APPID } }) => ({
-  APPID,
-}))
+@connect()
 class BindPhone extends PureComponent {
-  handleSubmit = values => {
-    const { dispatch, APPID } = this.props;
+  componentDidMount() {
+    const { dispatch, location } = this.props;
+    const { code } = location.query;
+    if (code) {
+      dispatch({
+        type: 'wechatModel/wechatAccess',
+        payload: {
+          code,
+        },
+      });
+    }
+  }
 
-    const requestUrl = '/h5/user/bind';
-    const redirectUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=
-      ${APPID}
-      &redirect_uri=
-      ${encodeURI(window.location.origin)}%2Fh5%2Fuser%2Fbind
-      &response_type=code&scope=snsapi_base#wechat_redirect`;
+  handleSubmit = values => {
+    const { dispatch } = this.props;
 
     dispatch({
       type: 'driverModel/bindPhone',
-      payload: { ...values, url: requestUrl },
-    }).then(success => {
-      if (success) {
-        window.location.href = redirectUrl;
-      }
-    });
+      payload: { ...values },
+    }).then(success => {});
   };
 
   render() {

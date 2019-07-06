@@ -16,17 +16,17 @@ export const BOOLEAN_YES = 1;
 /**
  * 用户审核状态：未审核
  */
-export const AUDIT_STATE_UNREVIEWED = '0';
+export const AUDIT_STATE_UNREVIEWED = BOOLEAN_NO;
 
 /**
  * 用户审核状态：已通过
  */
-export const AUDIT_STATE_PASSED = '1';
+export const AUDIT_STATE_PASSED = BOOLEAN_YES;
 
 /**
  * 用户审核状态：未通过
  */
-export const AUDIT_STATE_REFUSE = '2';
+export const AUDIT_STATE_REFUSE = 2;
 
 /**
  * 用户审核状态
@@ -49,22 +49,22 @@ export const AUDIT_STATE_LIST = [
 /**
  * 广告粘贴状态：未审核
  */
-export const AD_PASTE_STATE_UN_REVIEW = '0';
+export const AD_PASTE_STATE_UN_REVIEW = BOOLEAN_NO;
 
 /**
  * 广告粘贴状态：审核通过，未粘贴
  */
-export const AD_PASTE_STATE_UN_PASTED = '1';
+export const AD_PASTE_STATE_UN_PASTED = BOOLEAN_YES;
 
 /**
  * 广告粘贴状态：审核通过，已粘贴
  */
-export const AD_PASTE_STATE_PASTED = '2';
+export const AD_PASTE_STATE_PASTED = 2;
 
 /**
  * 广告粘贴状态：审核被拒绝
  */
-export const AD_PASTE_STATE_REFUSE = '3';
+export const AD_PASTE_STATE_REFUSE = 3;
 
 /**
  * 广告粘贴状态
