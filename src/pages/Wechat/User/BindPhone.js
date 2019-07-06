@@ -160,13 +160,27 @@ const FormWrapper = createForm()(
 );
 
 // eslint-disable-next-line react/no-multi-comp
-@connect()
+@connect(({ login: { APPID } }) => ({
+  APPID,
+}))
 class BindPhone extends PureComponent {
   handleSubmit = values => {
-    const { dispatch } = this.props;
+    const { dispatch, APPID } = this.props;
+
+    const requestUrl = '/h5/user/bind';
+    const redirectUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=
+      ${APPID}
+      &redirect_uri=
+      ${encodeURI(window.location.origin)}%2Fh5%2Fuser%2Fbind
+      &response_type=code&scope=snsapi_base#wechat_redirect`;
+
     dispatch({
       type: 'driverModel/bindPhone',
-      payload: { ...values },
+      payload: { ...values, url: requestUrl },
+    }).then(success => {
+      if (success) {
+        window.location.href = redirectUrl;
+      }
     });
   };
 

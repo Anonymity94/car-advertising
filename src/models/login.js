@@ -13,6 +13,8 @@ export default {
     status: undefined,
     currentUser: {},
     wechatUser: {},
+
+    APPID: '', // 微信 appid
   },
 
   effects: {
