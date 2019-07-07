@@ -67,22 +67,22 @@ class Audited extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { name, telephone, expireTime } = query;
+    const { username, phone, expireTime } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
         <Row gutter={10}>
           <Col md={6}>
             <FormItem label="姓名">
-              {getFieldDecorator('name', {
-                initialValue: name,
+              {getFieldDecorator('username', {
+                initialValue: username,
               })(<Input placeholder="输入姓名查询" />)}
             </FormItem>
           </Col>
           <Col md={6}>
             <FormItem label="手机号">
               {getFieldDecorator('phone', {
-                initialValue: telephone,
+                initialValue: phone,
               })(<Input placeholder="输入手机号查询" />)}
             </FormItem>
           </Col>
@@ -121,7 +121,7 @@ class Audited extends PureComponent {
       },
       {
         title: '姓名',
-        dataIndex: 'name',
+        dataIndex: 'username',
         align: 'center',
       },
       {

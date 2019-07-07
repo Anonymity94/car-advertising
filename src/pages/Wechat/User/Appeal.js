@@ -219,10 +219,11 @@ class Appeal extends PureComponent {
   };
 
   render() {
+    const { dispatch } = this.props;
     return (
       <DocumentTitle title="更换手机号申诉">
         <section>
-          <FormWrapper onOk={this.handleSubmit} />
+          <FormWrapper dispatch={dispatch} onOk={this.handleSubmit} />
         </section>
       </DocumentTitle>
     );

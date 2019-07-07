@@ -1,9 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { Result } from 'antd-mobile';
-import router from 'umi/router';
 
-import styles from './Waiting.less'
+import styles from './Waiting.less';
 
 import waitingIcon from './icons/waiting@2x.png';
 
@@ -15,14 +14,10 @@ export default class Waiting extends PureComponent {
       <DocumentTitle title="等待审核">
         <Fragment>
           <div className={styles.wrap}>
-
             <Result
               img={myImg(waitingIcon)}
               title="审核中"
               message="审核时间3-5个工作日，请您耐心等待！"
-              buttonText="返回首页"
-              buttonType="ghost"
-              onButtonClick={() => router.replace('/h5/home')}
             />
           </div>
         </Fragment>

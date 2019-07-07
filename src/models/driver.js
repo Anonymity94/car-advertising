@@ -17,6 +17,7 @@ import {
   queryUserSettlements,
   queryUserExchanges,
 } from '@/services/driver';
+import { AUDIT_STATE_PASSED } from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'driverModel',
@@ -35,7 +36,10 @@ export default modelExtend(model, {
           const payload = { ...location.query };
           dispatch({
             type: 'queryDrivers',
-            payload,
+            payload: {
+              ...payload,
+              status: AUDIT_STATE_PASSED,
+            },
           });
         }
       });
@@ -57,10 +61,17 @@ export default modelExtend(model, {
      */
     *queryDrivers({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryDrivers, payload);
+
+      // 过滤出已审核通过的人员
+      let list = success ? result : [];
+      if (payload.status) {
+        list = list.filter(item => item.status === payload.isPublish);
+      }
+
       yield put({
         type: 'updateState',
         payload: {
-          list: success ? result : [],
+          list,
         },
       });
     },
