@@ -5,7 +5,7 @@ import request from '@/utils/request';
  * @param {String} exchangeCode
  */
 export async function queryExchangeDetail({ exchangeCode }) {
-  return request(`/api/goods/exchange/detail?exchangeCode=${exchangeCode}`, {
+  return request(`/api/goods-ext/exchange/detail?exchangeCode=${exchangeCode}`, {
     method: 'GET',
   });
 }
@@ -15,7 +15,7 @@ export async function queryExchangeDetail({ exchangeCode }) {
  * @param {String} businessId
  */
 export async function queryExchangeLogs({ businessId }) {
-  return request(`/api/goods/exchange/logs?businessId=${businessId}`, {
+  return request(`/api/goods-ext/exchange/logs?businessId=${businessId}`, {
     method: 'GET',
   });
 }
@@ -25,7 +25,7 @@ export async function queryExchangeLogs({ businessId }) {
  * @param {String} exchangeCode
  */
 export async function auditExchange({ exchangeCode }) {
-  return request(`/api/goods/exchange/access`, {
+  return request(`/api/goods-ext/exchange/access`, {
     method: 'POST',
     body: {
       exchangeCode,
