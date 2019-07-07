@@ -62,7 +62,7 @@ class UserCenter extends PureComponent {
   render() {
     const {
       wechatUser,
-      wechatUser: { username = '立即绑定', userIntegral = 0, restIntegral = 0 },
+      wechatUser: { username = '立即绑定', usedIntegral, restIntegral },
     } = this.props;
     return (
       <DocumentTitle title="个人中心">
@@ -82,13 +82,13 @@ class UserCenter extends PureComponent {
               <Flex>
                 <Flex.Item>
                   <div className={styles.integral}>
-                    <p className={`${styles.number} ${styles.rest}`}>{restIntegral}</p>
+                    <p className={`${styles.number} ${styles.rest}`}>{restIntegral || 0}</p>
                     <p>可使用</p>
                   </div>
                 </Flex.Item>
                 <Flex.Item>
                   <div className={styles.integral}>
-                    <p className={`${styles.number} ${styles.used}`}>{userIntegral}</p>
+                    <p className={`${styles.number} ${styles.used}`}>{usedIntegral || 0}</p>
                     <p>已兑换</p>
                   </div>
                 </Flex.Item>

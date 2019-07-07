@@ -65,7 +65,7 @@ class Detail extends PureComponent {
     if (!detail.id) return;
 
     // 检查自己的积分是否足够兑换
-    if (!(wechatUser.userIntegral && wechatUser.userIntegral >= detail.integral)) {
+    if (!(wechatUser.restIntegral && wechatUser.restIntegral >= detail.integral)) {
       Modal.alert('兑换失败', '积分不足', [{ text: '好的', onPress: () => {} }]);
       return;
     }

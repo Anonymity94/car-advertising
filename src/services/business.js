@@ -63,3 +63,16 @@ export async function deleteBusiness({ id }) {
     body: {},
   });
 }
+
+/**
+ * 某个商户用积分发起提现申请
+ */
+export async function startIntegralSettlement({ id, integral, telephone }) {
+  return request(`/api/businesses/${id}/integral-settlement`, {
+    method: 'POST',
+    body: {
+      integral,
+      telephone,
+    },
+  });
+}

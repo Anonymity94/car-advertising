@@ -8,6 +8,7 @@ import {
   createBusiness,
   updateBusiness,
   deleteBusiness,
+  startIntegralSettlement
 } from '@/services/business';
 
 export default modelExtend(model, {
@@ -74,13 +75,10 @@ export default modelExtend(model, {
     /**
      * 新建商户
      */
-    *createBusiness({ payload }, { call, put }) {
+    *createBusiness({ payload }, { call }) {
       const { success } = yield call(createBusiness, payload);
       if (success) {
         message.success('商户创建成功');
-        yield put({
-          type: 'queryBusinesses',
-        });
       } else {
         message.error('商户创建失败');
       }
@@ -112,6 +110,19 @@ export default modelExtend(model, {
         });
       } else {
         message.error('删除失败');
+      }
+      return success;
+    },
+
+    /**
+     * 某个商户根据兑换码给用户兑换商品
+     */
+    *startIntegralSettlement({ payload }, { call }) {
+      const { success } = yield call(startIntegralSettlement, payload);
+      if (success) {
+        message.success('提现申请成功');
+      } else {
+        message.error('提现申请失败');
       }
       return success;
     },
