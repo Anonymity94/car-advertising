@@ -1,4 +1,4 @@
-## 检查登陆的微信用户，某个活动的参与情况
+## 检查登录的微信用户，某个活动的参与情况
 ```
 GET /api/activities/${id}/check-join
 
@@ -16,7 +16,7 @@ POST /api/activities/${id}
 ```
 
 
-## 检查登陆的微信用户，某个商品的兑换情况
+## 检查登录的微信用户，某个商品的兑换情况
 ```
 GET /api/goods/${id}/check-exchange
 
@@ -272,7 +272,7 @@ state: 2
 
 ## 讨论一个问题，微信端个人信息。
 
-需要2个接口，一个是查当前登陆人的详情信息。
+需要2个接口，一个是查当前登录人的详情信息。
 和 后台管理`/api/user-manager/user-single?id=${id}`  返回一模一样
 
 第二个是，修改个人信息，`/api/user-manager/user-manager/user-update?id=${id}` 这个也能复用
