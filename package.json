@@ -59,6 +59,7 @@
     "omit.js": "^1.0.0",
     "path-to-regexp": "^2.4.0",
     "prop-types": "^15.5.10",
+    "qrcode": "^1.4.0",
     "qs": "^6.6.0",
     "rc-animate": "^2.4.4",
     "rc-form": "^2.4.6",
