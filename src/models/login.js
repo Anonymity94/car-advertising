@@ -21,7 +21,7 @@ export default {
     *login({ payload }, { call, put }) {
       const { success, result } = yield call(login, payload);
 
-      if (!success) {
+      if (result.result === 'failure') {
         message.error(result.message);
         return;
       }

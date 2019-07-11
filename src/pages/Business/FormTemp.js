@@ -206,7 +206,7 @@ class FormTemp extends PureComponent {
             initialValue: values.id || '',
           })(<Input placeholder="商户id" />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="商户名称" extra="商户名称也用作商户登陆名称使用">
+        <FormItem {...formItemLayout} label="商户名称" extra="商户名称也用作商户登录名称使用">
           {getFieldDecorator('name', {
             initialValue: values.name || '',
             rules: [

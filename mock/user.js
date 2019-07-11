@@ -1,11 +1,11 @@
 export default {
-  // 登陆
+  // 登录
   'POST /api/account/admin/login': (req, res) => {
     const { password, username } = req.body;
     if (password === 'admin' && username === 'admin') {
       res.send({
         result: 'success',
-        message: '登陆成功',
+        message: '登录成功',
       });
       return;
     }

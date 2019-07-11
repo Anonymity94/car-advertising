@@ -10,7 +10,7 @@ export default class GlobalHeaderRight extends PureComponent {
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
         <Menu.Item key="logout">
           <Icon type="logout" />
-          退出登陆
+          退出登录
         </Menu.Item>
       </Menu>
     );
