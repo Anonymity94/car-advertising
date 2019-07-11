@@ -53,10 +53,13 @@ export default modelExtend(model, {
     /**
      * 申诉审核
      */
-    *updateAppealState({ payload }, { call }) {
+    *updateAppealState({ payload }, { call, put }) {
       const { success } = yield call(updateAppealState, payload);
       if (success) {
         message.success('审核成功');
+        yield put({
+          type: 'queryAppeals',
+        });
       } else {
         message.error('审核失败');
       }
