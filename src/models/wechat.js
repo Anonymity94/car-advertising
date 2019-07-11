@@ -14,11 +14,13 @@ export default modelExtend(model, {
       yield call(wechatAuthorize, {
         scope: 'snsapi_base',
         state: 'STATE',
+        isDev: IS_DEV,
       });
     },
     *wechatAccess({ payload }, { call }) {
       yield call(wechatAccess, {
         code: payload.code,
+        isDev: IS_DEV,
       });
     },
   },
