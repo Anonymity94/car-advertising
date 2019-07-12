@@ -10,8 +10,9 @@ import Empty from '@/components/Empty';
 import router from 'umi/router';
 import styles from './styles.less';
 
-@connect(({ activityModel: { detail }, loading }) => ({
+@connect(({ activityModel: { detail }, login: { wechatUser }, loading }) => ({
   detail,
+  wechatUser,
   queryLoading: loading.effects['activityModel/queryActivityContent'],
 }))
 class Detail extends PureComponent {
@@ -97,7 +98,7 @@ class Detail extends PureComponent {
 
   render() {
     const { isJoin } = this.state;
-    const { queryLoading, detail } = this.props;
+    const { queryLoading, detail, wechatUser } = this.props;
 
     if (queryLoading) {
       Toast.loading('加载中....', 0);
@@ -148,16 +149,24 @@ class Detail extends PureComponent {
 
               <div className={styles.operate}>
                 <div className={styles.operateItem}>
-                  {isJoin === 'NAN' && (
-                    <span className={styles.btnCancel}>
-                      <Icon type="loading" />
-                    </span>
-                  )}
-                  {isJoin !== 'NAN' && isJoin && <span className={styles.btnCancel}>已参与</span>}
-                  {isJoin !== 'NAN' && !isJoin && (
-                    <span className={styles.btnOk} onClick={() => this.joinActivity()}>
-                      我要参与
-                    </span>
+                  {!wechatUser.id ? (
+                    <span className={styles.btnCancel}>未注册</span>
+                  ) : (
+                    <Fragment>
+                      {isJoin === 'NAN' && (
+                        <span className={styles.btnCancel}>
+                          <Icon type="loading" />
+                        </span>
+                      )}
+                      {isJoin !== 'NAN' && isJoin && (
+                        <span className={styles.btnCancel}>已参与</span>
+                      )}
+                      {isJoin !== 'NAN' && !isJoin && (
+                        <span className={styles.btnOk} onClick={() => this.joinActivity()}>
+                          我要参与
+                        </span>
+                      )}
+                    </Fragment>
                   )}
                 </div>
               </div>

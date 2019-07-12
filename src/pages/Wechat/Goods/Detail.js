@@ -107,7 +107,7 @@ class Detail extends PureComponent {
 
   render() {
     const { isExchanged } = this.state;
-    const { queryLoading, detail } = this.props;
+    const { queryLoading, detail, wechatUser } = this.props;
 
     if (queryLoading) {
       Toast.loading('加载中....', 1000);
@@ -148,12 +148,16 @@ class Detail extends PureComponent {
                     <p className={styles.businessName}>{detail.businessName}</p>
                   </div>
                   <div className={styles.right}>
-                    <span
-                      className={styles.btn}
-                      onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
-                    >
-                      {isExchanged === false ? '兑换' : '已兑换'}
-                    </span>
+                    {wechatUser.id ? (
+                      <span
+                        className={styles.btn}
+                        onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
+                      >
+                        {isExchanged === false ? '兑换' : '已兑换'}
+                      </span>
+                    ) : (
+                      <span className={styles.btn}>未注册</span>
+                    )}
                   </div>
                 </div>
               </div>

@@ -11,7 +11,8 @@ import styles from './styles.less';
 import Empty from '@/components/Empty';
 import { PUBLISH_STATE_NO } from '@/common/constants';
 
-@connect(({ adModel: { detail }, loading }) => ({
+@connect(({ adModel: { detail }, login: { wechatUser }, loading }) => ({
+  wechatUser,
   detail,
   queryLoading: loading.effects['adModel/queryAdContent'],
 }))
@@ -44,7 +45,7 @@ class Detail extends PureComponent {
   };
 
   render() {
-    const { queryLoading, detail } = this.props;
+    const { queryLoading, detail, wechatUser } = this.props;
 
     if (queryLoading) {
       Toast.loading('加载中....', 0);
@@ -96,12 +97,16 @@ class Detail extends PureComponent {
                   签约可获<span className={styles.integral}>{detail.integral}</span>积分
                 </div>
                 <div className={styles.operateItem}>
-                  <span
-                    className={styles.btn}
-                    onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}
-                  >
-                    立即签约
-                  </span>
+                  {wechatUser.id ? (
+                    <span
+                      className={styles.btn}
+                      onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}
+                    >
+                      立即签约
+                    </span>
+                  ) : (
+                    <span className={styles.btn}>未注册</span>
+                  )}
                 </div>
               </div>
             </div>
