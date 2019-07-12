@@ -1,5 +1,5 @@
 import 'braft-editor/dist/index.css';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Form, Input, Button, DatePicker, Modal, Icon } from 'antd';
@@ -206,7 +206,11 @@ class FormTemp extends PureComponent {
             initialValue: values.id || '',
           })(<Input placeholder="商户id" />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="商户名称" extra="商户名称也用作商户登录名称使用">
+        <FormItem
+          {...formItemLayout}
+          label="商户名称"
+          extra="商户名称也用作商户登录名称使用，不可修改"
+        >
           {getFieldDecorator('name', {
             initialValue: values.name || '',
             rules: [
@@ -216,9 +220,13 @@ class FormTemp extends PureComponent {
                 message: '请输入商户名称',
               },
             ],
-          })(<Input placeholder="请输入商户名称" />)}
+          })(<Input disabled={values.id} placeholder="请输入商户名称" />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="登录密码" extra="以字母开头，长度在6~18之间，只能包含字母、数字和下划线">
+        <FormItem
+          {...formItemLayout}
+          label="登录密码"
+          extra="以字母开头，长度在6~18之间，只能包含字母、数字和下划线"
+        >
           {getFieldDecorator('password', {
             initialValue: values.password || '',
             rules: [
@@ -284,14 +292,26 @@ class FormTemp extends PureComponent {
           })(<DatePicker format="YYYY-MM-DD" />)}
         </Form.Item>
 
-        {/* 提供商品 */}
-        {goodsItems}
-        {/* 增加地址按钮 */}
-        <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button type="dashed" onClick={this.addGoodsItem} style={{ width: '60%' }}>
-            <Icon type="plus" /> 新增商品
-          </Button>
-        </Form.Item>
+        {values.id ? (
+          <Form.Item label="商品" {...formItemLayout}>
+            {values.goods.map(item => (
+              <p key={item.id} style={{ marginBottom: 4 }}>
+                {item.businessName}-{item.name}
+              </p>
+            ))}
+          </Form.Item>
+        ) : (
+          <Fragment>
+            {/* 提供商品 */}
+            {goodsItems}
+            {/* 增加地址按钮 */}
+            <Form.Item {...formItemLayoutWithOutLabel}>
+              <Button type="dashed" onClick={this.addGoodsItem} style={{ width: '60%' }}>
+                <Icon type="plus" /> 新增商品
+              </Button>
+            </Form.Item>
+          </Fragment>
+        )}
 
         <Form.Item label="地址" {...formItemLayout}>
           {getFieldDecorator('address', {

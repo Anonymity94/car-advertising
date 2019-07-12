@@ -123,6 +123,7 @@ class BusinessList extends PureComponent {
         title: '编号',
         dataIndex: 'id',
         align: 'center',
+        width: 200,
       },
       {
         title: '商户名称',
@@ -146,12 +147,14 @@ class BusinessList extends PureComponent {
         render: goods => {
           if (!goods) return '';
           if (!Array.isArray(goods)) return '';
-          return goods.map(item => item.name).join('、');
+          const text = goods.map(item => item.name).join('、');
+
+          return <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', maxWidth: 300 }}>{text}</div>;
         },
       },
       {
         title: '提供日期',
-        dataIndex: 'createTime',
+        dataIndex: 'beginTime',
         align: 'center',
         render: text => text && moment(text).format('YYYY-MM-DD'),
       },
