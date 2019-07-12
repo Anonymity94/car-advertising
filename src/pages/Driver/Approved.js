@@ -19,7 +19,7 @@ const FormItem = Form.Item;
 @connect(({ driverModel: { list, pagination }, loading }) => ({
   list,
   pagination,
-  loading: loading.effects['driverModel/queryApprovedDrivers'],
+  loading: loading.effects['driverModel/queryDrivers'],
 }))
 class Audited extends PureComponent {
   constructor(props) {
@@ -149,11 +149,11 @@ class Audited extends PureComponent {
         dataIndex: 'expireTime',
         align: 'center',
       },
-      {
-        title: '审核人',
-        dataIndex: 'verifyName',
-        align: 'center',
-      },
+      // {
+      //   title: '审核人',
+      //   dataIndex: 'verifyName',
+      //   align: 'center',
+      // },
       {
         title: '操作',
         dataIndex: 'operate',
@@ -164,7 +164,7 @@ class Audited extends PureComponent {
             <a onClick={() => router.push(`/user/drivers/${record.id}/update`)}>修改</a>
             <Divider type="vertical" />
             <Popconfirm
-              title={`确定删除[${record.name}]吗？`}
+              title={`确定删除[${record.username}]吗？`}
               onConfirm={() => this.handleDelete(record.id)}
               okText="删除"
               cancelText="取消"

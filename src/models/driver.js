@@ -65,7 +65,7 @@ export default modelExtend(model, {
       // 过滤出已审核通过的人员
       let list = success ? result : [];
       if (payload.status) {
-        list = list.filter(item => item.status === payload.isPublish);
+        list = list.filter(item => item.status === payload.status);
       }
 
       yield put({
@@ -76,18 +76,15 @@ export default modelExtend(model, {
       });
     },
 
-    /**
-     * 获取已经审核通过的车主列表
-     */
-    // *queryApprovedDrivers({ payload = {} }, { call, put }) {
-    //   yield doPageRequest({
-    //     api: queryApprovedDrivers,
-    //     payload,
-    //     call,
-    //     put,
-    //     stateKey: 'drivers',
-    //   });
-    // },
+    *queryApprovedDrivers({ payload }, { put }) {
+      yield put({
+        type: 'queryDrivers',
+        payload: {
+          ...payload,
+          status: AUDIT_STATE_PASSED,
+        },
+      });
+    },
 
     /**
      * 车主详情
@@ -145,7 +142,7 @@ export default modelExtend(model, {
       if (success) {
         message.success('删除成功');
         yield put({
-          type: 'queryDrivers',
+          type: 'queryApprovedDrivers',
         });
       } else {
         message.error('删除失败');

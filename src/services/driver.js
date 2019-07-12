@@ -18,7 +18,7 @@ export async function queryDrivers() {
  * @param {*} params
  */
 export async function queryApprovedDrivers(params) {
-  return request(`/api/drivers?${stringify({ ...params, state: AUDIT_STATE_PASSED })}`);
+  return request(`/api/drivers?${stringify({ ...params, status: AUDIT_STATE_PASSED })}`);
 }
 
 /**
@@ -64,7 +64,7 @@ export async function updateDriver({ id, ...reset }) {
  * @param {String} id
  */
 export async function deleteDriver({ id }) {
-  return request(`/api/user-manager/user-remove?id=${id}`, {
+  return request(`/api/user-manager/user-manager/user-remove?id=${id}`, {
     method: 'DELETE',
     body: {},
   });
