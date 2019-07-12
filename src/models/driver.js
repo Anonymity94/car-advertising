@@ -105,13 +105,10 @@ export default modelExtend(model, {
     /**
      * 审核
      */
-    *auditDriver({ payload }, { call, put }) {
+    *auditDriver({ payload }, { call }) {
       const { success } = yield call(auditDriver, payload);
       if (success) {
         message.success('审核成功');
-        yield put({
-          type: 'queryDrivers',
-        });
       } else {
         message.error('审核失败');
       }

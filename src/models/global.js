@@ -1,3 +1,5 @@
+import { WECHAT_APPID } from '@/common/constants';
+
 export default {
   namespace: 'global',
 
@@ -24,12 +26,24 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {
-      const { pathname } = history.location;
+      const { pathname, query } = history.location;
       if (pathname.indexOf('h5') === -1) {
         dispatch({ type: 'login/queryLoggedUser' });
       } else {
-        dispatch({ type: 'wechatModel/wechatAuthorize' });
-        dispatch({ type: 'login/queryWechatUser' });
+        const { code } = query;
+        if (!code) {
+          const httpUrl = encodeURIComponent(`${window.location}`);
+          const redirectUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WECHAT_APPID}&redirect_uri=${httpUrl}&response_type=code&scope=snsapi_base&state=232#wechat_redirect`;
+          window.location.href = redirectUrl;
+        } else {
+          // 如果有code
+          dispatch({
+            type: 'wechatModel/wechatAccess',
+            payload: {
+              code,
+            },
+          });
+        }
       }
     },
   },

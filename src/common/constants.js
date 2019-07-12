@@ -151,3 +151,8 @@ export const INTEGRAL_SETTLEMENT_STATE_YES = BOOLEAN_YES;
  * 积分结算状态：未结算
  */
 export const INTEGRAL_SETTLEMENT_STATE_NO = BOOLEAN_NO;
+
+// export const WECHAT_APPID = 'wxe2f3fc904dcf43f4';
+// export const WECHAT_APP_SECRET = '429c9d561e8009e0586e6f5d1c4d28b5';
+export const WECHAT_APPID = 'wxdeccec8d16c71e0c';
+export const WECHAT_APP_SECRET = 'adf861f192b1f9727ae5ff4ca9f04737';

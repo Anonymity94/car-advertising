@@ -55,11 +55,11 @@ const tableColumns = [
       return '';
     },
   },
-  {
-    title: '审核人',
-    dataIndex: 'verifyName',
-    align: 'center',
-  },
+  // {
+  //   title: '审核人',
+  //   dataIndex: 'verifyName',
+  //   align: 'center',
+  // },
   {
     title: '操作',
     dataIndex: 'operate',

@@ -42,16 +42,10 @@ class UserCenter extends PureComponent {
   handleLink = link => {
     const { wechatUser } = this.props;
     if (!wechatUser.id) {
-      Modal.alert('暂未绑定帐号', '', [
+      Modal.alert('未登录', '', [
         {
-          text: '取消',
+          text: '好的',
           onPress: () => {},
-        },
-        {
-          text: '立即绑定',
-          onPress: () => {
-            router.push('/h5/user/bind');
-          },
         },
       ]);
       return;
@@ -62,7 +56,7 @@ class UserCenter extends PureComponent {
   render() {
     const {
       wechatUser,
-      wechatUser: { username = '立即绑定', usedIntegral, restIntegral },
+      wechatUser: { username = '未登录', usedIntegral, restIntegral },
     } = this.props;
     return (
       <DocumentTitle title="个人中心">
@@ -70,10 +64,8 @@ class UserCenter extends PureComponent {
           <section className={styles.header}>
             <div className={styles.info}>
               <img alt={username} src={wechatUser.avatar || defaultAvatar} />
-              {username === '立即绑定' ? (
-                <p style={{ color: '#00c7bd' }} onClick={() => router.push('/h5/user/bind')}>
-                  {username}
-                </p>
+              {username === '未登录' ? (
+                <p style={{ color: '#00c7bd' }}>{username}</p>
               ) : (
                 <p>{username}</p>
               )}

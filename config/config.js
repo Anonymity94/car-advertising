@@ -55,7 +55,7 @@ export default {
   plugins,
   define: {
     APP_TYPE: process.env.APP_TYPE || '',
-    IS_DEV: process.env.NODE_ENV === 'development',
+    IS_DEV: process.env.IS_DEV || process.env.NODE_ENV === 'development',
   },
   treeShaking: true,
   targets: {
@@ -80,12 +80,12 @@ export default {
   },
   proxy: {
     '/mock-api/': {
-      target: 'http://39.106.231.234',
+      target: 'https://testzyy.limitouch.com',
       changeOrigin: true,
       pathRewrite: { '^/mock-api': '' },
     },
     '/upload/': {
-      target: 'http://39.106.231.234',
+      target: 'https://testzyy.limitouch.com',
       changeOrigin: true,
       pathRewrite: { '^/upload': '/upload' },
     },
