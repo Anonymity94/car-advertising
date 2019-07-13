@@ -151,6 +151,9 @@ class FormTemp extends PureComponent {
     const {
       form: { getFieldDecorator, getFieldValue },
       values = {}, // 初始值
+      goods = [],
+      onCreateGoods,
+      onDelGoods,
       submitLoading,
     } = this.props;
 
@@ -294,11 +297,22 @@ class FormTemp extends PureComponent {
 
         {values.id ? (
           <Form.Item label="商品" {...formItemLayout}>
-            {values.goods.map(item => (
+            {goods.map(item => (
               <p key={item.id} style={{ marginBottom: 4 }}>
                 {item.businessName}-{item.name}
+                <Button
+                  size="small"
+                  type="danger"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => onDelGoods(item.id)}
+                >
+                  删除
+                </Button>
               </p>
             ))}
+            <Button type="dashed" onClick={onCreateGoods} style={{ width: '60%' }}>
+              <Icon type="plus" /> 新增商品
+            </Button>
           </Form.Item>
         ) : (
           <Fragment>

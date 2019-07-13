@@ -86,9 +86,11 @@ export default modelExtend(model, {
       const { success } = yield call(createGoods, payload);
       if (success) {
         message.success('新建商品成功');
-        yield put({
-          type: 'queryGoods',
-        });
+        if (!payload.businessId) {
+          yield put({
+            type: 'queryGoods',
+          });
+        }
       } else {
         message.error('新建商品失败');
       }
@@ -147,9 +149,11 @@ export default modelExtend(model, {
       const { success } = yield call(deleteGoods, payload);
       if (success) {
         message.success('删除成功');
-        yield put({
-          type: 'queryGoods',
-        });
+        if (!payload.businessId) {
+          yield put({
+            type: 'queryGoods',
+          });
+        }
       } else {
         message.error('删除失败');
       }
