@@ -53,10 +53,16 @@
     例如，用户申诉、用户注册时。我填写了一个错误的手机验证码，也可以成功。
 
 2. 用户申诉审核，列表，
-  通过，不通过，报500错误。/api/appeals/5d29833bc069360006e0db55/state
+  通过，不生效。PUT /api/appeals/5d29833bc069360006e0db55/state  {state: 1}
+  不通过，不生效。PUT /api/appeals/5d29833bc069360006e0db55/state  {state: 2，ramark: '不通过'}
 
 3. 查某个商品详情时，/api/goods/5d29922234b86b00063f0d70 
   缺少了2个字段：address：商户的地址，endTime：到期时间。
   这2个字段都是商户的信息。
 
 4. 查商品列表/api/goods，问题同3
+
+
+this.mongo.upsert(new Query(Criteria.where("_id").is(id)), u, AppealsEntity.class);
+
+this.mongoTemplate.upsert(new Query(Criteria.where("_id").is(id)), Update.update("status", 1), WechatAccountEntity.class);
