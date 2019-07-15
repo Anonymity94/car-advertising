@@ -201,13 +201,17 @@ export function handleTableChange(pagination, filters, sorter) {
 
 export function handleFilterResult() {
   const { search } = this.state;
-  console.log(search);
   const { list } = this.props;
 
   let result = list.slice();
 
   // eslint-disable-next-line compat/compat
-  const values = Object.values(search);
+  const values = Object.values(search).map(item => {
+    if (item === 0) {
+      return '0';
+    }
+    return item;
+  });
   // 过滤掉空值
   const compactValues = lodash.compact(values);
   if (compactValues.length > 0) {
@@ -218,11 +222,11 @@ export function handleFilterResult() {
       const keywordsFlag = lodash.fill(Array(keywords.length), true);
       keywords.forEach((key, index) => {
         // 某个搜索条件没有值，继续下一个
-        if (!search[key]) {
+        if (!search[key] && search[key] !== 0) {
           return;
         }
         // 如果目标对象没有值，判定为不符合
-        if (!item[key]) {
+        if (!item[key] && item[key] !== 0) {
           keywordsFlag[index] = false;
         } else if (String(item[key]).indexOf(String(search[key])) === -1) {
           keywordsFlag[index] = false;

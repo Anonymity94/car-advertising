@@ -43,6 +43,7 @@ const tableColumns = [
     title: '提交日期',
     dataIndex: 'createTime',
     align: 'center',
+    render: text => text && moment(text).format('YYYY-MM-DD'),
   },
   {
     title: '状态',
@@ -120,7 +121,7 @@ class List extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { name, createTime, state } = query;
+    const { name, createTime, status } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
@@ -143,8 +144,8 @@ class List extends PureComponent {
           </Col>
           <Col md={6}>
             <FormItem label="状态">
-              {getFieldDecorator('state', {
-                initialValue: state,
+              {getFieldDecorator('status', {
+                initialValue: status,
               })(
                 <Select placeholder="请选择审核状态">
                   <Select.Option key="" value="">

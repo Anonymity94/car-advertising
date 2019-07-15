@@ -13,8 +13,6 @@ export default {
     status: undefined,
     currentUser: {},
     wechatUser: {},
-
-    APPID: '', // 微信 appid
   },
 
   effects: {
@@ -38,7 +36,7 @@ export default {
     *queryWechatUser(_, { call, put }) {
       const { success, result } = yield call(queryCurrent);
 
-      if (success && result.name && result.type !== 'unknow') {
+      if (success && result.id) {
         // 填充当前登录人
         yield put({
           type: 'changeState',
@@ -65,7 +63,7 @@ export default {
       const { from } = payload;
       const { success, result } = yield call(queryCurrent);
 
-      if (success && result.name && result.type !== 'unknow') {
+      if (success && result.id) {
         // 刷新权限
         setAuthority(result.type);
         reloadAuthorized();

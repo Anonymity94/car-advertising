@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { TextareaItem, InputItem, Button, Modal, Flex } from 'antd-mobile';
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -10,6 +10,7 @@ import styles from './style.less';
 
 import phoneIcon from './icons/icon_phone@2x.png';
 import captchaIcon from './icons/icon_captcha@2x.png';
+import Empty from '@/components/Empty';
 
 const iconPorps = {
   backgroundSize: 'contain',
@@ -208,22 +209,38 @@ const FormWrapper = createForm()(
 );
 
 // eslint-disable-next-line react/no-multi-comp
-@connect()
+@connect(({ login: { wechatUser }, wechatModel: { openId } }) => ({
+  wechatUser,
+  openId,
+}))
 class Appeal extends PureComponent {
   handleSubmit = values => {
-    const { dispatch } = this.props;
+    const { dispatch, wechatUser, openId } = this.props;
     dispatch({
       type: 'appealModel/createAppeal',
-      payload: { ...values },
+      payload: { ...values, userId: wechatUser.id, name: wechatUser.username, openId },
     });
   };
 
   render() {
-    const { dispatch } = this.props;
+    const { dispatch, wechatUser } = this.props;
     return (
       <DocumentTitle title="更换手机号申诉">
         <section>
-          <FormWrapper dispatch={dispatch} onOk={this.handleSubmit} />
+          {!wechatUser.id ? (
+            <Fragment>
+              <Empty text="您还没有注册" />
+              <Button
+                className="button-ok"
+                style={{ marginTop: 10 }}
+                onClick={() => router.push('/h5/user/register')}
+              >
+                立马注册
+              </Button>
+            </Fragment>
+          ) : (
+            <FormWrapper dispatch={dispatch} onOk={this.handleSubmit} />
+          )}
         </section>
       </DocumentTitle>
     );

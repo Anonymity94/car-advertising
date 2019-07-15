@@ -55,20 +55,15 @@ class UserCenter extends PureComponent {
 
   render() {
     const {
-      wechatUser,
-      wechatUser: { username = '未登录', usedIntegral, restIntegral },
+      wechatUser: { id, username, usedIntegral, restIntegral, avatar },
     } = this.props;
     return (
       <DocumentTitle title="个人中心">
         <Fragment>
           <section className={styles.header}>
             <div className={styles.info}>
-              <img alt={username} src={wechatUser.avatar || defaultAvatar} />
-              {username === '未登录' ? (
-                <p style={{ color: '#00c7bd' }}>{username}</p>
-              ) : (
-                <p>{username}</p>
-              )}
+              <img alt={username} src={avatar || defaultAvatar} />
+              {!id ? <p style={{ color: '#00c7bd' }}>未登录</p> : <p>{username}</p>}
             </div>
             <div>
               <Flex>

@@ -217,6 +217,7 @@ class AppealList extends PureComponent {
         title: '会员编号',
         dataIndex: 'id',
         align: 'center',
+        width: 200
       },
       {
         title: '姓名',
@@ -237,6 +238,8 @@ class AppealList extends PureComponent {
         title: '申诉理由',
         dataIndex: 'reason',
         align: 'center',
+        width: 400,
+        render: text => <div>{text}</div>,
       },
       {
         title: '提交日期',
