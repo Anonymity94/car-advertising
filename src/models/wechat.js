@@ -8,7 +8,7 @@ export default modelExtend(model, {
   namespace: 'wechatModel',
 
   state: {
-    openid: '', // 微信 appid
+    openId: '', // 微信 appid
   },
 
   effects: {
@@ -37,15 +37,12 @@ export default modelExtend(model, {
         yield put({
           type: 'changeState',
           payload: {
-            openid: result.openid,
+            openId: result.openid,
           },
         });
 
         yield put({
           type: 'wechatLogin',
-          payload: {
-            openid: result.openid,
-          },
         });
       }
     },
