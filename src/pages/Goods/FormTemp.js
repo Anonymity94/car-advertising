@@ -26,8 +26,7 @@ const formItemLayoutWithOutLabel = {
 };
 
 @Form.create()
-@connect(({ businessModel: { allGoods }, loading }) => ({
-  allGoods,
+@connect(({ loading }) => ({
   loading,
 }))
 class FormTemp extends PureComponent {
@@ -46,12 +45,8 @@ class FormTemp extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch, values } = this.props;
+    const { values } = this.props;
 
-    // 获取所有的商品列表
-    dispatch({
-      type: 'businessModel/queryAllBusinessGoods',
-    });
     // 异步设置编辑器内容
     setTimeout(() => {
       const { form } = this.props;
@@ -83,32 +78,22 @@ class FormTemp extends PureComponent {
     });
   };
 
-  handleGoodsChange = goodsName => {
-    const { allGoods, form } = this.props;
-    const find = allGoods.find(item => item.name === goodsName);
-    if (find) {
-      form.setFieldsValue({
-        businessName: find.businessName,
-        endTime: moment(find.endTime),
-        address: find.address,
-      });
-    }
-  };
-
   onOk = event => {
     event.preventDefault();
     const { form, onSubmit } = this.props;
     form.validateFields((error, values) => {
       if (error) return;
 
-      const { endTime, content } = values;
+      const { content, image, shopImage } = values;
+      console.log('values', values);
       const submitData = {
         ...values,
-        endTime: moment(endTime).format('YYYY-MM-DD'),
         content: content.toHTML(),
+        image: image[0].url,
+        shopImage: shopImage[0].url,
       };
 
-      delete submitData.keys;
+      console.log('submitData', submitData);
 
       Modal.confirm({
         title: '确定提交吗？',
@@ -133,19 +118,18 @@ class FormTemp extends PureComponent {
     });
   };
 
-  handleUpload = e => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
+  handleUpload = ({ fileList }) =>
+    fileList.map(file => ({
+      uid: file.uid,
+      name: file.response ? file.response.url : file.url,
+      url: file.response ? file.response.url : file.url,
+    }));
 
   render() {
     const {
       form: { getFieldDecorator },
       values = {}, // 初始值
       submitLoading,
-      allGoods,
     } = this.props;
 
     return (
@@ -162,44 +146,16 @@ class FormTemp extends PureComponent {
             rules: [
               {
                 required: true,
-                message: '请选择商品',
+                message: '请填写商品名称',
               },
             ],
-          })(
-            <Select
-              placeholder="请选择商品"
-              onChange={this.handleGoodsChange}
-              showSearch
-              filterOption={(input, option) =>
-                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {allGoods.map(item => (
-                <Select.Option key={item.name} value={item.name}>
-                  {item.name}
-                </Select.Option>
-              ))}
-            </Select>
-          )}
+          })(<Input placeholder="请填写商品名称" />)}
         </FormItem>
-        <FormItem {...formItemLayout} label="所属商户名称" extra="选择商品后自动联想">
-          {getFieldDecorator('businessName', {
-            initialValue: values.businessName || '',
-            rules: [
-              {
-                required: true,
-                whitespace: true,
-                message: '请输入所属商户名称',
-              },
-            ],
-          })(<Input disabled placeholder="请输入所属商户名称" />)}
+        <FormItem {...formItemLayout} label="所属商户名称">
+          {values.businessName}
         </FormItem>
-        <Form.Item label="到期日期" {...formItemLayout} extra="选择商品后自动联想">
-          {getFieldDecorator('endTime', {
-            initialValue: values.endTime ? moment(values.endTime) : undefined,
-            validateFirst: true,
-            rules: [{ required: true, message: '请选择到期时间' }],
-          })(<DatePicker disabled format="YYYY-MM-DD" />)}
+        <Form.Item label="到期日期" {...formItemLayout}>
+          {values.endTime}
         </Form.Item>
 
         <Form.Item label="积分" {...formItemLayout}>
@@ -214,7 +170,8 @@ class FormTemp extends PureComponent {
         </Form.Item>
         <FormItem {...formItemLayout} label="商品头图" extra="建议尺寸：16:9比例">
           {getFieldDecorator('image', {
-            valuePropName: 'value',
+            initialValue: values.image ? [{ uid: values.image, url: values.image }] : [],
+            valuePropName: 'fileList',
             getValueFromEvent: this.handleUpload,
             rules: [
               {
@@ -226,7 +183,10 @@ class FormTemp extends PureComponent {
         </FormItem>
         <FormItem {...formItemLayout} label="商城页图" extra="建议尺寸：4:3比例">
           {getFieldDecorator('shopImage', {
-            valuePropName: 'value',
+            initialValue: values.shopImage
+              ? [{ uid: values.shopImage, url: values.shopImage }]
+              : [],
+            valuePropName: 'fileList',
             getValueFromEvent: this.handleUpload,
             rules: [
               {
@@ -236,11 +196,8 @@ class FormTemp extends PureComponent {
             ],
           })(<StandardUpload name="image" accept="image/*" limit={1} />)}
         </FormItem>
-        <Form.Item label="地址" {...formItemLayout} extra="选择商品后自动联想">
-          {getFieldDecorator('address', {
-            initialValue: values.address || '',
-            rules: [{ required: true, whitespace: true, message: '请输入商户地址' }],
-          })(<Input.TextArea disabled placeholder="请输入商户地址" rows={4} />)}
+        <Form.Item label="地址" {...formItemLayout}>
+          {values.address}
         </Form.Item>
 
         <Form.Item label="商品详情内容" {...formItemLayout}>

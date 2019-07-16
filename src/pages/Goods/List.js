@@ -163,7 +163,7 @@ class ActivityList extends PureComponent {
         title: '编号',
         dataIndex: 'id',
         align: 'center',
-        width: 200
+        width: 200,
       },
       {
         title: '所属商户名称',
@@ -208,7 +208,7 @@ class ActivityList extends PureComponent {
         align: 'center',
         width: 140,
         render: (text, record) => {
-          const { id, isTop, isPublish } = record;
+          const { id, integral, isTop, isPublish } = record;
 
           let color = '';
 
@@ -229,24 +229,32 @@ class ActivityList extends PureComponent {
 
           return (
             <Fragment>
-              <Popconfirm
-                title={`确定${publishText}吗？`}
-                onConfirm={() => this.handlePublish(id, newPublishState)}
-                okText="确定"
-                cancelText="取消"
-              >
-                <a style={color ? { color } : null}>{publishText}</a>
-              </Popconfirm>
-              <Divider key="divider" type="vertical" />
-              <Popconfirm
-                title={`确定${topText}吗？`}
-                onConfirm={() => this.handleTop(id, newTopState)}
-                okText="确定"
-                cancelText="取消"
-              >
-                <a>{topText}</a>
-              </Popconfirm>
-              <br />
+              {// 有积分的才可以发布
+              integral && [
+                <Popconfirm
+                  title={`确定${publishText}吗？`}
+                  onConfirm={() => this.handlePublish(id, newPublishState)}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <a style={color ? { color } : null}>{publishText}</a>
+                </Popconfirm>,
+                <Divider key="divider" type="vertical" />,
+              ]}
+              {
+                // 已发布的才可以置顶
+                isTop === TOP_STATE_YES && [
+                  <Popconfirm
+                    title={`确定${topText}吗？`}
+                    onConfirm={() => this.handleTop(id, newTopState)}
+                    okText="确定"
+                    cancelText="取消"
+                  >
+                    <a>{topText}</a>
+                  </Popconfirm>,
+                  <Divider type="vertical" />
+                ]
+              }
               <Link to={`/integral/goods/${id}/update`}>修改</Link>
               <Divider type="vertical" />
               <a onClick={() => this.handleDelete(record)}>删除</a>
