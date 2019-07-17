@@ -5,6 +5,7 @@ import Link from 'umi/link';
 import router from 'umi/router';
 import moment from 'moment';
 import { Carousel, Toast } from 'antd-mobile';
+import Empty from '@/components/Empty';
 import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 
 import styles from './styles.less';
@@ -70,6 +71,14 @@ class List extends PureComponent {
       Toast.loading('加载中....', 0);
     } else {
       Toast.hide();
+    }
+
+    if ([...pageData, ...topList].length === 0) {
+      return (
+        <DocumentTitle title="活动中心">
+          <Empty showback={false} text="还没有相关活动哟~" />
+        </DocumentTitle>
+      );
     }
 
     return (

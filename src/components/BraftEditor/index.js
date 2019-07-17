@@ -84,6 +84,7 @@ export default class RichTextEditor extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
     if ('value' in nextProps) {
       const editorState = nextProps.value;
       this.setState({
@@ -97,6 +98,11 @@ export default class RichTextEditor extends PureComponent {
     if (onBlur) {
       onBlur(editorState);
     }
+  };
+
+  customHandlePastedText = (text, html, editorState, editor) => {
+    console.log(html);
+    editor.setValue(ContentUtils.insertHTML(editorState, html, 'paste'));
   };
 
   handleEditorBlur = editorState => {
@@ -206,11 +212,17 @@ export default class RichTextEditor extends PureComponent {
     const { placeholder = '请输入内容' } = this.props;
     return (
       <div className={styles.braftEditor}>
+        <p
+          style={{ color: 'red', marginBottom: 0, lineHeight: '22px', height: 22, paddingLeft: 10 }}
+        >
+          粘贴文字后，为防止提交失败，请检查是否存在非法换行。
+        </p>
         <BraftEditor
           controls={controls}
           placeholder={placeholder}
           value={editorState}
           extendControls={this.extendControls}
+          handlePastedText={this.customHandlePastedText}
           onBlur={this.handleEditorBlur}
         />
       </div>

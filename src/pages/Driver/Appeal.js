@@ -12,6 +12,8 @@ import {
   DatePicker,
   Modal,
   Icon,
+  Tooltip,
+  Tag,
 } from 'antd';
 import moment from 'moment';
 import isEqual from 'lodash/isEqual';
@@ -217,7 +219,7 @@ class AppealList extends PureComponent {
         title: '会员编号',
         dataIndex: 'id',
         align: 'center',
-        width: 200
+        width: 200,
       },
       {
         title: '姓名',
@@ -251,15 +253,21 @@ class AppealList extends PureComponent {
         title: '状态',
         dataIndex: 'state',
         align: 'center',
-        render: text => {
-          if (text === AUDIT_STATE_PASSED) return '通过';
-          if (text === AUDIT_STATE_REFUSE) return '不通过';
+        render: (text, record) => {
+          if (text === AUDIT_STATE_PASSED) return <Tag color="#87d068">通过</Tag>;
+          if (text === AUDIT_STATE_REFUSE) {
+            const { remark } = record;
+            if (remark) {
+              return <Tooltip title={remark}><Tag color="#f50">不通过</Tag></Tooltip>;
+            }
+            return <Tag color="#f50">不通过</Tag>;
+          }
           return '待审核';
         },
       },
       {
         title: '审核人',
-        dataIndex: 'operatorName',
+        dataIndex: 'operator',
         align: 'center',
       },
       {
@@ -278,7 +286,7 @@ class AppealList extends PureComponent {
               </Fragment>
             );
           }
-          return '';
+          return '--';
         },
       },
     ];

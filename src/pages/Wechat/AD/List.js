@@ -6,6 +6,7 @@ import router from 'umi/router';
 import { Carousel, Card, Toast } from 'antd-mobile';
 import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 import { countFormatter } from '@/utils/utils';
+import Empty from '@/components/Empty';
 // import Scroll from '@/components/Scroll';
 
 import signingIcon from '../icons/icon_signing@2x.png';
@@ -103,6 +104,14 @@ class List extends PureComponent {
       Toast.loading('加载中....', 0);
     } else {
       Toast.hide();
+    }
+
+    if ([...pageData, ...topList].length === 0) {
+      return (
+        <DocumentTitle title="广告签约">
+          <Empty showback={false} text="还没有相关广告哟~" />
+        </DocumentTitle>
+      );
     }
 
     return (

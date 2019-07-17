@@ -2,7 +2,7 @@ import 'braft-editor/dist/index.css';
 import React, { PureComponent } from 'react';
 import BraftEditor from 'braft-editor';
 import { connect } from 'dva';
-import { Form, Input, Button, DatePicker, Modal } from 'antd';
+import { Form, Input, Button, DatePicker, Modal, message, notification } from 'antd';
 import moment from 'moment';
 import router from 'umi/router';
 import StandardUpload from '@/components/StandardUpload';
@@ -67,6 +67,14 @@ class CreateActivity extends PureComponent {
       if (error) return;
 
       const { participation, content, activityTime, banner } = values;
+      if (!participation.toHTML() || !content.toHTML()) {
+        notification.error({
+          message: '富文本中存在非法换行',
+          description: '请检查粘贴的文字，删除多余的换行。',
+        });
+        return;
+      }
+
       const submitData = {
         ...values,
         participation: participation.toHTML(),
