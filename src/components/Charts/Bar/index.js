@@ -71,7 +71,9 @@ class Bar extends Component {
         type: 'cat',
       },
       y: {
+        type: 'linear',
         min: 0,
+        tickInterval: 1,
       },
     };
 

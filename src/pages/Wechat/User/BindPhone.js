@@ -3,6 +3,7 @@ import { InputItem, Button, Modal, Flex } from 'antd-mobile';
 import router from 'umi/router';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
+import Link from 'umi/link';
 import { connect } from 'dva';
 import DocumentTitle from 'react-document-title';
 
@@ -138,6 +139,11 @@ const FormWrapper = createForm()(
                 {count ? `${count}秒后重试` : '获取验证码'}
               </Button>
             </Flex>
+          </section>
+          <section className={styles.field}>
+            <Link to="/h5/user/register">
+              <p>还未注册？马上注册</p>
+            </Link>
           </section>
           <section className={styles.field}>
             <Flex style={{ justifyContent: 'space-between' }}>

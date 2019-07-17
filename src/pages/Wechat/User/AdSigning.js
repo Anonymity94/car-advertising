@@ -22,16 +22,9 @@ import addressIcon from './icons/icon_address@2x.png';
   })
 )
 class AdSigning extends PureComponent {
-  async componentDidMount() {
-    const { dispatch, wechatUser } = this.props;
-    // 获取用户信息，用于生成二维码图片
-    await dispatch({
-      type: 'driverModel/queryDriverDetail',
-      payload: {
-        id: wechatUser.id,
-      },
-    });
-    await dispatch({
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({
       type: 'driverModel/queryUserSignings',
     });
   }
@@ -90,47 +83,51 @@ class AdSigning extends PureComponent {
       return <Loading />;
     }
 
+    if (adSignings.length === 0) {
+      return (
+        <DocumentTitle title="签约记录">
+          <Empty />
+        </DocumentTitle>
+      );
+    }
+
     return (
       <DocumentTitle title="签约记录">
         <div className={styles.signing}>
-          {adSignings.length === 0 ? (
-            <Empty />
-          ) : (
-            adSignings.map(item => (
-              <div className={styles.card}>
-                <p className={styles.title}>{item.adTitle}</p>
+          {adSignings.map(item => (
+            <div className={styles.card}>
+              <p className={styles.title}>{item.adTitle}</p>
 
-                <div className={`${styles.extra} ${styles.flex}`}>
-                  <span>{moment(item.createTime).format('YYYY-MM-DD')}</span>
-                  <span>{item.bonus}/月</span>
+              <div className={`${styles.extra} ${styles.flex}`}>
+                <span>{moment(item.createTime).format('YYYY-MM-DD')}</span>
+                <span>{item.bonus}/月</span>
+              </div>
+
+              <div className={styles.content}>
+                <p className={styles.address}>
+                  <img src={addressIcon} alt="地址" /> {item.address}
+                </p>
+                <div className={`${styles.info} ${styles.flex}`}>
+                  <span>工作时间</span>
+                  <span>
+                    {item.beginTime}-{item.endTime}
+                  </span>
                 </div>
-
-                <div className={styles.content}>
-                  <p className={styles.address}>
-                    <img src={addressIcon} alt="地址" /> {item.address}
-                  </p>
-                  <div className={`${styles.info} ${styles.flex}`}>
-                    <span>工作时间</span>
-                    <span>
-                      {item.beginTime}-{item.endTime}
-                    </span>
-                  </div>
-                  <div className={`${styles.info} ${styles.flex}`}>
-                    <span>有效期</span>
-                    <span>{item.signingExpireTime}</span>
-                  </div>
-                </div>
-
-                <div className={`${styles.footer} ${styles.flex}`}>
-                  <img src={qrcodeIcon} alt="二维码" onClick={() => this.showQrcode(item)} />
-                  <Link to={`/h5/ads/${item.adId}`}>
-                    详情
-                    <Icon type="right" />
-                  </Link>
+                <div className={`${styles.info} ${styles.flex}`}>
+                  <span>有效期</span>
+                  <span>{item.signingExpireTime}</span>
                 </div>
               </div>
-            ))
-          )}
+
+              <div className={`${styles.footer} ${styles.flex}`}>
+                <img src={qrcodeIcon} alt="二维码" onClick={() => this.showQrcode(item)} />
+                <Link to={`/h5/ads/${item.advId}`}>
+                  详情
+                  <Icon type="right" />
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </DocumentTitle>
     );

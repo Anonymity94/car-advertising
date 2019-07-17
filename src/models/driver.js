@@ -2,7 +2,7 @@ import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import router from 'umi/router';
-import { Toast } from 'antd-mobile';
+import { Toast, Modal } from 'antd-mobile';
 import {
   queryDrivers,
   queryDriverById,
@@ -184,10 +184,32 @@ export default modelExtend(model, {
     /**
      * 微信端绑定手机号
      */
-    *bindPhone({ payload }, { call }) {
-      const { success } = yield call(bindPhone, payload);
+    *bindPhone({ payload }, { call, put }) {
+      const { success, result } = yield call(bindPhone, payload);
       if (success) {
-        router.push('/h5/user/center');
+        const { code } = result;
+        if (code === 200) {
+          yield put({
+            type: 'login/queryWechatUser',
+          });
+          router.push('/h5/user/center');
+        } else if (code === 404) {
+          // 这个号没有注册过，提示一下，是否去注册
+          Modal.alert('帐号没有注册', '现在去注册吗？', [
+            { text: '取消', onPress: () => {}, style: 'default' },
+            {
+              text: '注册',
+              onPress: () => {
+                router.push('/h5/user/register');
+              },
+            },
+          ]);
+        } else if (code === 403) {
+          // 这个号没有审核通过
+          Modal.alert('帐号审核中，请等待...', '', [
+            { text: '好的', onPress: () => {}, style: 'default' },
+          ]);
+        }
       } else {
         message.error('绑定失败');
       }

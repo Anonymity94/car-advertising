@@ -20,7 +20,12 @@ import isEqual from 'lodash/isEqual';
 import { handleSearch, handleSearchReset, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import FormModal, { ACCESS_PASTE, REJECT_PASTE } from './FormModal';
-import { AD_PASTE_STATE_LIST } from '@/common/constants';
+import {
+  AD_PASTE_STATE_LIST,
+  AD_PASTE_STATE_UN_REVIEW,
+  AD_PASTE_STATE_PASTED,
+  AD_PASTE_STATE_REFUSE,
+} from '@/common/constants';
 
 const FormItem = Form.Item;
 
@@ -110,10 +115,13 @@ class AdPasteList extends PureComponent {
   };
 
   handleSubmit = values => {
+    const { operateType } = this.state;
     const { dispatch } = this.props;
     dispatch({
       type:
-        values.type === 'access' ? 'adSigningModel/accessAdPaste' : 'adSigningModel/rejectAdPaste',
+        operateType === ACCESS_PASTE
+          ? 'adSigningModel/accessAdPaste'
+          : 'adSigningModel/rejectAdPaste',
       payload: {
         ...values,
       },
@@ -133,15 +141,15 @@ class AdPasteList extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { name, pasteTime, pasteState } = query;
+    const { username, pasteTime, pasteState } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
         <Row gutter={10}>
           <Col md={6}>
             <FormItem label="姓名">
-              {getFieldDecorator('name', {
-                initialValue: name,
+              {getFieldDecorator('username', {
+                initialValue: username,
               })(<Input placeholder="输入姓名查询" />)}
             </FormItem>
           </Col>
@@ -201,7 +209,7 @@ class AdPasteList extends PureComponent {
       },
       {
         title: '姓名',
-        dataIndex: 'fullname',
+        dataIndex: 'username',
         align: 'center',
       },
       {
@@ -240,14 +248,21 @@ class AdPasteList extends PureComponent {
         align: 'center',
       },
       {
-        title: '粘贴日期',
+        title: '粘贴/拒绝日期',
         dataIndex: 'pasteTime',
         align: 'center',
+        render: text => text && moment(text).format('YYYY-MM-DD'),
       },
       {
         title: '粘贴状态',
         dataIndex: 'pasteState',
         align: 'center',
+        render: text => {
+          if (!text || text === AD_PASTE_STATE_UN_REVIEW) return '未审核';
+          if (text === AD_PASTE_STATE_PASTED) return '已粘贴';
+          if (text === AD_PASTE_STATE_REFUSE) return '拒绝';
+          return '';
+        },
       },
       {
         title: '审核人',
@@ -261,10 +276,12 @@ class AdPasteList extends PureComponent {
         width: 140,
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.toogleModal(record, ACCESS_PASTE)}>粘贴</a>
-            <Divider type="vertical" />
-            <a onClick={() => this.toogleModal(record, REJECT_PASTE)}>拒绝</a>
-            <Divider type="vertical" />
+            {(record.pasteState === AD_PASTE_STATE_UN_REVIEW || !record.pasteState) && [
+              <a onClick={() => this.toogleModal(record, ACCESS_PASTE)}>粘贴</a>,
+              <Divider type="vertical" />,
+              <a onClick={() => this.toogleModal(record, REJECT_PASTE)}>拒绝</a>,
+              <Divider type="vertical" />,
+            ]}
             <Link to={`/application/ad-signings/paste/detail?id=${record.id}`}>详情</Link>
           </Fragment>
         ),

@@ -121,15 +121,15 @@ class List extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { name, createTime, status } = query;
+    const { username, createTime, status } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
         <Row>
           <Col md={6}>
             <FormItem label="姓名">
-              {getFieldDecorator('name', {
-                initialValue: name,
+              {getFieldDecorator('username', {
+                initialValue: username,
               })(<Input placeholder="输入姓名查询" />)}
             </FormItem>
           </Col>

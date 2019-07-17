@@ -200,6 +200,8 @@ class AdminList extends PureComponent {
         title: '名称',
         dataIndex: 'title',
         align: 'center',
+        width: 300,
+        render: text => <div>{text}</div>,
       },
       {
         title: '签约条款',
@@ -265,7 +267,7 @@ class AdminList extends PureComponent {
         title: '操作',
         dataIndex: 'operate',
         align: 'center',
-        width: 100,
+        width: 120,
         render: (text, record) => {
           const { id, isTop, isPublish } = record;
 

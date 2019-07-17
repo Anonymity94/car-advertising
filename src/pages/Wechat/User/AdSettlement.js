@@ -4,7 +4,8 @@ import { connect } from 'dva';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
 import { Card } from 'antd-mobile';
-import { SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED } from '@/common/constants';
+import moment from 'moment';
+import { SIGNING_GOLD_SETTLEMENT_STATE_SETTLED } from '@/common/constants';
 
 import styles from './IntegralExchange.less';
 
@@ -37,7 +38,7 @@ class AdSettlement extends PureComponent {
               <Card>
                 <Card.Header
                   title={
-                    item.settlementState === SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED ? (
+                    item.settlementState !== SIGNING_GOLD_SETTLEMENT_STATE_SETTLED ? (
                       <span className={styles.without}>待结算</span>
                     ) : (
                       <span className={styles.finish}>已结算</span>
@@ -45,9 +46,12 @@ class AdSettlement extends PureComponent {
                   }
                 />
                 <Card.Body>
-                  <div>{item.adTitle}</div>
+                  <div>{item.title}</div>
                 </Card.Body>
-                <Card.Footer content={item.createTime} extra={<div>￥{item.bonus}</div>} />
+                <Card.Footer
+                  content={item.settlementTime && moment(item.settlementTime).format('YYYY-MM-DD')}
+                  extra={<div>￥{item.bonus}</div>}
+                />
               </Card>
             ))
           )}

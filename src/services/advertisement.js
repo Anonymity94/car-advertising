@@ -127,6 +127,13 @@ export async function queryAdSettlements() {
 }
 
 /**
+ * 查询广告结算详情
+ */
+export async function queryAdSettlementDetail({ id }) {
+  return request(`/api/ad-signings/signing-detail?id=${id}`);
+}
+
+/**
  * 广告签约
  */
 export async function doSigning(params) {

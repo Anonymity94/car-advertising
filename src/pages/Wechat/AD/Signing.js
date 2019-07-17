@@ -53,7 +53,6 @@ class Signing extends PureComponent {
       dispatch,
       match: { params },
     } = this.props;
-    console.log(params);
 
     dispatch({
       type: 'adModel/queryAdContent',
@@ -103,7 +102,7 @@ class Signing extends PureComponent {
           dispatch({
             type: 'adSigningModel/doSigning',
             payload: {
-              id: detail.id, // 广告id
+              advId: detail.id, // 广告id
               ...currentAddress, // 粘贴地址，粘贴时间
             },
           }).then(success => {

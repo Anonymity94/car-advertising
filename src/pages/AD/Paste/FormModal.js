@@ -19,21 +19,22 @@ class PasswordModal extends PureComponent {
   };
 
   // 内容列表 图片上传
-  handleUpload = ({ fileList }) => {
-    console.log(fileList);
-    return fileList.map(file => ({
+  handleUpload = ({ fileList }) => fileList.map(file => ({
       uid: file.uid,
       name: file.name || file.response.name,
       url: file.response ? file.response.url : file.url,
     }));
-  };
 
   handleSubmit = e => {
     const { form, onSubmit } = this.props;
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        onSubmit(values);
+        const submitData = {
+          ...values,
+          pasteImages: values.pasteImages.map(item => item.url),
+        };
+        onSubmit(submitData);
       }
     });
   };

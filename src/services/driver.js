@@ -92,13 +92,8 @@ export async function register(params) {
  * @param {String} phone
  * @param {String} captcha
  */
-export async function bindPhone(params) {
-  return request('/api/user/bind', {
-    method: 'POST',
-    body: {
-      ...params,
-    },
-  });
+export async function bindPhone({ phone, captcha }) {
+  return request(`/api/user/bind?phone=${phone}&captcha=${captcha}`);
 }
 
 /**

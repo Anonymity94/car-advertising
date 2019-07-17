@@ -45,6 +45,14 @@ export default {
             status: true,
           },
         });
+
+        // 获取用户详情
+        yield put({
+          type: 'driverModel/queryDriverDetail',
+          payload: {
+            id: result.id,
+          },
+        });
       } else {
         yield put({
           type: 'changeState',

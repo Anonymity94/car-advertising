@@ -9,7 +9,7 @@ import { countFormatter } from '@/utils/utils';
 import router from 'umi/router';
 import styles from './styles.less';
 import Empty from '@/components/Empty';
-import { PUBLISH_STATE_NO } from '@/common/constants';
+import { PUBLISH_STATE_YES } from '@/common/constants';
 
 @connect(({ adModel: { detail }, login: { wechatUser }, loading }) => ({
   wechatUser,
@@ -61,7 +61,7 @@ class Detail extends PureComponent {
       );
     }
 
-    if (detail.isPublish === PUBLISH_STATE_NO) {
+    if (detail.isPublish !== PUBLISH_STATE_YES) {
       return (
         <Fragment>
           <Empty text="广告已下线" />

@@ -1,8 +1,9 @@
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import { wechatAuthorize, wechatAccess, wechatLogin } from '@/services/wechat';
+import router from 'umi/router';
 
-const IS_DEV = true;
+const IS_DEV = false;
 
 export default modelExtend(model, {
   namespace: 'wechatModel',
@@ -18,6 +19,9 @@ export default modelExtend(model, {
         yield put({
           type: 'login/queryWechatUser',
         });
+      } else {
+        // 如果微信用户没有登陆，去绑定
+        router.push('/h5/user/bind')
       }
     },
     *wechatAuthorize(_, { call }) {

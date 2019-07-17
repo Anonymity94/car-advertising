@@ -12,6 +12,7 @@ import {
   accessAdPaste,
   rejectAdPaste,
   doSigning,
+  queryAdSettlementDetail,
   doSigningSettlement,
 } from '@/services/advertisement';
 
@@ -21,6 +22,7 @@ export default modelExtend(model, {
   state: {
     list: [],
     detail: {},
+    settleDetail: {},
   },
 
   effects: {
@@ -69,18 +71,32 @@ export default modelExtend(model, {
           detail: success ? result : {},
         },
       });
+
+      return success ? result : {};
+    },
+
+    /**
+     * 广告结算详情
+     */
+    *queryAdSettlementDetail({ payload }, { call, put }) {
+      const { success, result } = yield call(queryAdSettlementDetail, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          settleDetail: success ? result : {},
+        },
+      });
+
+      return success ? result : {};
     },
 
     /**
      * 允许粘贴广告
      */
-    *accessAdPaste({ payload }, { call, put }) {
+    *accessAdPaste({ payload }, { call }) {
       const { success } = yield call(accessAdPaste, payload);
       if (success) {
         message.success('广告粘贴完成');
-        yield put({
-          type: 'queryAdPastes',
-        });
       } else {
         message.error('广告粘贴失败');
       }
@@ -90,13 +106,10 @@ export default modelExtend(model, {
     /**
      * 拒绝粘贴广告
      */
-    *rejectAdPaste({ payload }, { call, put }) {
+    *rejectAdPaste({ payload }, { call }) {
       const { success } = yield call(rejectAdPaste, payload);
       if (success) {
         message.success('广告拒绝粘贴完成');
-        yield put({
-          type: 'queryAdPastes',
-        });
       } else {
         message.error('广告拒绝粘贴失败');
       }

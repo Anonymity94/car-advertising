@@ -7,7 +7,11 @@ import { Card, Divider, Form, Row, Col, Input, Button, Icon, DatePicker, Select 
 import { handleSearch, handleSearchReset, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
 import FormModal from './FormModal';
-import { SIGNING_GOLD_SETTLEMENT_STATE_LIST } from '@/common/constants';
+import {
+  SIGNING_GOLD_SETTLEMENT_STATE_LIST,
+  SIGNING_GOLD_SETTLEMENT_STATE_SETTLED,
+  SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED,
+} from '@/common/constants';
 
 const FormItem = Form.Item;
 
@@ -91,15 +95,15 @@ class AdPasteList extends PureComponent {
       location: { query },
     } = this.props;
 
-    const { name, settlementTime, settlementState } = query;
+    const { username, settlementTime, settlementState } = query;
 
     return (
       <Form className="searchForm" onSubmit={this.handleSearch} layout="inline">
         <Row gutter={10}>
           <Col md={6}>
             <FormItem label="姓名">
-              {getFieldDecorator('name', {
-                initialValue: name,
+              {getFieldDecorator('username', {
+                initialValue: username,
               })(<Input placeholder="输入姓名查询" />)}
             </FormItem>
           </Col>
@@ -159,7 +163,7 @@ class AdPasteList extends PureComponent {
       },
       {
         title: '姓名',
-        dataIndex: 'fullname',
+        dataIndex: 'username',
         align: 'center',
       },
       {
@@ -191,6 +195,7 @@ class AdPasteList extends PureComponent {
         title: '粘贴日期',
         dataIndex: 'pasteTime',
         align: 'center',
+        render: text => text && moment(text).format('YYYY-MM-DD'),
       },
       {
         title: '签约金额',
@@ -206,17 +211,19 @@ class AdPasteList extends PureComponent {
         title: '结算日期',
         dataIndex: 'settlementTime',
         align: 'center',
+        render: text => text && moment(text).format('YYYY-MM-DD'),
       },
       {
         title: '状态',
         dataIndex: 'settlementState',
         align: 'center',
+        render: text => (text === SIGNING_GOLD_SETTLEMENT_STATE_SETTLED ? '已结算' : '未审核'),
       },
-      {
-        title: '审核人',
-        dataIndex: 'settlementPerson',
-        align: 'center',
-      },
+      // {
+      //   title: '审核人',
+      //   dataIndex: 'settlementPerson',
+      //   align: 'center',
+      // },
       {
         title: '操作',
         dataIndex: 'operate',
@@ -224,8 +231,10 @@ class AdPasteList extends PureComponent {
         width: 140,
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.toogleModal(record)}>结算</a>
-            <Divider type="vertical" />
+            {record.settlementState !== SIGNING_GOLD_SETTLEMENT_STATE_SETTLED && [
+              <a onClick={() => this.toogleModal(record)}>结算</a>,
+              <Divider type="vertical" />,
+            ]}
             <Link to={`/application/ad-signings/settlement/detail?id=${record.id}`}>详情</Link>
           </Fragment>
         ),

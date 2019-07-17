@@ -28,7 +28,11 @@ class PasswordModal extends PureComponent {
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        onSubmit(values);
+        const submitData = {
+          ...values,
+          settlementImage: values.settlementImage.map(item => item.url),
+        };
+        onSubmit(submitData);
       }
     });
   };

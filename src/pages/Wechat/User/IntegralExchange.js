@@ -5,7 +5,7 @@ import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
 import { Card } from 'antd-mobile';
 import styles from './IntegralExchange.less';
-import { INTEGRAL_SETTLEMENT_STATE_NO } from '@/common/constants';
+import { INTEGRAL_SETTLEMENT_STATE_NO, INTEGRAL_SETTLEMENT_STATE_YES } from '@/common/constants';
 
 @connect(({ driverModel: { integralExchanges }, loading }) => ({
   integralExchanges,
@@ -36,7 +36,7 @@ class IntegralExchange extends PureComponent {
               <Card>
                 <Card.Header
                   title={
-                    item.state === INTEGRAL_SETTLEMENT_STATE_NO ? (
+                    item.state !== INTEGRAL_SETTLEMENT_STATE_YES ? (
                       <span className={styles.without}>未使用</span>
                     ) : (
                       <span className={styles.finish}>已使用</span>
