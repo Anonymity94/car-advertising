@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
 import { Card } from 'antd-mobile';
+import moment from 'moment';
 import styles from './IntegralExchange.less';
 import { INTEGRAL_SETTLEMENT_STATE_YES } from '@/common/constants';
 
@@ -47,7 +48,8 @@ class IntegralExchange extends PureComponent {
                   <div>{item.goodsName}</div>
                 </Card.Body>
                 <Card.Footer
-                  content={`${item.createTime}/${item.businessName}`}
+                  content={`${item.createTime &&
+                    `${moment(item.createTime).format('YYYY-MM-DD')}/`}${item.businessName}`}
                   extra={<div>{item.integral}积分</div>}
                 />
               </Card>
