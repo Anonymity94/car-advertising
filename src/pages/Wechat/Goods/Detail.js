@@ -123,7 +123,7 @@ class Detail extends PureComponent {
       );
     }
 
-    if (detail.isPublish === PUBLISH_STATE_YES) {
+    if (detail.isPublish !== PUBLISH_STATE_YES) {
       return (
         <Fragment>
           <Empty text="广告已下线" />
