@@ -241,20 +241,18 @@ class ActivityList extends PureComponent {
                 </Popconfirm>,
                 <Divider key="divider" type="vertical" />,
               ]}
-              {
-                // 已发布的才可以置顶
-                isTop === TOP_STATE_YES && [
-                  <Popconfirm
-                    title={`确定${topText}吗？`}
-                    onConfirm={() => this.handleTop(id, newTopState)}
-                    okText="确定"
-                    cancelText="取消"
-                  >
-                    <a>{topText}</a>
-                  </Popconfirm>,
-                  <Divider type="vertical" />
-                ]
-              }
+              {// 已发布的才可以置顶
+              isTop === TOP_STATE_YES && [
+                <Popconfirm
+                  title={`确定${topText}吗？`}
+                  onConfirm={() => this.handleTop(id, newTopState)}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <a>{topText}</a>
+                </Popconfirm>,
+                <Divider type="vertical" />,
+              ]}
               <Link to={`/integral/goods/${id}/update`}>修改</Link>
               <Divider type="vertical" />
               <a onClick={() => this.handleDelete(record)}>删除</a>
@@ -285,7 +283,7 @@ class ActivityList extends PureComponent {
             loading={loading}
             columns={tableColumns}
             data={{ list: filterResult }}
-            rowClassName={record => (record.isPublish === PUBLISH_STATE_NO ? 'trStrikingBg' : '')}
+            rowClassName={record => (!record.isPublish ? 'trStrikingBg' : '')}
           />
         </Card>
       </PageHeaderWrapper>

@@ -3,7 +3,7 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
-import { Carousel, Card, Toast } from 'antd-mobile';
+import { Carousel, Card } from 'antd-mobile';
 import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 import { countFormatter } from '@/utils/utils';
 import Empty from '@/components/Empty';
@@ -11,6 +11,7 @@ import Empty from '@/components/Empty';
 
 import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
+import Loading from '@/components/Loading';
 
 const ColumnList = memo(({ list }) => (
   <div className={styles.column}>
@@ -101,9 +102,7 @@ class List extends PureComponent {
     const { pageData, topList } = this.state;
 
     if (queryLoading) {
-      Toast.loading('加载中....', 0);
-    } else {
-      Toast.hide();
+      return <Loading />;
     }
 
     if ([...pageData, ...topList].length === 0) {

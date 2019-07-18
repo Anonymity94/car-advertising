@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
 import isEqual from 'lodash/isEqual';
-import { Checkbox, Toast, Modal, List } from 'antd-mobile';
+import { Checkbox, Modal, List } from 'antd-mobile';
 import Loading from '@/components/Loading';
 import 'weui';
 import 'react-weui/build/packages/react-weui.css';
@@ -129,10 +129,8 @@ class Signing extends PureComponent {
     const { detail, queryLoading } = this.props;
 
     if (queryLoading) {
-      Toast.loading('加载中....', 0);
       return <Loading />;
     }
-    Toast.hide();
 
     if (!detail.id) {
       return (

@@ -5,6 +5,7 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
+import _ from 'lodash';
 import {
   queryAdPastes,
   queryAdSettlements,
@@ -38,11 +39,23 @@ export default modelExtend(model, {
      * 获取广告粘贴列表【未结算】
      */
     *queryAdPastes({ payload = {} }, { call, put }) {
-      const { success, result } = yield call(queryAdPastes, payload);
       yield put({
         type: 'updateState',
         payload: {
-          list: success ? result : [],
+          list: [],
+        },
+      });
+
+      const { success, result } = yield call(queryAdPastes, payload);
+
+      // 排序
+      let list = success ? result : [];
+      list = _.sortBy(list, ['pasteState'], ['asc']);
+
+      yield put({
+        type: 'updateState',
+        payload: {
+          list,
         },
       });
     },
@@ -51,11 +64,23 @@ export default modelExtend(model, {
      * 获取广告结算列表【已经粘贴完成了】
      */
     *queryAdSettlements({ payload = {} }, { call, put }) {
-      const { success, result } = yield call(queryAdSettlements, payload);
       yield put({
         type: 'updateState',
         payload: {
-          list: success ? result : [],
+          list: [],
+        },
+      });
+
+      const { success, result } = yield call(queryAdSettlements, payload);
+
+      // 排序
+      let list = success ? result : [];
+      list = _.sortBy(list, ['settlementState'], ['asc']);
+
+      yield put({
+        type: 'updateState',
+        payload: {
+          list,
         },
       });
     },

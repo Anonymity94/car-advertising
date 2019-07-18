@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
+import _ from 'lodash';
 import { queryAppeals, updateAppealState, createAppeal } from '@/services/appeal';
 import router from 'umi/router';
 
@@ -29,10 +30,15 @@ export default modelExtend(model, {
      */
     *queryAppeals({ payload = {} }, { call, put }) {
       const { success, result } = yield call(queryAppeals, payload);
+
+      // 排序
+      let list = success ? result : [];
+      list = _.sortBy(list, ['state', 'createTime'], ['asc', 'desc']);
+
       yield put({
         type: 'updateState',
         payload: {
-          list: success ? result : [],
+          list,
         },
       });
     },

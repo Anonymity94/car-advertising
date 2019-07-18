@@ -2,7 +2,7 @@ import 'braft-editor/dist/index.css';
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Form, Input, Button, DatePicker, Modal, Icon } from 'antd';
+import { Form, Input, Button, DatePicker, Modal, Icon, Popconfirm } from 'antd';
 import moment from 'moment';
 import router from 'umi/router';
 import { phoneReg, passwordReg } from '@/utils/utils';
@@ -300,14 +300,11 @@ class FormTemp extends PureComponent {
             {goods.map(item => (
               <p key={item.id} style={{ marginBottom: 4 }}>
                 {item.businessName}-{item.name}
-                <Button
-                  size="small"
-                  type="danger"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => onDelGoods(item.id)}
-                >
-                  删除
-                </Button>
+                <Popconfirm title="确定删除吗？" onConfirm={() => onDelGoods(item.id)}>
+                  <Button size="small" type="danger" style={{ marginLeft: 10 }}>
+                    删除
+                  </Button>
+                </Popconfirm>
               </p>
             ))}
             <Button type="dashed" onClick={onCreateGoods} style={{ width: '60%' }}>

@@ -3,11 +3,12 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
-import { Carousel, Card, Toast } from 'antd-mobile';
+import { Carousel, Card } from 'antd-mobile';
 import Empty from '@/components/Empty';
 import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 
 import styles from './styles.less';
+import Loading from '@/components/Loading';
 
 const BigItem = memo(({ data }) => (
   <div className={`${styles.item} ${styles.big}`}>
@@ -106,9 +107,7 @@ class List extends PureComponent {
     const { pageData, topList } = this.state;
 
     if (queryLoading) {
-      Toast.loading('加载中....', 0);
-    } else {
-      Toast.hide();
+      return <Loading />;
     }
 
     if ([...pageData, ...topList].length === 0) {

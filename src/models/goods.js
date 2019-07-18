@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
+import _ from 'lodash';
 import {
   queryGoods,
   queryGoodsContent,
@@ -44,6 +45,8 @@ export default modelExtend(model, {
       // 微信端过滤出已发布的
       if (payload.isPublish) {
         list = list.filter(item => item.isPublish === payload.isPublish);
+      } else {
+        list = _.sortBy(list, ['isPublish'], ['asc']);
       }
 
       yield put({

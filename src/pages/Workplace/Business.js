@@ -120,10 +120,18 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     </Col>
                   </Row>
                 </Form.Item>
-                <Form.Item label="姓名">{exchangeDetail.username || '--'}</Form.Item>
-                <Form.Item label="手机号码">{exchangeDetail.phone || '--'}</Form.Item>
-                <Form.Item label="兑换商品">{exchangeDetail.goodsName || '--'}</Form.Item>
-                <Form.Item label="积分数">{exchangeDetail.integral || '--'}</Form.Item>
+                <Form.Item style={{ marginBottom: 0 }} label="姓名">
+                  {exchangeDetail.username || '--'}
+                </Form.Item>
+                <Form.Item style={{ marginBottom: 0 }} label="手机号码">
+                  {exchangeDetail.phone || '--'}
+                </Form.Item>
+                <Form.Item style={{ marginBottom: 0 }} label="兑换商品">
+                  {exchangeDetail.goodsName || '--'}
+                </Form.Item>
+                <Form.Item style={{ marginBottom: 0 }} label="积分数">
+                  {exchangeDetail.integral || '--'}
+                </Form.Item>
               </Fragment>
             )}
             {type === MODEL_TYPE_SETTLEMENT && (

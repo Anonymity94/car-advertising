@@ -20,7 +20,7 @@ const CreateGoodsForm = Form.create({ name: 'form_in_modal' })(
         <Modal
           visible={visible}
           destroyOnClose
-          submitLoading={loading}
+          confirmLoading={loading}
           title="新增商品"
           onCancel={onCancel}
           onOk={onCreate}

@@ -225,10 +225,22 @@ export function handleFilterResult() {
         if (!search[key] && search[key] !== 0) {
           return;
         }
+
+        let target = item[key];
+        if (typeof target === 'number') {
+          target = String(target);
+        } else if (Array.isArray(target)) {
+          if (key === 'goods') {
+            target = target.map(el => el.name).join(',');
+          } else {
+            target = target.join(',');
+          }
+        }
+
         // 如果目标对象没有值，判定为不符合
         if (!item[key] && item[key] !== 0) {
           keywordsFlag[index] = false;
-        } else if (String(item[key]).indexOf(String(search[key])) === -1) {
+        } else if (target.indexOf(String(search[key])) === -1) {
           keywordsFlag[index] = false;
         }
       });

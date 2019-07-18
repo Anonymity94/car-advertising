@@ -329,6 +329,7 @@ class AdPasteList extends PureComponent {
             loading={loading}
             columns={tableColumns}
             data={{ list: filterResult }}
+            rowClassName={record => (record.pasteState === AD_PASTE_STATE_UN_REVIEW ? 'trStrikingBg' : '')}
           />
         </Card>
         <FormModal

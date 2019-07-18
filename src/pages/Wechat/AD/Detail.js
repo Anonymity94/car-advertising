@@ -3,7 +3,6 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import moment from 'moment';
 import Loading from '@/components/Loading';
-import { Toast } from 'antd-mobile';
 import { countFormatter } from '@/utils/utils';
 
 import router from 'umi/router';
@@ -48,10 +47,8 @@ class Detail extends PureComponent {
     const { queryLoading, detail, wechatUser } = this.props;
 
     if (queryLoading) {
-      Toast.loading('加载中....', 0);
       return <Loading />;
     }
-    Toast.hide();
 
     if (!detail.id) {
       return (
