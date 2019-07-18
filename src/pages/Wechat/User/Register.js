@@ -182,6 +182,7 @@ export const UserInfoForm = createForm()(
   class FormWrapper extends React.Component {
     state = {
       count: 0,
+      phoneCaptcha: '',
     };
 
     componentWillUnmount() {
@@ -216,10 +217,13 @@ export const UserInfoForm = createForm()(
         payload: {
           phone,
         },
-      }).then(success => {
+      }).then(({ success, captcha }) => {
         if (success) {
           this.runGetCaptchaCountDown();
         }
+        this.setState({
+          phoneCaptcha: captcha,
+        });
       });
     };
 

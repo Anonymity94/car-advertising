@@ -1,5 +1,5 @@
-import React, { PureComponent, Fragment } from 'react';
-import { InputItem, Button, Modal, Flex } from 'antd-mobile';
+import React, { PureComponent } from 'react';
+import { InputItem, Button, Modal, Flex, Toast } from 'antd-mobile';
 import { phoneReg, showError } from '@/utils/utils';
 import Link from 'umi/link';
 import router from 'umi/router';
@@ -24,6 +24,9 @@ const FormWrapper = createForm()(
     state = {
       oldCount: 0,
       count: 0,
+
+      oldPhoneCaptcha: '',
+      newPhoneCaptcha: '',
     };
 
     componentWillUnmount() {
@@ -68,22 +71,57 @@ const FormWrapper = createForm()(
         payload: {
           phone,
         },
-      }).then(success => {
+      }).then(({ success, captcha }) => {
         if (success) {
-          const stateKey = field === 'oldPhone' ? 'oldCount' : 'count';
+          let stateKey = [];
+          if (field === 'oldPhone') {
+            stateKey = 'oldCount';
+          } else {
+            stateKey = 'count';
+          }
           this.runGetCaptchaCountDown(stateKey);
+        }
+        if (field === 'oldPhone') {
+          this.setState({
+            oldPhoneCaptcha: captcha,
+          });
+        } else {
+          this.setState({
+            newPhoneCaptcha: captcha,
+          });
         }
       });
     };
 
     submit = () => {
-      const { form, onOk } = this.props;
+      const { form, onOk, userInfo } = this.props;
+      const { oldPhoneCaptcha, newPhoneCaptcha } = this.state;
       form.validateFields((error, values) => {
         if (error) {
           const errKeys = Object.keys(error);
           showError(error[errKeys[0]].errors[0].message);
           return;
         }
+        const { oldCaptcha, captcha, oldPhone } = values;
+
+        // 判断下，现在用户填写的旧手机号，是否是当前的手机号
+        if (userInfo.phone !== oldPhone) {
+          Modal.alert('更换失败', '旧手机号不是当前绑定的手机号', [
+            { text: '知道了', onPress: () => {} },
+          ]);
+          return;
+        }
+
+        // 判断验证码是否正确
+        if (oldCaptcha !== oldPhoneCaptcha) {
+          Modal.alert('更换失败', '旧手机号验证码错误', [{ text: '知道了', onPress: () => {} }]);
+          return;
+        }
+        if (captcha !== newPhoneCaptcha) {
+          Modal.alert('更换失败', '新手机号验证码错误', [{ text: '知道了', onPress: () => {} }]);
+          return;
+        }
+
         // 提示一下
         Modal.alert('确定更换手机号吗？', '', [
           { text: '取消', onPress: () => {} },
@@ -237,22 +275,47 @@ connect(({ dispatch }) => ({
 }))(FormWrapper);
 
 // eslint-disable-next-line react/no-multi-comp
-@connect()
+@connect(({ driverModel: { detail } }) => ({
+  userInfo: detail,
+}))
 class ChangePhone extends PureComponent {
   handleSubmit = values => {
-    const { dispatch } = this.props;
+    const { dispatch, userInfo } = this.props;
+    if (!userInfo.id) {
+      Toast.fail('修改失败', 1);
+      return;
+    }
+
     dispatch({
-      type: 'driverModel/changePhone',
-      payload: { ...values },
+      type: 'driverModel/updateDriver',
+      payload: {
+        id: userInfo.id,
+        phone: values.phone,
+      },
+    }).then(success => {
+      if (!success) {
+        Toast.fail('更换失败', 1);
+      } else {
+        Toast.success('更换成功', 1);
+        // 重新拉取当前登陆人信息
+        dispatch({
+          type: 'driverModel/queryDriverDetail',
+          payload: {
+            id: userInfo.id,
+          },
+        }).then(() => {
+          router.push('/h5/user/center');
+        });
+      }
     });
   };
 
   render() {
-    const { dispatch } = this.props;
+    const { dispatch, userInfo } = this.props;
     return (
       <DocumentTitle title="更换手机号">
         <section>
-          <FormWrapper dispatch={dispatch} onOk={this.handleSubmit} />
+          <FormWrapper userInfo={userInfo} dispatch={dispatch} onOk={this.handleSubmit} />
         </section>
       </DocumentTitle>
     );

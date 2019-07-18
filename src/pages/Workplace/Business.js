@@ -3,11 +3,11 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Avatar, Icon, Button, Form, Modal, Input, InputNumber } from 'antd';
-import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 
 import styles from './Business.less';
 import { phoneReg } from '@/utils/utils';
+import { BOOLEAN_YES } from '@/common/constants';
 
 const MODEL_TYPE_EXCHANGE = 'exchange';
 const MODEL_TYPE_SETTLEMENT = 'settlement';
@@ -15,7 +15,7 @@ const MODEL_TYPE_SETTLEMENT = 'settlement';
 const tableColumns = [
   {
     title: '姓名',
-    dataIndex: 'usename',
+    dataIndex: 'username',
     align: 'center',
   },
   {
@@ -25,8 +25,9 @@ const tableColumns = [
   },
   {
     title: '兑换物品',
-    dataIndex: 'goods',
+    dataIndex: 'goodsName',
     align: 'center',
+    render: (text, record) => `${record.businessName}-${text}`,
   },
   {
     title: '所获积分',
@@ -37,13 +38,13 @@ const tableColumns = [
     title: '兑换日期',
     dataIndex: 'settlementTime',
     align: 'center',
-    render: text => text && moment(text).format('YYYY-MM-DD'),
+    // render: text => text && moment(text).format('YYYY-MM-DD'),
   },
-  {
-    title: '审核人',
-    dataIndex: 'operator',
-    align: 'center',
-  },
+  // {
+  //   title: '审核人',
+  //   dataIndex: 'operator',
+  //   align: 'center',
+  // },
 ];
 
 const ModalForm = Form.create({ name: 'form_in_modal' })(
@@ -92,16 +93,25 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
 
     render() {
       const { exchangeDetail } = this.state;
-      const { visible, onCancel, form, type, currentUser } = this.props;
+      const { visible, onCancel, form, type, currentUser, loading } = this.props;
       const { getFieldDecorator } = form;
+
+      // 剩余可用积分
+      const restIntegral = currentUser.restIntegral || 0;
 
       return (
         <Modal
           visible={visible}
           title={type === MODEL_TYPE_EXCHANGE ? '兑换' : '提现'}
           destroyOnClose
+          confirmLoading={loading}
           onCancel={onCancel}
           onOk={this.onOk}
+          okButtonProps={{
+            disabled:
+              type === MODEL_TYPE_EXCHANGE &&
+              (!exchangeDetail.id || exchangeDetail.state === BOOLEAN_YES),
+          }}
         >
           <Form labelCol={{ span: 5 }} wrapperCol={{ span: 16 }}>
             {type === MODEL_TYPE_EXCHANGE && (
@@ -111,7 +121,7 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     <Col span={20}>
                       {getFieldDecorator('exchangeCode', {
                         rules: [{ required: true, message: '请输入兑换码' }],
-                      })(<Input />)}
+                      })(<Input onBlur={() => this.setState({ exchangeDetail: {} })} />)}
                     </Col>
                     <Col span={4}>
                       <Button type="primary" onClick={this.queryExchangeDetail}>
@@ -120,18 +130,24 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     </Col>
                   </Row>
                 </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }} label="姓名">
-                  {exchangeDetail.username || '--'}
-                </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }} label="手机号码">
-                  {exchangeDetail.phone || '--'}
-                </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }} label="兑换商品">
-                  {exchangeDetail.goodsName || '--'}
-                </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }} label="积分数">
-                  {exchangeDetail.integral || '--'}
-                </Form.Item>
+                {exchangeDetail.state === BOOLEAN_YES ? (
+                  <h3 style={{ color: 'red', textAlign: 'center' }}>已兑换</h3>
+                ) : (
+                  <Fragment>
+                    <Form.Item style={{ marginBottom: 0 }} label="姓名">
+                      {exchangeDetail.username || '--'}
+                    </Form.Item>
+                    <Form.Item style={{ marginBottom: 0 }} label="手机号码">
+                      {exchangeDetail.phone || '--'}
+                    </Form.Item>
+                    <Form.Item style={{ marginBottom: 0 }} label="兑换商品">
+                      {exchangeDetail.goodsName || '--'}
+                    </Form.Item>
+                    <Form.Item style={{ marginBottom: 0 }} label="积分数">
+                      {exchangeDetail.integral || '--'}
+                    </Form.Item>
+                  </Fragment>
+                )}
               </Fragment>
             )}
             {type === MODEL_TYPE_SETTLEMENT && (
@@ -141,12 +157,21 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     initialValue: currentUser.username,
                   })(<Input readOnly />)}
                 </Form.Item>
-                <Form.Item label="积分数">
+                <Form.Item label="积分数" extra={`剩余可用积分：${restIntegral}`}>
                   {getFieldDecorator('integral', {
                     validateFirst: true,
                     rules: [
                       { required: true, message: '请输入积分' },
                       { pattern: /^[1-9]\d*$/, message: '请输入正整数' },
+                      {
+                        validator: (rule, value, callback) => {
+                          if (value > restIntegral) {
+                            callback(`剩余可用积分：${restIntegral}`);
+                          } else {
+                            callback();
+                          }
+                        },
+                      },
                     ],
                   })(
                     <InputNumber style={{ width: '100%' }} onChange={this.handleIntegralChange} />
@@ -169,6 +194,13 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     ],
                   })(<Input />)}
                 </Form.Item>
+                {type === MODEL_TYPE_SETTLEMENT && (
+                  <p style={{ color: 'red', textAlign: 'center', marginBottom: 0 }}>
+                    提现请求发起后，工作人员将与x天内联系您。
+                    <br />
+                    请保持手机畅通！
+                  </p>
+                )}
               </Fragment>
             )}
           </Form>
@@ -184,6 +216,9 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
   goodsExchangeLogs,
   currentUser,
   loading,
+  submitLoading:
+    loading.effects['goodsExchangeModel/auditExchange'] ||
+    loading.effects['businessModel/startIntegralSettlement'],
 }))
 class Workplace extends PureComponent {
   state = {
@@ -246,6 +281,7 @@ class Workplace extends PureComponent {
       },
     }).then(success => {
       if (success) {
+        this.setState({ visible: false });
         this.queryCurrent();
         this.queryGoodsExchangeLogs();
       }
@@ -263,6 +299,7 @@ class Workplace extends PureComponent {
       },
     }).then(success => {
       if (success) {
+        this.setState({ visible: false });
         this.queryCurrent();
       }
     });
@@ -270,7 +307,7 @@ class Workplace extends PureComponent {
 
   render() {
     const { visible, modalType } = this.state;
-    const { loading, dispatch, currentUser, goodsExchangeLogs } = this.props;
+    const { loading, dispatch, currentUser, goodsExchangeLogs, submitLoading } = this.props;
     return (
       <Fragment>
         <Card size="small" bordered={false} style={{ marginBottom: 20 }}>
@@ -329,15 +366,18 @@ class Workplace extends PureComponent {
           />
         </Card>
 
-        <ModalForm
-          wrappedComponentRef={this.saveFormRef}
-          visible={visible}
-          currentUser={currentUser}
-          type={modalType}
-          dispatch={dispatch}
-          onCancel={this.handleCancel}
-          onSubmit={this.handleSubmit}
-        />
+        {visible && (
+          <ModalForm
+            wrappedComponentRef={this.saveFormRef}
+            visible={visible}
+            currentUser={currentUser}
+            loading={submitLoading}
+            type={modalType}
+            dispatch={dispatch}
+            onCancel={this.handleCancel}
+            onSubmit={this.handleSubmit}
+          />
+        )}
       </Fragment>
     );
   }

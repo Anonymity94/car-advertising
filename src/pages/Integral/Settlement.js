@@ -136,10 +136,11 @@ class Settlement extends PureComponent {
         title: '编号',
         dataIndex: 'id',
         align: 'center',
+        width: 200,
       },
       {
         title: '用户名',
-        dataIndex: 'usename',
+        dataIndex: 'username',
         align: 'center',
       },
       {

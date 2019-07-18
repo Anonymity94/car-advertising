@@ -64,9 +64,12 @@ class Detail extends PureComponent {
     const { dispatch, detail, wechatUser } = this.props;
     if (!detail.id) return;
 
+    const restIntegral = wechatUser.restIntegral || 0;
     // 检查自己的积分是否足够兑换
-    if (!(wechatUser.restIntegral && wechatUser.restIntegral >= detail.integral)) {
-      Modal.alert('兑换失败', '积分不足', [{ text: '好的', onPress: () => {} }]);
+    if (detail.integral > restIntegral) {
+      Modal.alert('兑换失败', `积分不足：当前可用积分${restIntegral}`, [
+        { text: '好的', onPress: () => {} },
+      ]);
       return;
     }
 

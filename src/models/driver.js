@@ -156,13 +156,16 @@ export default modelExtend(model, {
      * 获取验证码
      */
     *getCaptcha({ payload }, { call }) {
-      const { success } = yield call(getCaptcha, payload);
+      const { success, result } = yield call(getCaptcha, payload);
       if (success) {
         message.success('验证码获取成功');
       } else {
         message.error('验证码获取失败');
       }
-      return success;
+      return {
+        success,
+        captcha: success ? String(result) : '',
+      };
     },
 
     /**

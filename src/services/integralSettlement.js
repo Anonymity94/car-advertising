@@ -18,7 +18,7 @@ export async function querySettlements(params) {
  */
 export async function doSettlement({ id }) {
   return request(`/api/integrals/do-settlement?id=${id}`, {
-    method: 'POST',
+    method: 'PUT',
     body: {
       id,
     },

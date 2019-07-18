@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Loading from '@/components/Loading';
@@ -37,12 +37,15 @@ class IntegralExchange extends PureComponent {
               <Card>
                 <Card.Header
                   title={
-                    item.state !== INTEGRAL_SETTLEMENT_STATE_YES ? (
-                      <span className={styles.without}>未使用</span>
-                    ) : (
-                      <span className={styles.finish}>已使用</span>
-                    )
+                    <Fragment>
+                      {item.state !== INTEGRAL_SETTLEMENT_STATE_YES ? (
+                        <span className={styles.without}>未使用</span>
+                      ) : (
+                        <span className={styles.finish}>已使用</span>
+                      )}
+                    </Fragment>
                   }
+                  extra={<span>兑换码：{item.exchangeCode}</span>}
                 />
                 <Card.Body>
                   <div>{item.goodsName}</div>

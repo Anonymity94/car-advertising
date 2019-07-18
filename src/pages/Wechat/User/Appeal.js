@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import { TextareaItem, InputItem, Button, Modal, Flex } from 'antd-mobile';
+import { TextareaItem, InputItem, Button, Modal, Flex, Toast } from 'antd-mobile';
 import { connect } from 'dva';
 import router from 'umi/router';
 import { createForm } from 'rc-form';
@@ -23,6 +23,7 @@ const FormWrapper = createForm()(
   class FormContent extends React.Component {
     state = {
       count: 0,
+      phoneCaptcha: '',
     };
 
     componentWillUnmount() {
@@ -67,10 +68,13 @@ const FormWrapper = createForm()(
         payload: {
           phone,
         },
-      }).then(success => {
+      }).then(({ success, captcha }) => {
         if (success) {
           this.runGetCaptchaCountDown();
         }
+        this.setState({
+          phoneCaptcha: captcha,
+        });
       });
     };
 
@@ -82,6 +86,13 @@ const FormWrapper = createForm()(
           showError(error[errKeys[0]].errors[0].message);
           return;
         }
+        // 判断下验证码
+        const { phoneCaptcha } = this.state;
+        if (phoneCaptcha !== values.captcha) {
+          Toast.fail('验证码错误', 1);
+          return;
+        }
+
         // 提示一下
         Modal.alert('确定提交申诉吗？', '', [
           { text: '取消', onPress: () => {} },

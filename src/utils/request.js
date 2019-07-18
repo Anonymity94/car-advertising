@@ -96,6 +96,9 @@ export default function request(url, option) {
       if (contentType.includes('application/json')) {
         return response.json();
       }
+      if (contentType.includes('text/plain')) {
+        return response.text();
+      }
       return response;
     })
     .then(result => ({
