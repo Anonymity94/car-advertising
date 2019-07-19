@@ -143,7 +143,7 @@ class Detail extends PureComponent {
                 <div className={styles.info}>
                   <div className={styles.left}>
                     <h2 className={styles.title}>
-                      {detail.name && detail.name.replace(`${detail.businessName}-`, '')}
+                      {detail.name}
                       <span>{detail.integral}积分</span>
                     </h2>
                     <p className={styles.businessName}>{detail.businessName}</p>

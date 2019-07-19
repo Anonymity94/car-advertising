@@ -89,6 +89,7 @@ class FormTemp extends PureComponent {
 
   onOk = event => {
     event.preventDefault();
+    const { selectedGoods } = this.state;
     const { form, onSubmit } = this.props;
     form.validateFields((error, values) => {
       if (error) return;
@@ -96,6 +97,7 @@ class FormTemp extends PureComponent {
       const { content, image, shopImage } = values;
       const submitData = {
         ...values,
+        name: selectedGoods.name,
         content: content.toHTML(),
         image: image[0].url,
         shopImage: shopImage[0].url,

@@ -125,8 +125,8 @@ class List extends PureComponent {
             {topList.length > 0 && (
               <Carousel autoplay={false} infinite className={styles.carousel}>
                 {topList.map(item => (
-                  <Link className={styles.item} to={`/h5/goods/${item.id}`} key={item}>
-                    <img src={item.banner} alt={item.title} />
+                  <Link className={styles.item} to={`/h5/goods/${item.id}`} key={item.id}>
+                    <img src={item.banner} alt={item.name} />
                   </Link>
                 ))}
               </Carousel>
