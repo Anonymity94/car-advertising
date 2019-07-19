@@ -340,7 +340,7 @@ class FormTemp extends PureComponent {
             ],
           })(<StandardUpload name="image" accept="image/*" limit={3} />)}
         </FormItem>
-        <Form.Item label="签约条款" {...formItemLayout}>
+        <Form.Item label="签约条款" {...formItemLayout} extra="只能上传pdf文件">
           {getFieldDecorator('clause', {
             initialValue: values.banner
               ? [{ uid: values.clause, url: values.clause, name: values.clause }]

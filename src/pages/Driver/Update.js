@@ -1,6 +1,6 @@
 import React, { PureComponent, Suspense } from 'react';
 import { connect } from 'dva';
-import { Button, Modal } from 'antd';
+import { Button, Modal, message } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import FooterToolbar from '@/components/FooterToolbar';
 import router from 'umi/router';
@@ -58,6 +58,12 @@ class Audit extends PureComponent {
     const { dueDate } = this.state;
     const { dispatch, detail } = this.props;
     const { id, expireTime } = detail;
+    // 如果时间没有修改过，不能提交
+    if (!dueDate || dueDate === expireTime) {
+      message.info('证件到期时间没有变化，无需修改');
+      return;
+    }
+
     Modal.confirm({
       width: 500,
       title: (
@@ -106,7 +112,12 @@ class Audit extends PureComponent {
               <Button icon="reload" type="dashed" onClick={() => this.queryDriverDetail()}>
                 刷新
               </Button>
-              <Button icon="save" loading={submitting} type="primary" onClick={() => this.handleUpdate()}>
+              <Button
+                icon="save"
+                loading={submitting}
+                type="primary"
+                onClick={() => this.handleUpdate()}
+              >
                 保存
               </Button>
               <Button icon="rollback" loading={submitting} onClick={() => router.goBack()}>

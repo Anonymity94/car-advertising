@@ -2,7 +2,8 @@ import 'braft-editor/dist/index.css';
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Form, Input, Button, DatePicker, Modal, Icon, Popconfirm } from 'antd';
+import _ from 'lodash';
+import { Form, Input, Button, DatePicker, Modal, Icon, Popconfirm, message } from 'antd';
 import moment from 'moment';
 import router from 'umi/router';
 import { phoneReg, passwordReg } from '@/utils/utils';
@@ -30,14 +31,14 @@ let id = 0;
 @connect()
 class FormTemp extends PureComponent {
   static propTypes = {
-    tpye: PropTypes.oneOf(['create', 'update']), // 新建或修改
+    type: PropTypes.oneOf(['create', 'update']), // 新建或修改
     values: PropTypes.object, // 初始值
     submitLoading: PropTypes.bool,
     onSubmit: PropTypes.func,
   };
 
   static defaultProps = {
-    tpye: 'create',
+    type: 'create',
     values: {},
     submitLoading: false,
     onSubmit: () => {},
@@ -78,7 +79,7 @@ class FormTemp extends PureComponent {
       return;
     }
     const split = value.split('-');
-    if (split.length !== 2 || split[0] !== businessName || !split[1]) {
+    if (split.length !== 2 || split[1] !== businessName || !split[0]) {
       callback('以商品名称-商户名称的形式进行命名商品');
       form.validateFields(['name'], { force: true });
       return;
@@ -122,6 +123,14 @@ class FormTemp extends PureComponent {
 
       const { beginTime, endTime, goods } = values;
       const goodsList = Object.keys(goods).map(key => goods[key]);
+
+      // 判断是否有重名的
+      const copy = _.uniqBy(goodsList);
+      if (copy.length !== goodsList.length) {
+        message.error('商品存在重复，请删除');
+        return;
+      }
+
       const submitData = {
         ...values,
         goods: goodsList,
@@ -299,7 +308,7 @@ class FormTemp extends PureComponent {
           <Form.Item label="商品" {...formItemLayout}>
             {goods.map(item => (
               <p key={item.id} style={{ marginBottom: 4 }}>
-                {item.businessName}-{item.name}
+                {item.name}-{item.businessName}
                 <Popconfirm title="确定删除吗？" onConfirm={() => onDelGoods(item.id)}>
                   <Button size="small" type="danger" style={{ marginLeft: 10 }}>
                     删除

@@ -279,6 +279,13 @@ class ActivityList extends PureComponent {
         <Card bodyStyle={{ padding: 0 }} bordered={false}>
           <div className="searchWrap" />
           <StandardTable
+            title={() => (
+              <div style={{ textAlign: 'right' }}>
+                <Button type="primary" onClick={() => router.push('/integral/goods/create')}>
+                  新增商品
+                </Button>
+              </div>
+            )}
             rowKey="id"
             loading={loading}
             columns={tableColumns}

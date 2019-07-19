@@ -51,6 +51,7 @@ export default {
           type: 'driverModel/queryDriverDetail',
           payload: {
             id: result.id,
+            from: 'queryWechatUser',
           },
         });
       } else {

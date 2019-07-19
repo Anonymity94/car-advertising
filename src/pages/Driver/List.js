@@ -2,7 +2,20 @@ import React, { PureComponent, Fragment } from 'react';
 import Link from 'umi/link';
 import { connect } from 'dva';
 import isEqual from 'lodash/isEqual';
-import { Card, Divider, Form, Row, Col, Input, Select, Button, DatePicker, Icon } from 'antd';
+import {
+  Card,
+  Divider,
+  Form,
+  Row,
+  Col,
+  Input,
+  Select,
+  Button,
+  DatePicker,
+  Icon,
+  Tag,
+  Tooltip,
+} from 'antd';
 import moment from 'moment';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -49,11 +62,20 @@ const tableColumns = [
     title: '状态',
     dataIndex: 'status',
     align: 'center',
-    render: text => {
-      if (!text || text === AUDIT_STATE_UNREVIEWED) return '未审核';
-      if (text === AUDIT_STATE_PASSED) return '已通过';
-      if (text === AUDIT_STATE_REFUSE) return '未通过';
-      return '';
+    render: (text, record) => {
+      if (text === AUDIT_STATE_PASSED) return <Tag color="#87d068">通过</Tag>;
+      if (text === AUDIT_STATE_REFUSE) {
+        const { bandReason } = record;
+        if (bandReason) {
+          return (
+            <Tooltip title={bandReason}>
+              <Tag color="#f50">不通过</Tag>
+            </Tooltip>
+          );
+        }
+        return <Tag color="#f50">不通过</Tag>;
+      }
+      return '待审核';
     },
   },
   // {
@@ -68,12 +90,14 @@ const tableColumns = [
     align: 'center',
     render: (text, record) => (
       <Fragment>
-        {record.status === AUDIT_STATE_PASSED ? (
-          <Link to={`/application/drivers/${record.id}/update`}>修改</Link>
-        ) : (
-          <Link to={`/application/drivers/${record.id}/audit`}>审核</Link>
-        )}
-        <Divider type="vertical" />
+        {record.status === AUDIT_STATE_PASSED && [
+          <Link to={`/application/drivers/${record.id}/update`}>修改</Link>,
+          <Divider type="vertical" />,
+        ]}
+        {(record.status === AUDIT_STATE_UNREVIEWED || !record.status) && [
+          <Link to={`/application/drivers/${record.id}/audit`}>审核</Link>,
+          <Divider type="vertical" />,
+        ]}
         <Link to={`/application/drivers/${record.id}`}>查看</Link>
       </Fragment>
     ),
@@ -201,7 +225,9 @@ class List extends PureComponent {
             loading={loading}
             columns={tableColumns}
             data={{ list: filterResult }}
-            rowClassName={record => (record.state === AUDIT_STATE_UNREVIEWED ? 'trStrikingBg' : '')}
+            rowClassName={record =>
+              record.status === AUDIT_STATE_UNREVIEWED ? 'trStrikingBg' : ''
+            }
           />
         </Card>
       </PageHeaderWrapper>

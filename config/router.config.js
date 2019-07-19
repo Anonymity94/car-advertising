@@ -50,6 +50,11 @@ export default [
             name: 'ad-signing',
             component: './Wechat/User/AdSigning',
           },
+          {
+            path: '/h5/user/ad-signing/:id',
+            name: 'ad-signing-detail',
+            component: './Wechat/User/AdSigningDetail',
+          },
           // 广告结算记录
           {
             path: '/h5/user/ad-settlement',
@@ -371,7 +376,7 @@ export default [
               },
               {
                 path: '/integral/goods/:id/update',
-                name: 'create',
+                name: 'update',
                 component: './Goods/Update',
               },
             ],

@@ -20,16 +20,7 @@ class Audit extends PureComponent {
   };
 
   componentDidMount() {
-    const {
-      dispatch,
-      match: { params },
-    } = this.props;
-    dispatch({
-      type: 'driverModel/queryDriverDetail',
-      payload: {
-        id: params.id,
-      },
-    });
+    this.queryDriverDetail();
     window.addEventListener('resize', this.resizeFooterToolbar, { passive: true });
   }
 
@@ -47,6 +38,19 @@ class Audit extends PureComponent {
           this.setState({ width });
         }
       }
+    });
+  };
+
+  queryDriverDetail = () => {
+    const {
+      dispatch,
+      match: { params },
+    } = this.props;
+    dispatch({
+      type: 'driverModel/queryDriverDetail',
+      payload: {
+        id: params.id,
+      },
     });
   };
 
@@ -76,7 +80,7 @@ class Audit extends PureComponent {
       }).then(success => {
         if (success) {
           Modal.destroyAll();
-          router.goBack();
+          this.queryDriverDetail();
         } else {
           confirmModal.update({
             okButtonProps: {

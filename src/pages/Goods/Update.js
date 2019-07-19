@@ -32,6 +32,7 @@ class Update extends PureComponent {
       type: 'goodsModel/updateGoods',
       payload: {
         ...values,
+        state: 1,
       },
     }).then(success => {
       if (success) {
@@ -45,7 +46,12 @@ class Update extends PureComponent {
     return (
       <PageHeaderWrapper showback>
         <Card loading={loading}>
-          <FormTemp values={detail} submitLoading={submitLoading} onSubmit={this.handleSubmit} />
+          <FormTemp
+            type="update"
+            values={detail}
+            submitLoading={submitLoading}
+            onSubmit={this.handleSubmit}
+          />
         </Card>
       </PageHeaderWrapper>
     );

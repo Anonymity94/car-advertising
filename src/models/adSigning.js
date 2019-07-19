@@ -16,6 +16,7 @@ import {
   queryAdSettlementDetail,
   doSigningSettlement,
 } from '@/services/advertisement';
+import { AD_PASTE_STATE_UN_PASTED } from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'adSigningModel',
@@ -51,6 +52,11 @@ export default modelExtend(model, {
       // 排序
       let list = success ? result : [];
       list = _.sortBy(list, ['pasteState'], ['asc']);
+
+      list = list.map(item => ({
+        ...item,
+        pasteState: !item.pasteState ? AD_PASTE_STATE_UN_PASTED : item.pasteState,
+      }));
 
       yield put({
         type: 'updateState',

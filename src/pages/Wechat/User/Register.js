@@ -40,7 +40,8 @@ import uploadIcon from './icons/icon_upload@2x.png';
  * @param {} file
  */
 export function beforeUpload(file) {
-  const isLt5M = file.size / 1024 / 1024 < 5;
+  console.log('file对象', file);
+  const isLt5M = file.size / 1000 / 1000 < 5;
   if (!isLt5M) {
     Modal.alert('上传的图片不能超过5M', '', [{ text: '知道了', onPress: () => {} }]);
   }
@@ -56,6 +57,8 @@ export function beforeUpload(file) {
 export function handleUpload(info, state, loading) {
   const { onUpload } = this.props;
   const { status } = info.file;
+
+  console.log('上传结果', info);
 
   if (status === 'uploading') {
     this.setState({ [loading]: true });
@@ -87,7 +90,7 @@ export function handleUpload(info, state, loading) {
   if (status === 'error') {
     Modal.alert('上传失败', '', [{ text: '知道了', onPress: () => {} }]);
     this.setState({
-      [state]: [],
+      // [state]: [],
       [loading]: false,
     });
   }

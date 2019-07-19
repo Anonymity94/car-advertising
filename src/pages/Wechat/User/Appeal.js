@@ -204,7 +204,7 @@ const FormWrapper = createForm()(
               <Button
                 style={{ width: '45%' }}
                 className="button-cancel"
-                onClick={() => router.replace('/h5/home')}
+                onClick={() => router.goBack()}
               >
                 取消
               </Button>

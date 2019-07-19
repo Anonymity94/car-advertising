@@ -36,6 +36,7 @@ export default {
   'menu.integral.goods': '商品积分管理',
   'menu.integral.goods.list': '商品积分列表',
   'menu.integral.goods.create': '新增商品',
+  'menu.integral.goods.update': '编辑商品',
 
   'menu.user': '人员管理',
   'menu.user.driver': '车主档案',

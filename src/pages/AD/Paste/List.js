@@ -25,6 +25,7 @@ import {
   AD_PASTE_STATE_UN_REVIEW,
   AD_PASTE_STATE_PASTED,
   AD_PASTE_STATE_REFUSE,
+  AD_PASTE_STATE_UN_PASTED,
 } from '@/common/constants';
 
 const FormItem = Form.Item;
@@ -258,7 +259,8 @@ class AdPasteList extends PureComponent {
         dataIndex: 'pasteState',
         align: 'center',
         render: text => {
-          if (!text || text === AD_PASTE_STATE_UN_REVIEW) return '未审核';
+          if (!text || text === AD_PASTE_STATE_UN_REVIEW || text === AD_PASTE_STATE_UN_PASTED)
+            return '未粘贴';
           if (text === AD_PASTE_STATE_PASTED) return '已粘贴';
           if (text === AD_PASTE_STATE_REFUSE) return '拒绝';
           return '';
@@ -329,7 +331,9 @@ class AdPasteList extends PureComponent {
             loading={loading}
             columns={tableColumns}
             data={{ list: filterResult }}
-            rowClassName={record => (record.pasteState === AD_PASTE_STATE_UN_REVIEW ? 'trStrikingBg' : '')}
+            rowClassName={record =>
+              record.pasteState === AD_PASTE_STATE_UN_REVIEW ? 'trStrikingBg' : ''
+            }
           />
         </Card>
         <FormModal

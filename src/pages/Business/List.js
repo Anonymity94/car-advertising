@@ -87,7 +87,7 @@ class BusinessList extends PureComponent {
             <FormItem label="商品名称">
               {getFieldDecorator('goods', {
                 initialValue: goods,
-              })(<Input placeholder="输入商铺名称查询" />)}
+              })(<Input placeholder="输入商品名称查询" />)}
             </FormItem>
           </Col>
           <Col md={6}>
@@ -144,12 +144,13 @@ class BusinessList extends PureComponent {
         title: '提供商品',
         dataIndex: 'goods',
         align: 'center',
+        width: 300,
         render: goods => {
           if (!goods) return '';
           if (!Array.isArray(goods)) return '';
           const text = goods.map(item => item.name).join('、');
 
-          return <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', maxWidth: 300 }}>{text}</div>;
+          return <div style={{ wordWrap: 'break-word', wordBreak: 'break-all' }}>{text}</div>;
         },
       },
       {

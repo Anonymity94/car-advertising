@@ -30,9 +30,9 @@
   <!-- windows phone 点击无高光 -->
   <meta name="msapplication-tap-highlight" content="no">
 
-  <% if(context.env !== 'production') { %>
   <script crossorigin="anonymous" integrity="sha384-Syuu42tkQgszyxNSHWSh4xouXRhTwTLEj9qTUCa3YPdoZYLOIGmFq6z1VTMjS8KL" src="https://lib.baomitu.com/vConsole/3.3.0/vconsole.min.js"></script>
-  <!-- <script>var vConsole = new VConsole();</script> -->
+  <script>var vConsole = new VConsole();</script>
+  <% if(context.env !== 'production') { %>
   <% } %>
 </head>
 <body>

@@ -2,6 +2,7 @@ import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import router from 'umi/router';
+import _ from 'lodash';
 import { Toast, Modal } from 'antd-mobile';
 import {
   queryDrivers,
@@ -17,7 +18,7 @@ import {
   queryUserSettlements,
   queryUserExchanges,
 } from '@/services/driver';
-import { AUDIT_STATE_PASSED } from '@/common/constants';
+import { AUDIT_STATE_PASSED, AUDIT_STATE_UNREVIEWED, AUDIT_STATE_REFUSE } from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'driverModel',
@@ -68,6 +69,9 @@ export default modelExtend(model, {
         list = list.filter(item => item.status === payload.status);
       }
 
+      // 排序
+      list = _.sortBy(list, ['status'], ['asc']);
+
       yield put({
         type: 'updateState',
         payload: {
@@ -90,6 +94,7 @@ export default modelExtend(model, {
      * 车主详情
      */
     *queryDriverDetail({ payload }, { call, put }) {
+      const { from } = payload;
       const { success, result } = yield call(queryDriverById, payload);
       yield put({
         type: 'updateState',
@@ -97,6 +102,16 @@ export default modelExtend(model, {
           detail: success ? result : {},
         },
       });
+
+      // 如果来自微信，如果用户等待审核
+      if (success && from === 'queryWechatUser') {
+        if (result.status === AUDIT_STATE_UNREVIEWED) {
+          router.replace('/h5/user/waiting');
+        }
+        if (result.status === AUDIT_STATE_REFUSE) {
+          router.replace(`/h5/user/waiting?type=error&msg=${result.bandReason}`);
+        }
+      }
     },
 
     /**

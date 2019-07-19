@@ -49,7 +49,7 @@ export const AUDIT_STATE_LIST = [
 /**
  * 广告粘贴状态：未审核
  */
-export const AD_PASTE_STATE_UN_REVIEW = BOOLEAN_NO;
+export const AD_PASTE_STATE_UN_REVIEW = BOOLEAN_YES;
 
 /**
  * 广告粘贴状态：审核通过，未粘贴

@@ -21,7 +21,7 @@ export async function queryBusinessContent({ id }) {
 }
 
 /**
- * 查询所有商户下的所有商品
+ * 查询所有商户下的所有未新增的商品
  * @param {String} id
  */
 export async function queryAllBusinessGoods() {

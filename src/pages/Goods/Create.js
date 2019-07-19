@@ -7,7 +7,7 @@ import router from 'umi/router';
 import FormTemp from './FormTemp';
 
 @connect(({ loading }) => ({
-  submitLoading: loading.effects['goodsModel/createGoods'],
+  submitLoading: loading.effects['goodsModel/updateGoods'],
 }))
 class Create extends PureComponent {
   componentDidMount() {}
@@ -15,9 +15,10 @@ class Create extends PureComponent {
   handleSubmit = values => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'goodsModel/createGoods',
+      type: 'goodsModel/updateGoods',
       payload: {
         ...values,
+        state: 1,
       },
     }).then(success => {
       if (success) {
@@ -39,7 +40,7 @@ class Create extends PureComponent {
     return (
       <PageHeaderWrapper showback>
         <Card>
-          <FormTemp onSubmit={this.handleSubmit} submitLoading={submitLoading} />
+          <FormTemp type="create" onSubmit={this.handleSubmit} submitLoading={submitLoading} />
         </Card>
       </PageHeaderWrapper>
     );

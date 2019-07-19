@@ -14,7 +14,7 @@ const CreateGoodsForm = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
   class extends React.Component {
     render() {
-      const { business, visible, onCancel, onCreate, form, loading } = this.props;
+      const { business, goodsList, visible, onCancel, onCreate, form, loading } = this.props;
       const { getFieldDecorator } = form;
       return (
         <Modal
@@ -42,7 +42,18 @@ const CreateGoodsForm = Form.create({ name: 'form_in_modal' })(
           <Form {...formItemLayout}>
             <Form.Item label="商品名称">
               {getFieldDecorator('name', {
-                rules: [{ required: true, message: '请输入商品名称' }],
+                rules: [
+                  { required: true, message: '请输入商品名称' },
+                  {
+                    validator: (_, value, callback) => {
+                      if (goodsList.find(item => item.name === value)) {
+                        callback('商品名称不能重复');
+                        return;
+                      }
+                      callback();
+                    },
+                  },
+                ],
               })(<Input />)}
             </Form.Item>
           </Form>
@@ -175,6 +186,7 @@ class Update extends PureComponent {
           wrappedComponentRef={this.saveFormRef}
           visible={visible}
           business={detail}
+          goodsList={goodsList}
           loading={createGoodsLoading}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}

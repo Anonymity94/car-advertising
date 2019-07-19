@@ -84,7 +84,6 @@ export default class RichTextEditor extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     if ('value' in nextProps) {
       const editorState = nextProps.value;
       this.setState({

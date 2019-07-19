@@ -24,7 +24,7 @@ const Empty = props => {
 
 Empty.defaultProps = {
   text: '暂无记录',
-  showback: true,
+  showback: false,
 };
 
 Empty.propTypes = {

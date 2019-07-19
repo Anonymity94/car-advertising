@@ -12,6 +12,7 @@ import styles from './ADSigning.less';
 
 import qrcodeIcon from './icons/icon_qrcode@2x.png';
 import addressIcon from './icons/icon_address@2x.png';
+import { AD_PASTE_STATE_REFUSE } from '@/common/constants';
 
 @connect(
   ({ driverModel: { adSignings }, login: { wechatUser }, driverModel: { detail }, loading }) => ({
@@ -29,8 +30,19 @@ class AdSigning extends PureComponent {
     });
   }
 
-  showQrcode = ({ bonus }) => {
+  showQrcode = ({ bonus, status }) => {
     const { userDetail } = this.props;
+
+    if (status === AD_PASTE_STATE_REFUSE) {
+      Modal.alert('粘贴被拒绝', '无法生成签约二维码', [
+        {
+          text: '关闭',
+          onPress: () => {},
+        },
+      ]);
+      return;
+    }
+
     // 生成二维码信息
     // 会员编号、姓名、手机号、身份证号、车辆类型、行驶证号、证件到期时间、签约金额以及上传的身份证和车辆照片信息
     const qrcodeContent = {
@@ -121,7 +133,7 @@ class AdSigning extends PureComponent {
 
               <div className={`${styles.footer} ${styles.flex}`}>
                 <img src={qrcodeIcon} alt="二维码" onClick={() => this.showQrcode(item)} />
-                <Link to={`/h5/ads/${item.advId}`}>
+                <Link to={`/h5/user/ad-signing/${item.id}`}>
                   详情
                   <Icon type="right" />
                 </Link>

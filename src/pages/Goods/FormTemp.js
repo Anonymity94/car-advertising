@@ -6,10 +6,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import moment from 'moment';
 import router from 'umi/router';
-import { Form, Input, Button, DatePicker, Modal, InputNumber, Select } from 'antd';
+import { Form, Input, Button, Modal, InputNumber, Select } from 'antd';
 import BraftEditor from 'braft-editor';
 import RichTextEditor from '@/components/BraftEditor';
 import StandardUpload from '@/components/StandardUpload';
+
+import styles from './styles.less';
 
 const FormItem = Form.Item;
 
@@ -26,27 +28,41 @@ const formItemLayoutWithOutLabel = {
 };
 
 @Form.create()
-@connect(({ loading }) => ({
+@connect(({ businessModel: { allGoods }, loading }) => ({
   loading,
+  allGoods,
 }))
 class FormTemp extends PureComponent {
   static propTypes = {
-    tpye: PropTypes.oneOf(['create', 'update']), // 新建或修改
+    type: PropTypes.oneOf(['create', 'update']), // 新建或修改
     values: PropTypes.object, // 初始值
     submitLoading: PropTypes.bool,
     onSubmit: PropTypes.func,
   };
 
   static defaultProps = {
-    tpye: 'create',
+    type: 'create',
     values: {},
     submitLoading: false,
     onSubmit: () => {},
   };
 
-  componentDidMount() {
-    const { values } = this.props;
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      selectedGoods: props.values || {},
+    };
+  }
+
+  componentDidMount() {
+    const { dispatch, values, type } = this.props;
+    // 获取所有的商品列表
+    if (type === 'create') {
+      dispatch({
+        type: 'businessModel/queryAllBusinessGoods',
+      });
+    }
     // 异步设置编辑器内容
     setTimeout(() => {
       const { form } = this.props;
@@ -56,20 +72,13 @@ class FormTemp extends PureComponent {
     }, 0);
   }
 
-  // UNSAFE_componentWillReceiveProps(nextProps) {
-  //   const { values } = this.props;
-  //   const nextValues = nextProps.values;
-  //   if (!_.isEqual(values.content, nextValues.content)) {
-  //     console.log('old', this.props);
-  //     console.log('new', nextProps);
-  //     setTimeout(() => {
-  //       const { form } = nextProps;
-  //       form.setFieldsValue({
-  //         content: BraftEditor.createEditorState(nextValues.content || null),
-  //       });
-  //     }, 0);
-  //   }
-  // }
+  handleGoodsChange = goodsId => {
+    const { allGoods } = this.props;
+    const find = allGoods.find(item => item.id === goodsId);
+    this.setState({
+      selectedGoods: find || {},
+    });
+  };
 
   handleContentChange = editorContent => {
     const { form } = this.props;
@@ -85,15 +94,12 @@ class FormTemp extends PureComponent {
       if (error) return;
 
       const { content, image, shopImage } = values;
-      console.log('values', values);
       const submitData = {
         ...values,
         content: content.toHTML(),
         image: image[0].url,
         shopImage: shopImage[0].url,
       };
-
-      console.log('submitData', submitData);
 
       Modal.confirm({
         title: '确定提交吗？',
@@ -126,17 +132,23 @@ class FormTemp extends PureComponent {
     }));
 
   render() {
+    const { selectedGoods } = this.state;
     const {
       form: { getFieldDecorator },
       values = {}, // 初始值
+      type,
+      allGoods,
       submitLoading,
     } = this.props;
 
+    const extraText =
+      type === 'create' ? <span className="ant-form-text"> （选择商品后自动联想）</span> : null;
+
     return (
-      <Form onSubmit={this.onOk}>
+      <Form onSubmit={this.onOk} className={styles.goodsForm}>
         <FormItem {...formItemLayout} label="id" style={{ display: 'none' }}>
           {getFieldDecorator('id', {
-            initialValue: values.id || '',
+            initialValue: selectedGoods.id || '',
           })(<Input placeholder="商品积分id" />)}
         </FormItem>
 
@@ -149,13 +161,31 @@ class FormTemp extends PureComponent {
                 message: '请填写商品名称',
               },
             ],
-          })(<Input placeholder="请填写商品名称" />)}
+          })(
+            type === 'create' ? (
+              <Select placeholder="请选择商品" onChange={this.handleGoodsChange}>
+                {allGoods.map(item => (
+                  <Select.Option key={item.id} value={item.id}>
+                    [{item.businessName}]-{item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : (
+              <Input placeholder="请填写商品名称" />
+            )
+          )}
         </FormItem>
         <FormItem {...formItemLayout} label="所属商户名称">
-          {values.businessName}
+          {selectedGoods.businessName}
+          {extraText}
         </FormItem>
         <Form.Item label="到期日期" {...formItemLayout}>
-          {values.endTime}
+          {selectedGoods.endTime}
+          {extraText}
+        </Form.Item>
+        <Form.Item label="商户地址" {...formItemLayout}>
+          {selectedGoods.address}
+          {extraText}
         </Form.Item>
 
         <Form.Item label="积分" {...formItemLayout}>
@@ -196,10 +226,6 @@ class FormTemp extends PureComponent {
             ],
           })(<StandardUpload name="image" accept="image/*" limit={1} />)}
         </FormItem>
-        <Form.Item label="地址" {...formItemLayout}>
-          {values.address}
-        </Form.Item>
-
         <Form.Item label="商品详情内容" {...formItemLayout}>
           {getFieldDecorator('content', {
             initialValue: '',
