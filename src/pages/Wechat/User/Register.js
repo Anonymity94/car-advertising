@@ -7,6 +7,7 @@ import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
+import _ from 'lodash';
 import { MOCK_API_PREFIX } from '@/common/app';
 import moment from 'moment';
 import UploadLoading from './UploadLoading';
@@ -153,6 +154,10 @@ const getUploadImageUrl = data => {
   if (data && data.fileList) {
     images = data.fileList.map(file => (file.response ? file.response.url : file.url));
   }
+
+  // 去掉空值
+  images = _.compact(images);
+
   return images.join(',');
 };
 

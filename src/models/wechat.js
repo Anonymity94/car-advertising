@@ -10,18 +10,25 @@ export default modelExtend(model, {
 
   state: {
     openId: '', // 微信 appid
+    checkWechatLoginFinish: false,
   },
 
   effects: {
     *wechatLogin(_, { call, put }) {
       const { success, result } = yield call(wechatLogin);
+      yield put({
+        type: 'updateState',
+        payload: {
+          checkWechatLoginFinish: true,
+        },
+      });
       if (success && result) {
         yield put({
           type: 'login/queryWechatUser',
         });
       } else {
         // 如果微信用户没有登陆，去绑定
-        router.push('/h5/user/bind')
+        router.push('/h5/user/bind');
       }
     },
     *wechatAuthorize(_, { call }) {
@@ -39,7 +46,7 @@ export default modelExtend(model, {
 
       if (success && result.openid) {
         yield put({
-          type: 'changeState',
+          type: 'updateState',
           payload: {
             openId: result.openid,
           },
