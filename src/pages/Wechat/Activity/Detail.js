@@ -10,9 +10,9 @@ import Empty from '@/components/Empty';
 import router from 'umi/router';
 import styles from './styles.less';
 
-@connect(({ activityModel: { detail }, login: { wechatUser }, loading }) => ({
+@connect(({ activityModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
-  wechatUser,
+  userInfo,
   queryLoading: loading.effects['activityModel/queryActivityContent'],
 }))
 class Detail extends PureComponent {
@@ -98,7 +98,7 @@ class Detail extends PureComponent {
 
   render() {
     const { isJoin } = this.state;
-    const { queryLoading, detail, wechatUser } = this.props;
+    const { queryLoading, detail, userInfo } = this.props;
 
     if (queryLoading) {
       return <Loading />;
@@ -121,12 +121,12 @@ class Detail extends PureComponent {
     }
 
     const renderOperateBtn = () => {
-      const { id, status } = wechatUser;
+      const { id, status } = userInfo;
       if (!id) {
         return <span className={styles.btnCancel}>未注册</span>;
       }
       if (!status || status === AUDIT_STATE_UNREVIEWED) {
-        return <span className={styles.btnCancel}>等待审核</span>;
+        return <span className={styles.btnCancel}>注册信息等待审核</span>;
       }
       if (status === AUDIT_STATE_REFUSE) {
         return <span className={styles.btnCancel}>注册未通过</span>;

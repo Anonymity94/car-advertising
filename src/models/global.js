@@ -34,7 +34,9 @@ export default {
         if (!code) {
           const httpUrl = encodeURIComponent(`${window.location}`);
           const redirectUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WECHAT_APPID}&redirect_uri=${httpUrl}&response_type=code&scope=snsapi_base&state=232#wechat_redirect`;
-          window.location.href = redirectUrl;
+          if (!IS_DEV) {
+            window.location.href = redirectUrl;
+          }
         } else {
           // 如果有code
           dispatch({

@@ -13,7 +13,11 @@ export default connect(({ wechatModel }) => ({
       <WhiteSpace size="lg" />
       <WingBlank size="lg">
         <LocaleProvider locale={zhCN}>
-          {props.checkWechatLoginFinish ? <div {...props} /> : <Loading text="授权中..." />}
+          <Fragment>
+            {IS_DEV && <div {...props} />}
+            {!IS_DEV &&
+              (props.checkWechatLoginFinish ? <div {...props} /> : <Loading text="授权中..." />)}
+          </Fragment>
         </LocaleProvider>
       </WingBlank>
       <WhiteSpace size="lg" />

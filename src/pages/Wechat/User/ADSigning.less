@@ -96,3 +96,27 @@
     font-size: 13px;
   }
 }
+
+.signingDetail {
+  :global {
+    .am-list-body {
+      &::before,
+      &::after {
+        display: none !important;
+      }
+    }
+  }
+}
+
+.pasteImages {
+  margin-top: 10px;
+
+  .imgItem {
+    float: left;
+    width: 25%;
+    text-align: center;
+  }
+  img {
+    width: 98%;
+  }
+}

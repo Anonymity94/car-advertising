@@ -10,8 +10,8 @@ import styles from './styles.less';
 import Empty from '@/components/Empty';
 import { PUBLISH_STATE_YES, AUDIT_STATE_REFUSE, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
 
-@connect(({ adModel: { detail }, login: { wechatUser }, loading }) => ({
-  wechatUser,
+@connect(({ adModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
+  userInfo,
   detail,
   queryLoading: loading.effects['adModel/queryAdContent'],
 }))
@@ -44,7 +44,7 @@ class Detail extends PureComponent {
   };
 
   render() {
-    const { queryLoading, detail, wechatUser } = this.props;
+    const { queryLoading, detail, userInfo } = this.props;
 
     if (queryLoading) {
       return <Loading />;
@@ -67,12 +67,12 @@ class Detail extends PureComponent {
     }
 
     const renderOperateBtn = () => {
-      const { id, status } = wechatUser;
+      const { id, status } = userInfo;
       if (!id) {
         return <span className={styles.btn}>未注册</span>;
       }
       if (!status || status === AUDIT_STATE_UNREVIEWED) {
-        return <span className={styles.btn}>等待审核</span>;
+        return <span className={styles.btn}>注册信息等待审核</span>;
       }
       if (status === AUDIT_STATE_REFUSE) {
         return <span className={styles.btn}>注册未通过</span>;

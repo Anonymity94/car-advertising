@@ -14,9 +14,9 @@ import {
 import router from 'umi/router';
 import styles from './styles.less';
 
-@connect(({ goodsModel: { detail }, login: { wechatUser }, loading }) => ({
+@connect(({ goodsModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
-  wechatUser,
+  userInfo,
   queryLoading: loading.effects['goodsModel/queryGoodsContent'],
 }))
 class Detail extends PureComponent {
@@ -66,10 +66,10 @@ class Detail extends PureComponent {
   };
 
   exchangeGood = () => {
-    const { dispatch, detail, wechatUser } = this.props;
+    const { dispatch, detail, userInfo } = this.props;
     if (!detail.id) return;
 
-    const restIntegral = wechatUser.restIntegral || 0;
+    const restIntegral = userInfo.restIntegral || 0;
     // 检查自己的积分是否足够兑换
     if (detail.integral > restIntegral) {
       Modal.alert('兑换失败', `积分不足：当前可用积分${restIntegral}`, [
@@ -115,7 +115,7 @@ class Detail extends PureComponent {
 
   render() {
     const { isExchanged } = this.state;
-    const { queryLoading, detail, wechatUser } = this.props;
+    const { queryLoading, detail, userInfo } = this.props;
 
     if (queryLoading) {
       return <Loading />;
@@ -137,16 +137,16 @@ class Detail extends PureComponent {
       );
     }
 
-    if (!wechatUser.id) {
+    if (!userInfo.id) {
       Modal.alert('无法兑换', '尚未注册', [{ text: '好的', onPress: () => {}, style: 'default' }]);
     }
 
-    if (wechatUser.id && wechatUser.status === AUDIT_STATE_REFUSE) {
+    if (userInfo.id && userInfo.status === AUDIT_STATE_REFUSE) {
       Modal.alert('无法兑换', '注册申请被拒绝', [
         { text: '好的', onPress: () => {}, style: 'default' },
       ]);
     }
-    if (wechatUser.id && (wechatUser.status === AUDIT_STATE_UNREVIEWED || !wechatUser.status)) {
+    if (userInfo.id && (userInfo.status === AUDIT_STATE_UNREVIEWED || !userInfo.status)) {
       Modal.alert('无法兑换', '注册信息审核中', [
         { text: '好的', onPress: () => {}, style: 'default' },
       ]);
@@ -169,7 +169,7 @@ class Detail extends PureComponent {
                     <p className={styles.businessName}>{detail.businessName}</p>
                   </div>
                   <div className={styles.right}>
-                    {wechatUser.id && wechatUser.status === AUDIT_STATE_PASSED && (
+                    {userInfo.id && userInfo.status === AUDIT_STATE_PASSED && (
                       <span
                         className={styles.btn}
                         onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
