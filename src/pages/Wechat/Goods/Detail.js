@@ -4,7 +4,12 @@ import { connect } from 'dva';
 import { Toast, Modal } from 'antd-mobile';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
-import { PUBLISH_STATE_YES } from '@/common/constants';
+import {
+  PUBLISH_STATE_YES,
+  AUDIT_STATE_REFUSE,
+  AUDIT_STATE_UNREVIEWED,
+  AUDIT_STATE_PASSED,
+} from '@/common/constants';
 
 import router from 'umi/router';
 import styles from './styles.less';
@@ -132,6 +137,21 @@ class Detail extends PureComponent {
       );
     }
 
+    if (!wechatUser.id) {
+      Modal.alert('无法兑换', '尚未注册', [{ text: '好的', onPress: () => {}, style: 'default' }]);
+    }
+
+    if (wechatUser.id && wechatUser.status === AUDIT_STATE_REFUSE) {
+      Modal.alert('无法兑换', '注册申请被拒绝', [
+        { text: '好的', onPress: () => {}, style: 'default' },
+      ]);
+    }
+    if (wechatUser.id && (wechatUser.status === AUDIT_STATE_UNREVIEWED || !wechatUser.status)) {
+      Modal.alert('无法兑换', '注册信息审核中', [
+        { text: '好的', onPress: () => {}, style: 'default' },
+      ]);
+    }
+
     return (
       <DocumentTitle title="积分商品详情">
         <Fragment>
@@ -149,15 +169,13 @@ class Detail extends PureComponent {
                     <p className={styles.businessName}>{detail.businessName}</p>
                   </div>
                   <div className={styles.right}>
-                    {wechatUser.id ? (
+                    {wechatUser.id && wechatUser.status === AUDIT_STATE_PASSED && (
                       <span
                         className={styles.btn}
                         onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
                       >
                         {isExchanged === false ? '兑换' : '已兑换'}
                       </span>
-                    ) : (
-                      <span className={styles.btn}>未注册</span>
                     )}
                   </div>
                 </div>

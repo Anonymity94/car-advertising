@@ -258,7 +258,11 @@ class AppealList extends PureComponent {
           if (text === AUDIT_STATE_REFUSE) {
             const { remark } = record;
             if (remark) {
-              return <Tooltip title={remark}><Tag color="#f50">不通过</Tag></Tooltip>;
+              return (
+                <Tooltip title={remark}>
+                  <Tag color="#f50">不通过</Tag>
+                </Tooltip>
+              );
             }
             return <Tag color="#f50">不通过</Tag>;
           }
@@ -277,7 +281,7 @@ class AppealList extends PureComponent {
         width: 140,
         render: (text, record) => {
           const { id, state } = record;
-          if (state === AUDIT_STATE_UNREVIEWED) {
+          if (!state || state === AUDIT_STATE_UNREVIEWED) {
             return (
               <Fragment>
                 <a onClick={() => this.handleAudit(id, AUDIT_STATE_PASSED)}>通过</a>

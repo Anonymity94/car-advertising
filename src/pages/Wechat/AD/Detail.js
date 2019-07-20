@@ -8,7 +8,7 @@ import { countFormatter } from '@/utils/utils';
 import router from 'umi/router';
 import styles from './styles.less';
 import Empty from '@/components/Empty';
-import { PUBLISH_STATE_YES } from '@/common/constants';
+import { PUBLISH_STATE_YES, AUDIT_STATE_REFUSE, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
 
 @connect(({ adModel: { detail }, login: { wechatUser }, loading }) => ({
   wechatUser,
@@ -66,6 +66,25 @@ class Detail extends PureComponent {
       );
     }
 
+    const renderOperateBtn = () => {
+      const { id, status } = wechatUser;
+      if (!id) {
+        return <span className={styles.btn}>未注册</span>;
+      }
+      if (!status || status === AUDIT_STATE_UNREVIEWED) {
+        return <span className={styles.btn}>等待审核</span>;
+      }
+      if (status === AUDIT_STATE_REFUSE) {
+        return <span className={styles.btn}>注册未通过</span>;
+      }
+
+      return (
+        <span className={styles.btn} onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}>
+          立即签约
+        </span>
+      );
+    };
+
     return (
       <DocumentTitle title={detail.title}>
         <Fragment>
@@ -93,18 +112,7 @@ class Detail extends PureComponent {
                 <div className={styles.operateItem}>
                   签约可获<span className={styles.integral}>{detail.integral}</span>积分
                 </div>
-                <div className={styles.operateItem}>
-                  {wechatUser.id ? (
-                    <span
-                      className={styles.btn}
-                      onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}
-                    >
-                      立即签约
-                    </span>
-                  ) : (
-                    <span className={styles.btn}>未注册</span>
-                  )}
-                </div>
+                <div className={styles.operateItem}>{renderOperateBtn()}</div>
               </div>
             </div>
           </div>

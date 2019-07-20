@@ -3,7 +3,7 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import moment from 'moment';
 import { Toast, Modal, Icon } from 'antd-mobile';
-import { PUBLISH_STATE_NO } from '@/common/constants';
+import { AUDIT_STATE_REFUSE, AUDIT_STATE_UNREVIEWED, PUBLISH_STATE_YES } from '@/common/constants';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
 
@@ -112,13 +112,42 @@ class Detail extends PureComponent {
       );
     }
 
-    if (detail.isPublish === PUBLISH_STATE_NO) {
+    if (detail.isPublish !== PUBLISH_STATE_YES) {
       return (
         <Fragment>
           <Empty text="活动已下线" />
         </Fragment>
       );
     }
+
+    const renderOperateBtn = () => {
+      const { id, status } = wechatUser;
+      if (!id) {
+        return <span className={styles.btnCancel}>未注册</span>;
+      }
+      if (!status || status === AUDIT_STATE_UNREVIEWED) {
+        return <span className={styles.btnCancel}>等待审核</span>;
+      }
+      if (status === AUDIT_STATE_REFUSE) {
+        return <span className={styles.btnCancel}>注册未通过</span>;
+      }
+
+      return (
+        <Fragment>
+          {isJoin === 'NAN' && (
+            <span className={styles.btnCancel}>
+              <Icon type="loading" />
+            </span>
+          )}
+          {isJoin !== 'NAN' && isJoin && <span className={styles.btnCancel}>已参与</span>}
+          {isJoin !== 'NAN' && !isJoin && (
+            <span className={styles.btnOk} onClick={() => this.joinActivity()}>
+              我要参与
+            </span>
+          )}
+        </Fragment>
+      );
+    };
 
     return (
       <DocumentTitle title={detail.title}>
@@ -146,27 +175,7 @@ class Detail extends PureComponent {
               </div>
 
               <div className={styles.operate}>
-                <div className={styles.operateItem}>
-                  {!wechatUser.id ? (
-                    <span className={styles.btnCancel}>未注册</span>
-                  ) : (
-                    <Fragment>
-                      {isJoin === 'NAN' && (
-                        <span className={styles.btnCancel}>
-                          <Icon type="loading" />
-                        </span>
-                      )}
-                      {isJoin !== 'NAN' && isJoin && (
-                        <span className={styles.btnCancel}>已参与</span>
-                      )}
-                      {isJoin !== 'NAN' && !isJoin && (
-                        <span className={styles.btnOk} onClick={() => this.joinActivity()}>
-                          我要参与
-                        </span>
-                      )}
-                    </Fragment>
-                  )}
-                </div>
+                <div className={styles.operateItem}>{renderOperateBtn()}</div>
               </div>
             </div>
           </div>
