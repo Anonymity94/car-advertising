@@ -67,9 +67,14 @@ class AdPasteList extends PureComponent {
 
   componentDidMount() {
     this.queryAdPastes();
+    this.timer = setInterval(() => this.queryAdPastes(), 3000);
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
 
   static getDerivedStateFromProps(nextProps, state) {
     if (!isEqual(nextProps.list, state.list)) {
@@ -399,7 +404,7 @@ class AdPasteList extends PureComponent {
               </div>
             )}
             rowKey="id"
-            loading={loading}
+            // loading={loading}
             columns={tableColumns}
             data={{ list: filterResult }}
             rowClassName={record =>

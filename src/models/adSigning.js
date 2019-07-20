@@ -15,8 +15,10 @@ import {
   doSigning,
   queryAdSettlementDetail,
   doSigningSettlement,
+  beginPaste,
 } from '@/services/advertisement';
 import { AD_PASTE_STATE_UN_PASTED } from '@/common/constants';
+import { Toast } from 'antd-mobile';
 
 export default modelExtend(model, {
   namespace: 'adSigningModel',
@@ -40,13 +42,6 @@ export default modelExtend(model, {
      * 获取广告粘贴列表【未结算】
      */
     *queryAdPastes({ payload = {} }, { call, put }) {
-      yield put({
-        type: 'updateState',
-        payload: {
-          list: [],
-        },
-      });
-
       const { success, result } = yield call(queryAdPastes, payload);
 
       // 排序
@@ -119,6 +114,19 @@ export default modelExtend(model, {
       });
 
       return success ? result : {};
+    },
+
+    /**
+     * 开始粘贴广告
+     */
+    *beginPaste({ payload }, { call }) {
+      const { success } = yield call(beginPaste, payload);
+      if (success) {
+        Toast.success('确认成功', 1);
+      } else {
+        Toast.fail('确认失败', 1);
+      }
+      return success;
     },
 
     /**

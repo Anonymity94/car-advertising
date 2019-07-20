@@ -151,6 +151,14 @@ export default [
       },
     ],
   },
+  // 商户工作台
+  {
+    path: '/wechat/ad-signing-qrcode',
+    name: 'ad-signing-qrcode',
+    icon: 'qrcode',
+    component: './AD/Paste/ScanQrcode',
+    authority: ['admin'],
+  },
   // app
   {
     path: '/',

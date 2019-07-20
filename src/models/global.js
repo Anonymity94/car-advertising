@@ -27,9 +27,12 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       const { pathname, query } = history.location;
-      if (pathname.indexOf('h5') === -1) {
+      if (pathname.indexOf('h5') === -1 && pathname.indexOf('/wechat/') === -1) {
         dispatch({ type: 'login/queryLoggedUser' });
       } else {
+        if (pathname.indexOf('/wechat/') > -1) {
+          return;
+        }
         const { code } = query;
         if (!code) {
           const httpUrl = encodeURIComponent(`${window.location}`);

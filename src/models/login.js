@@ -23,12 +23,19 @@ export default {
         message.error(result.message);
         return;
       }
+
+      if (payload.from === 'wechat-qrcode' && payload.redirect_url) {
+        router.push(payload.redirect_url);
+        return;
+      }
+
       // Login successfully
       // 获取登陆用户信息
       yield put({
         type: 'queryLoggedUser',
         payload: {
-          from: 'login',
+          from: payload.from || 'login',
+          redirect_url: payload.redirect_url,
         },
       });
     },
@@ -85,6 +92,9 @@ export default {
             status: true,
           },
         });
+        if (from === 'wechat-qrcode') {
+          return;
+        }
         if (from === 'login') {
           // 跳转到主页
           router.push({
@@ -92,9 +102,9 @@ export default {
           });
         }
       } else {
-        router.push({
-          pathname: '/login',
-        });
+        router.push(
+          `/login?from=${from}&redirect_url=${window.location.pathname}${window.location.search}`
+        );
       }
     },
 

@@ -100,6 +100,15 @@ export async function queryAdPastes() {
 }
 
 /**
+ * 开始粘贴
+ */
+export async function beginPaste({ id }) {
+  return request(`/api/ad-signings?id=${id}`, {
+    method: 'POST',
+  });
+}
+
+/**
  * 允许粘贴
  */
 export async function accessAdPaste({ id, ...rest }) {

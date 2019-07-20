@@ -11,6 +11,7 @@ export default {
 
   'menu.application.ad-signing': '广告签约管理',
   'menu.application.ad-signing.paste': '粘贴广告',
+  'menu.ad-signing-qrcode': '签约确认',
   'menu.application.ad-signing.paste.detail': '详情',
   'menu.application.ad-signing.settlement': '签约金结算',
   'menu.application.ad-signing.settlement.detail': '详情',

@@ -12,7 +12,7 @@ import styles from './ADSigning.less';
 
 import qrcodeIcon from './icons/icon_qrcode@2x.png';
 import addressIcon from './icons/icon_address@2x.png';
-import { AD_PASTE_STATE_REFUSE } from '@/common/constants';
+import { AD_PASTE_STATE_REFUSE, AD_PASTE_STATE_PASTED } from '@/common/constants';
 
 @connect(
   ({ driverModel: { adSignings }, login: { wechatUser }, driverModel: { detail }, loading }) => ({
@@ -30,11 +30,28 @@ class AdSigning extends PureComponent {
     });
   }
 
-  showQrcode = ({ bonus, status }) => {
-    const { userDetail } = this.props;
+  showQrcode = ({ id, pasteState }) => {
+    if (!id) {
+      Modal.alert('无法生成签约二维码', '没有找到相关签约记录', [
+        {
+          text: '关闭',
+          onPress: () => {},
+        },
+      ]);
+      return;
+    }
 
-    if (status === AD_PASTE_STATE_REFUSE) {
+    if (pasteState === AD_PASTE_STATE_REFUSE) {
       Modal.alert('粘贴被拒绝', '无法生成签约二维码', [
+        {
+          text: '关闭',
+          onPress: () => {},
+        },
+      ]);
+      return;
+    }
+    if (pasteState === AD_PASTE_STATE_PASTED) {
+      Modal.alert('已粘贴', '', [
         {
           text: '关闭',
           onPress: () => {},
@@ -44,23 +61,7 @@ class AdSigning extends PureComponent {
     }
 
     // 生成二维码信息
-    // 会员编号、姓名、手机号、身份证号、车辆类型、行驶证号、证件到期时间、签约金额以及上传的身份证和车辆照片信息
-    const qrcodeContent = {
-      id: userDetail.id,
-      username: userDetail.username,
-      phone: userDetail.phone,
-      idcard: userDetail.idcard,
-      carType: userDetail.carType,
-      carCode: userDetail.carCode,
-      expireTime: userDetail.expireTime,
-      bonus,
-      carImage: userDetail.carImage,
-      idcardBackImage: userDetail.idcardBackImage,
-      idcardFrontImage: userDetail.idcardFrontImage,
-    };
-
-    // 生成二维码信息
-    QRCode.toDataURL(JSON.stringify(qrcodeContent))
+    QRCode.toDataURL(`${window.location.origin}/wechat/ad-signing-qrcode?id=${id}`)
       .then(url => {
         Modal.alert(
           '',

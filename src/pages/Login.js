@@ -22,6 +22,10 @@ class LoginPage extends Component {
 
   handleSubmit = (err, values) => {
     const { type } = this.state;
+    const {
+      location: { query },
+    } = this.props;
+
     if (!err) {
       const { dispatch } = this.props;
       dispatch({
@@ -29,6 +33,8 @@ class LoginPage extends Component {
         payload: {
           ...values,
           type,
+          from: query.from,
+          redirect_url: query.redirect_url,
         },
       });
     }
@@ -36,7 +42,13 @@ class LoginPage extends Component {
 
   render() {
     const { type } = this.state;
-    const { submitting } = this.props;
+    const {
+      submitting,
+      location: { query },
+    } = this.props;
+
+    // 是否来自于微信扫码
+    const fromQrcode = query.from === 'wechat-qrcode';
 
     const text = type === 'admin' ? '管理员帐号' : '商户名称';
 
@@ -51,7 +63,7 @@ class LoginPage extends Component {
           }}
         >
           <Tab key="admin" tab="管理员登录" />
-          <Tab key="business" tab="商户登录" />
+          {!fromQrcode && <Tab key="business" tab="商户登录" />}
           <UserName
             name="username"
             placeholder={`${text}`}
