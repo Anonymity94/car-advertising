@@ -65,11 +65,24 @@ class Detail extends PureComponent {
     });
   };
 
+  updateDriverIntegral = ({ id, restIntegral, usedIntegral }) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'driverModel/updateDriverIntegral',
+      payload: {
+        id,
+        restIntegral,
+        usedIntegral,
+      },
+    });
+  };
+
   exchangeGood = () => {
     const { dispatch, detail, userInfo } = this.props;
     if (!detail.id) return;
 
-    const restIntegral = userInfo.restIntegral || 0;
+    const { restIntegral = 0, usedIntegral = 0, id: userId } = userInfo;
+
     // 检查自己的积分是否足够兑换
     if (detail.integral > restIntegral) {
       Modal.alert('兑换失败', `积分不足：当前可用积分${restIntegral}`, [
@@ -83,20 +96,28 @@ class Detail extends PureComponent {
       {
         text: '确定',
         onPress: () => {
+          Toast.loading('提交中...', 0);
           dispatch({
             type: 'goodsModel/exchangeGood',
             payload: {
               id: detail.id, // 活动id
             },
           }).then(success => {
+            Toast.hide();
             if (success) {
               this.setState({ isExchanged: true });
+              // 去更新用户的积分情况
+              this.updateDriverIntegral({
+                id: userId,
+                restIntegral: restIntegral - detail.integral,
+                usedIntegral: usedIntegral + detail.integral,
+              });
+
               Modal.alert('兑换成功', '请到取货地址及时取货', [
                 {
                   text: '好的',
                   onPress: () => {
                     router.goBack();
-
                     // 重新获取用户信息，刷新积分情况
                     dispatch({
                       type: 'login/queryWechatUser',

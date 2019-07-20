@@ -17,6 +17,7 @@ import {
   queryUserSignings,
   queryUserSettlements,
   queryUserExchanges,
+  updateIntegral,
 } from '@/services/driver';
 import { AUDIT_STATE_PASSED, AUDIT_STATE_UNREVIEWED, AUDIT_STATE_REFUSE } from '@/common/constants';
 
@@ -112,6 +113,7 @@ export default modelExtend(model, {
           router.replace(`/h5/user/waiting?type=error&msg=${result.bandReason}`);
         }
       }
+      return success ? result : {};
     },
 
     /**
@@ -145,6 +147,23 @@ export default modelExtend(model, {
         } else {
           message.error('更新失败');
         }
+      }
+      return success;
+    },
+
+    /**
+     * 更新用户的积分
+     */
+    *updateDriverIntegral({ payload }, { call, put }) {
+      const { success } = yield call(updateIntegral, payload);
+      // 如果页面是在微信端，再查一遍用户信息
+      if (window.location.pathname.indexOf('/h5/') > -1) {
+        yield put({
+          type: 'queryDriverDetail',
+          payload: {
+            id: payload.id,
+          },
+        });
       }
       return success;
     },

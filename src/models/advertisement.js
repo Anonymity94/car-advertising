@@ -75,6 +75,8 @@ export default modelExtend(model, {
           detail: success ? result : {},
         },
       });
+
+      return success ? result : {};
     },
 
     /**

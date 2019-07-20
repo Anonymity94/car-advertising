@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
 import isEqual from 'lodash/isEqual';
-import { Checkbox, Modal, List } from 'antd-mobile';
+import { Checkbox, Modal, List, Toast } from 'antd-mobile';
 import Loading from '@/components/Loading';
 import 'weui';
 import 'react-weui/build/packages/react-weui.css';
@@ -19,6 +19,7 @@ const { AgreeItem } = Checkbox;
 @connect(({ adModel: { detail }, loading }) => ({
   detail,
   queryLoading: loading.effects['adModel/queryAdContent'],
+  submitLoading: loading.effects['adSigningModel/doSigning'],
 }))
 class Signing extends PureComponent {
   state = {
@@ -99,6 +100,7 @@ class Signing extends PureComponent {
       {
         text: '确定',
         onPress: () => {
+          Toast.loading('提交中...', 0);
           dispatch({
             type: 'adSigningModel/doSigning',
             payload: {
@@ -106,6 +108,7 @@ class Signing extends PureComponent {
               ...currentAddress, // 粘贴地址，粘贴时间
             },
           }).then(success => {
+            Toast.hide();
             if (success) {
               Modal.alert('签约成功', '', [
                 {

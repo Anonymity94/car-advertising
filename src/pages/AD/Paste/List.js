@@ -37,6 +37,7 @@ const FormItem = Form.Item;
   submitLoading:
     loading.effects['adSigningModel/accessAdPaste'] ||
     loading.effects['adSigningModel/rejectAdPaste'],
+  queryUserLoading: loading.effects['driverModel/queryDriverDetail'],
 }))
 class AdPasteList extends PureComponent {
   constructor(props) {
@@ -54,6 +55,9 @@ class AdPasteList extends PureComponent {
 
       list: [],
       filterResult: [],
+
+      userInfo: {}, // 某个人结算节分
+      advInfo: {}, // 当前广告的详情
     };
 
     this.handleSearchReset = handleSearchReset.bind(this);
@@ -84,6 +88,34 @@ class AdPasteList extends PureComponent {
     });
   };
 
+  queryDriverDetail = userId => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'driverModel/queryDriverDetail',
+      payload: {
+        id: userId,
+      },
+    }).then(userInfo => {
+      this.setState({
+        userInfo,
+      });
+    });
+  };
+
+  queryAdContent = id => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adModel/queryAdContent',
+      payload: {
+        id,
+      },
+    }).then(advInfo => {
+      this.setState({
+        advInfo,
+      });
+    });
+  };
+
   toogleScaning = isScaning => {
     const { isScaning: oldIsScaning } = this.setState;
     if (isScaning === oldIsScaning) return;
@@ -108,15 +140,29 @@ class AdPasteList extends PureComponent {
   };
 
   toogleModal = (current, operateType) => {
-    this.setState(({ modalVisible }) => ({
-      modalVisible: !modalVisible,
-      current: current || {},
-      operateType: current ? operateType : '',
-    }));
+    const { modalVisible } = this.state;
+
+    this.setState(
+      {
+        modalVisible: !modalVisible,
+        current: current || {},
+        operateType: current ? operateType : '',
+        userInfo: {}, // 清空用户信息
+        advInfo: {}, // 清空广告的信息
+      },
+      () => {
+        if (current && current.userId) {
+          this.queryDriverDetail(current.userId);
+        }
+        if (current && current.advId) {
+          this.queryAdContent(current.advId);
+        }
+      }
+    );
   };
 
   handleSubmit = values => {
-    const { operateType } = this.state;
+    const { operateType, userInfo, advInfo } = this.state;
     const { dispatch } = this.props;
     dispatch({
       type:
@@ -128,11 +174,36 @@ class AdPasteList extends PureComponent {
       },
     }).then(success => {
       if (success) {
+        // 如果同意完成了。
+        const { id, usedIntegral = 0, restIntegral = 0 } = userInfo;
+        if (operateType === ACCESS_PASTE) {
+          // 同意完成，增加用户的积分情况
+          // 如果用户存在再去增加积分
+          if (userInfo.id && advInfo.id) {
+            // 已使用积分不变
+            // 新的积分 = 老的积分 + 广告的积分
+            const newIntegral = restIntegral + (advInfo.integral || 0);
+            // 更新用户的积分
+            this.updateDriverIntegral({ id, restIntegral: newIntegral, usedIntegral });
+          }
+        }
         // 关闭弹出
         this.toogleModal();
         // 重新拉取表格
         this.queryAdPastes();
       }
+    });
+  };
+
+  updateDriverIntegral = ({ id, restIntegral, usedIntegral }) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'driverModel/updateDriverIntegral',
+      payload: {
+        id,
+        restIntegral,
+        usedIntegral,
+      },
     });
   };
 

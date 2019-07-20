@@ -146,6 +146,11 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     <Form.Item style={{ marginBottom: 0 }} label="积分数">
                       {exchangeDetail.integral || '--'}
                     </Form.Item>
+                    <Form.Item style={{ display: 'none' }}>
+                      {getFieldDecorator('integral', {
+                        initialValue: exchangeDetail.integral || 0,
+                      })(<Input />)}
+                    </Form.Item>
                   </Fragment>
                 )}
               </Fragment>
@@ -272,8 +277,8 @@ class Workplace extends PureComponent {
   /**
    * 某个商户根据兑换码给用户兑换商品
    */
-  auditGoodsExchange = ({ exchangeCode }) => {
-    const { dispatch } = this.props;
+  auditGoodsExchange = ({ exchangeCode, integral = 0 }) => {
+    const { dispatch, currentUser } = this.props;
     dispatch({
       type: 'goodsExchangeModel/auditExchange',
       payload: {
@@ -282,9 +287,27 @@ class Workplace extends PureComponent {
     }).then(success => {
       if (success) {
         this.setState({ visible: false });
-        this.queryCurrent();
+        // 更新商户的积分
+        const { id, restIntegral = 0, usedIntegral = 0 } = currentUser;
+        this.updateIntegral({ id, restIntegral: restIntegral + integral, usedIntegral });
         this.queryGoodsExchangeLogs();
       }
+    });
+  };
+
+  // 更新商户的积分
+  updateIntegral = ({ id, restIntegral, usedIntegral }) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'businessModel/updateIntegral',
+      payload: {
+        id,
+        restIntegral,
+        usedIntegral,
+      },
+    }).then(() => {
+      // 刷新积分后，重新拉取一边用户积分情况
+      this.queryCurrent();
     });
   };
 
@@ -299,6 +322,14 @@ class Workplace extends PureComponent {
       },
     }).then(success => {
       if (success) {
+        // 更新积分
+        const { id, restIntegral = 0, usedIntegral = 0 } = currentUser;
+        this.updateIntegral({
+          id,
+          restIntegral: restIntegral - values.integral,
+          usedIntegral: usedIntegral + values.integral,
+        });
+
         this.setState({ visible: false });
         this.queryCurrent();
       }

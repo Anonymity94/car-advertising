@@ -8,7 +8,8 @@ import {
   createBusiness,
   updateBusiness,
   deleteBusiness,
-  startIntegralSettlement
+  startIntegralSettlement,
+  updateIntegral,
 } from '@/services/business';
 
 export default modelExtend(model, {
@@ -95,6 +96,14 @@ export default modelExtend(model, {
       } else {
         message.error('商户修改失败');
       }
+      return success;
+    },
+
+    /**
+     * 更新商户的积分
+     */
+    *updateIntegral({ payload }, { call }) {
+      const { success } = yield call(updateIntegral, payload);
       return success;
     },
 

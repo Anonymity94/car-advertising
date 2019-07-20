@@ -54,6 +54,21 @@ export async function updateBusiness({ id, ...resetParams }) {
 }
 
 /**
+ * 更新积分
+ * @param {Stirng} id 用户id
+ * @param {Number} restIntegral 可用积分
+ * @param {Number} usedIntegral 已使用积分
+ */
+export async function updateIntegral({ id, restIntegral, usedIntegral }) {
+  return request(
+    `/api/businesses/setIntegral?id=${id}&restIntegral=${restIntegral}&usedIntegral=${usedIntegral}`,
+    {
+      method: 'POST',
+    }
+  );
+}
+
+/**
  * 删除商户
  * @param {String} id
  */

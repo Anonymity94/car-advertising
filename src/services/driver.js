@@ -60,6 +60,21 @@ export async function updateDriver({ id, ...reset }) {
 }
 
 /**
+ * 更新积分
+ * @param {Stirng} id 用户id
+ * @param {Number} restIntegral 可用积分
+ * @param {Number} usedIntegral 已使用积分
+ */
+export async function updateIntegral({ id, restIntegral, usedIntegral }) {
+  return request(
+    `/api/user/setIntegral?id=${id}&restIntegral=${restIntegral}&usedIntegral=${usedIntegral}`,
+    {
+      method: 'POST',
+    }
+  );
+}
+
+/**
  * 删除
  * @param {String} id
  */
