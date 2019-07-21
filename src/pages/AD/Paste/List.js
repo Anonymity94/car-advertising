@@ -408,7 +408,7 @@ class AdPasteList extends PureComponent {
             columns={tableColumns}
             data={{ list: filterResult }}
             rowClassName={record =>
-              record.pasteState === AD_PASTE_STATE_UN_REVIEW ? 'trStrikingBg' : ''
+              record.pasteState === AD_PASTE_STATE_UN_PASTED ? 'trStrikingBg' : ''
             }
           />
         </Card>

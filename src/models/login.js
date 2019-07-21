@@ -101,11 +101,13 @@ export default {
             pathname: '/',
           });
         }
-      } else {
-        router.push(
-          `/login?from=${from}&redirect_url=${window.location.pathname}${window.location.search}`
-        );
-      }
+      } else if (!from) {
+          router.push('/login');
+        } else {
+          router.push(
+            `/login?from=${from}&redirect_url=${window.location.pathname}${window.location.search}`
+          );
+        }
     },
 
     *logout(_, { call, put }) {

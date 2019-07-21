@@ -10,7 +10,6 @@ import FormModal from './FormModal';
 import {
   SIGNING_GOLD_SETTLEMENT_STATE_LIST,
   SIGNING_GOLD_SETTLEMENT_STATE_SETTLED,
-  SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED,
 } from '@/common/constants';
 
 const FormItem = Form.Item;
@@ -217,7 +216,7 @@ class AdPasteList extends PureComponent {
         title: '状态',
         dataIndex: 'settlementState',
         align: 'center',
-        render: text => (text === SIGNING_GOLD_SETTLEMENT_STATE_SETTLED ? '已结算' : '未审核'),
+        render: text => (text === SIGNING_GOLD_SETTLEMENT_STATE_SETTLED ? '已结算' : '未结算'),
       },
       // {
       //   title: '审核人',
@@ -262,6 +261,9 @@ class AdPasteList extends PureComponent {
             loading={loading}
             columns={tableColumns}
             data={{ list: filterResult }}
+            rowClassName={record =>
+              record.settlementState !== SIGNING_GOLD_SETTLEMENT_STATE_SETTLED ? 'trStrikingBg' : ''
+            }
           />
         </Card>
         <FormModal

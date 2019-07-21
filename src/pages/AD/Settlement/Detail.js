@@ -2,6 +2,7 @@ import React, { PureComponent, Suspense, Fragment } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
 import { Button, Row, Card } from 'antd';
+import Zmage from 'react-zmage';
 import FooterToolbar from '@/components/FooterToolbar';
 import { SIGNING_GOLD_SETTLEMENT_STATE_SETTLED } from '@/common/constants';
 import FormModal from './FormModal';
@@ -12,7 +13,9 @@ const UserDetail = React.lazy(() => import('@/pages/Driver/UserDetail'));
 @connect(({ adSigningModel: { settleDetail }, driverModel: { detail: userInfo }, loading }) => ({
   settleDetail,
   userInfo,
-  loading: loading.effects['adSigningModel/queryAdSigningDetail'],
+  loading:
+    loading.effects['adSigningModel/queryAdSettlementDetail'] ||
+    loading.effects['driverModel/queryDriverDetail'],
   submitting: loading.effects['adSigningModel/doSigningSettlement'],
 }))
 class Info extends PureComponent {
@@ -113,7 +116,7 @@ class Info extends PureComponent {
           <Row gutter={10}>
             {Array.isArray(settleDetail.pasteImages) &&
               settleDetail.pasteImages.map(url => (
-                <img
+                <Zmage
                   style={{ maxWidth: '100%', maxHeight: '200px', marginRight: 10 }}
                   src={url}
                   alt="照片"
@@ -145,7 +148,7 @@ class Info extends PureComponent {
               <Row gutter={10}>
                 {Array.isArray(settleDetail.settlementImage) &&
                   settleDetail.settlementImage.map(url => (
-                    <img
+                    <Zmage
                       style={{ maxWidth: '100%', maxHeight: '200px', marginRight: 10 }}
                       src={url}
                       alt="照片"

@@ -26,7 +26,8 @@ import styles from './style.less';
     currentUser,
     loading:
       loading.effects['adSigningModel/queryAdSigningDetail'] ||
-      loading.effects['adModel/queryAdContent'],
+      loading.effects['adModel/queryAdContent'] ||
+      loading.effects['login/queryLoggedUser'],
   })
 )
 class SigningDetail extends PureComponent {
@@ -188,18 +189,18 @@ class SigningDetail extends PureComponent {
                 </div>
               </Fragment>
             )}
-            {(!signingDetail.pasteState ||
+            {/* {(!signingDetail.pasteState ||
               signingDetail.pasteState === AD_PASTE_STATE_UN_REVIEW) && (
-              <Fragment>
-                <Flex style={{ width: '90%', margin: '20px auto 0' }}>
-                  <Flex.Item>
-                    <Button type="primary" onClick={() => this.handleOk()}>
-                      开始粘贴
-                    </Button>
-                  </Flex.Item>
-                </Flex>
-              </Fragment>
-            )}
+              <Fragment> */}
+            <Flex style={{ width: '90%', margin: '20px auto 0' }}>
+              <Flex.Item>
+                <Button type="primary" onClick={() => this.handleOk()}>
+                  开始粘贴
+                </Button>
+              </Flex.Item>
+            </Flex>
+            {/* </Fragment>
+            )} */}
           </div>
         </Fragment>
       </DocumentTitle>

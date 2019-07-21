@@ -1,11 +1,13 @@
 import React, { PureComponent, Suspense, Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Row, Col, Card, Tag } from 'antd';
+import { Button, Row, Card, Tag } from 'antd';
+import Zmage from 'react-zmage';
 import FooterToolbar from '@/components/FooterToolbar';
 import {
   AD_PASTE_STATE_UN_REVIEW,
   AD_PASTE_STATE_PASTED,
   AD_PASTE_STATE_REFUSE,
+  AD_PASTE_STATE_UN_PASTED,
 } from '@/common/constants';
 import FormModal, { ACCESS_PASTE, REJECT_PASTE } from './FormModal';
 import { Field } from '@/components/Charts';
@@ -15,7 +17,9 @@ const UserDetail = React.lazy(() => import('@/pages/Driver/UserDetail'));
 @connect(({ adSigningModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
   userInfo,
-  loading: loading.effects['adSigningModel/queryAdSigningDetail'],
+  loading:
+    loading.effects['adSigningModel/queryAdSigningDetail'] ||
+    loading.effects['driverModel/queryDriverDetail'],
   submitting:
     loading.effects['adSigningModel/accessAdPaste'] ||
     loading.effects['adSigningModel/rejectAdPaste'],
@@ -114,7 +118,9 @@ class Info extends PureComponent {
         </Suspense>
 
         {detail.id &&
-          (!detail.pasteState || detail.pasteState === AD_PASTE_STATE_UN_REVIEW ? (
+          (!detail.pasteState ||
+          detail.pasteState === AD_PASTE_STATE_UN_REVIEW ||
+          detail.pasteState === AD_PASTE_STATE_UN_PASTED ? (
             <FooterToolbar style={{ width }}>
               <section style={{ textAlign: 'center' }}>
                 <Button
@@ -151,7 +157,7 @@ class Info extends PureComponent {
               <Row gutter={10} style={{ marginBottom: 10 }}>
                 {Array.isArray(detail.pasteImages) &&
                   detail.pasteImages.map(url => (
-                    <img
+                    <Zmage
                       style={{ maxWidth: '100%', maxHeight: '200px', marginRight: 10 }}
                       src={url}
                       alt="照片"
