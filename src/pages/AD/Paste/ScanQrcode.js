@@ -4,6 +4,7 @@ import { List, WhiteSpace, Flex, Button, Modal, Toast } from 'antd-mobile';
 import { connect } from 'dva';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
+import PullToRefreshWrap from '@/components/PullToRefresh';
 import {
   AD_PASTE_STATE_PASTED,
   AD_PASTE_STATE_REFUSE,
@@ -127,7 +128,7 @@ class SigningDetail extends PureComponent {
 
     return (
       <DocumentTitle title="广告粘贴审核">
-        <Fragment>
+        <PullToRefreshWrap onRefresh={() => this.queryAdSigningDetail()}>
           <div className={styles.signingDetail}>
             <List>
               <List.Item
@@ -202,7 +203,7 @@ class SigningDetail extends PureComponent {
               </Fragment>
             )}
           </div>
-        </Fragment>
+        </PullToRefreshWrap>
       </DocumentTitle>
     );
   }

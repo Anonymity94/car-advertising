@@ -9,6 +9,7 @@ import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 
 import styles from './styles.less';
 import Loading from '@/components/Loading';
+import PullToRefreshWrap from '@/components/PullToRefresh';
 
 const BigItem = memo(({ data }) => (
   <div className={`${styles.item} ${styles.big}`}>
@@ -57,10 +58,10 @@ class List extends PureComponent {
   }
 
   componentDidMount() {
-    this.getAds();
+    this.getList();
   }
 
-  getAds = () => {
+  getList = () => {
     const { dispatch } = this.props;
 
     dispatch({
@@ -122,21 +123,23 @@ class List extends PureComponent {
       <DocumentTitle title="积分商城">
         <Fragment>
           <div className={styles.wrap}>
-            {topList.length > 0 && (
-              <Carousel autoplay={false} infinite className={styles.carousel}>
-                {topList.map(item => (
-                  <Link className={styles.item} to={`/h5/goods/${item.id}`} key={item.id}>
-                    <img src={item.banner} alt={item.name} />
-                  </Link>
-                ))}
-              </Carousel>
-            )}
-
-            <section className={styles.content}>
-              {pageData.map((item, index) =>
-                index % 3 === 0 ? <BigItem data={item} /> : <SmallItem data={item} />
+            <PullToRefreshWrap onRefresh={() => this.getList()}>
+              {topList.length > 0 && (
+                <Carousel autoplay={false} infinite className={styles.carousel}>
+                  {topList.map(item => (
+                    <Link className={styles.item} to={`/h5/goods/${item.id}`} key={item.id}>
+                      <img src={item.banner} alt={item.name} />
+                    </Link>
+                  ))}
+                </Carousel>
               )}
-            </section>
+
+              <section className={styles.content}>
+                {pageData.map((item, index) =>
+                  index % 3 === 0 ? <BigItem data={item} /> : <SmallItem data={item} />
+                )}
+              </section>
+            </PullToRefreshWrap>
           </div>
         </Fragment>
       </DocumentTitle>

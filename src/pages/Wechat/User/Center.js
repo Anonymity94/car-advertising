@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
-import { Flex, Modal } from 'antd-mobile';
+import { Flex, Modal, PullToRefresh, WhiteSpace } from 'antd-mobile';
 import router from 'umi/router';
 
 import styles from './Center.less';
@@ -53,6 +53,13 @@ class UserCenter extends PureComponent {
     router.push(link);
   };
 
+  queryWechatUser = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'login/queryWechatUser',
+    });
+  };
+
   render() {
     const {
       wechatUser: { id, username, usedIntegral, restIntegral, avatar },
@@ -60,40 +67,43 @@ class UserCenter extends PureComponent {
     return (
       <DocumentTitle title="个人中心">
         <Fragment>
-          <section className={styles.header}>
-            <div className={styles.info}>
-              <img alt={username} src={avatar || defaultAvatar} />
-              {!id ? <p style={{ color: '#00c7bd' }}>未登录</p> : <p>{username}</p>}
-            </div>
-            <div>
-              <Flex>
-                <Flex.Item>
-                  <div className={styles.integral}>
-                    <p className={`${styles.number} ${styles.rest}`}>{restIntegral || 0}</p>
-                    <p>可使用</p>
-                  </div>
-                </Flex.Item>
-                <Flex.Item>
-                  <div className={styles.integral}>
-                    <p className={`${styles.number} ${styles.used}`}>{usedIntegral || 0}</p>
-                    <p>已兑换</p>
-                  </div>
-                </Flex.Item>
-              </Flex>
-            </div>
-          </section>
-          <section className={styles.content}>
-            {entries.map(item => (
-              <div
-                key={item.title}
-                className={styles.item}
-                onClick={() => this.handleLink(item.link)}
-              >
-                <img className={styles.icon} src={item.icon} alt={item.title} />
-                <p className={styles.title}>{item.title}</p>
+          <PullToRefresh onRefresh={() => this.queryWechatUser()}>
+            <section className={styles.header}>
+              <div className={styles.info}>
+                <img alt={username} src={avatar || defaultAvatar} />
+                {!id ? <p style={{ color: '#00c7bd' }}>未登录</p> : <p>{username}</p>}
               </div>
-            ))}
-          </section>
+              <div>
+                <Flex>
+                  <Flex.Item>
+                    <div className={styles.integral}>
+                      <p className={`${styles.number} ${styles.rest}`}>{restIntegral || 0}</p>
+                      <p>可使用</p>
+                    </div>
+                  </Flex.Item>
+                  <Flex.Item>
+                    <div className={styles.integral}>
+                      <p className={`${styles.number} ${styles.used}`}>{usedIntegral || 0}</p>
+                      <p>已兑换</p>
+                    </div>
+                  </Flex.Item>
+                </Flex>
+              </div>
+            </section>
+            <WhiteSpace size="lg" />
+            <section className={styles.content}>
+              {entries.map(item => (
+                <div
+                  key={item.title}
+                  className={styles.item}
+                  onClick={() => this.handleLink(item.link)}
+                >
+                  <img className={styles.icon} src={item.icon} alt={item.title} />
+                  <p className={styles.title}>{item.title}</p>
+                </div>
+              ))}
+            </section>
+          </PullToRefresh>
         </Fragment>
       </DocumentTitle>
     );

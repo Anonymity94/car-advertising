@@ -9,6 +9,7 @@ import router from 'umi/router';
 import styles from './styles.less';
 import Empty from '@/components/Empty';
 import { PUBLISH_STATE_YES, AUDIT_STATE_REFUSE, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
+import PullToRefreshWrap from '@/components/PullToRefresh';
 
 @connect(({ adModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   userInfo,
@@ -107,7 +108,6 @@ class Detail extends PureComponent {
                   detail.cover.map(img => <img src={img} alt="图片" />)}
                 <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
               </div>
-
               <div className={styles.operate}>
                 <div className={styles.operateItem}>
                   签约可获<span className={styles.integral}>{detail.integral}</span>积分

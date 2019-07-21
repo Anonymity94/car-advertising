@@ -14,6 +14,7 @@ import {
 import { Tag } from 'antd';
 
 import styles from './ADSigning.less';
+import PullToRefreshWrap from '@/components/PullToRefresh';
 
 @connect(
   ({ adSigningModel: { detail: signingDetail }, adModel: { detail: adDetail }, loading }) => ({
@@ -122,7 +123,7 @@ class SigningDetail extends PureComponent {
       <DocumentTitle title="签约详情">
         <Fragment>
           <div className={styles.signingDetail}>
-            <List>
+            <PullToRefreshWrap onRefresh={() => this.queryAdSigningDetail()}>
               <List>
                 <List.Item
                   extra={
@@ -148,47 +149,47 @@ class SigningDetail extends PureComponent {
                 >
                   状态
                 </List.Item>
+                <List.Item extra={signingDetail.username}>用户</List.Item>
+                <List.Item extra={signingDetail.createTime}>提交时间</List.Item>
+                <List.Item
+                  extra={
+                    <Fragment>
+                      {signingDetail.address}
+                      <br />
+                      {signingDetail.beginTime} - {signingDetail.endTime}
+                    </Fragment>
+                  }
+                >
+                  粘贴地点
+                </List.Item>
               </List>
-              <List.Item extra={signingDetail.username}>用户</List.Item>
-              <List.Item extra={signingDetail.createTime}>提交时间</List.Item>
-              <List.Item
-                extra={
+              <WhiteSpace size="sm" />
+              <List>
+                <List.Item extra={adDetail.title}>广告</List.Item>
+                <List.Item extra={adDetail.company}>机构名称</List.Item>
+                <List.Item extra={`${signingDetail.bonus}元/月`}>签约金额</List.Item>
+                <List.Item extra={signingDetail.signingExpireTime}>签约有效期</List.Item>
+                {!isNot && (
                   <Fragment>
-                    {signingDetail.address}
-                    <br />
-                    {signingDetail.beginTime} - {signingDetail.endTime}
+                    <List.Item extra={signingDetail.pastePerson}>操作人</List.Item>
+                    <List.Item extra={signingDetail.pasteRemark}>备注</List.Item>
                   </Fragment>
-                }
-              >
-                粘贴地点
-              </List.Item>
-            </List>
-            <WhiteSpace size="sm" />
-            <List>
-              <List.Item extra={adDetail.title}>广告</List.Item>
-              <List.Item extra={adDetail.company}>机构名称</List.Item>
-              <List.Item extra={`${signingDetail.bonus}元/月`}>签约金额</List.Item>
-              <List.Item extra={signingDetail.signingExpireTime}>签约有效期</List.Item>
+                )}
+              </List>
+
               {!isNot && (
                 <Fragment>
-                  <List.Item extra={signingDetail.pastePerson}>操作人</List.Item>
-                  <List.Item extra={signingDetail.pasteRemark}>备注</List.Item>
+                  <div className={styles.pasteImages}>
+                    {Array.isArray(signingDetail.pasteImages) &&
+                      signingDetail.pasteImages.map(url => (
+                        <div className={styles.imgItem}>
+                          <img src={url} alt="粘贴照片" />
+                        </div>
+                      ))}
+                  </div>
                 </Fragment>
               )}
-            </List>
-
-            {!isNot && (
-              <Fragment>
-                <div className={styles.pasteImages}>
-                  {Array.isArray(signingDetail.pasteImages) &&
-                    signingDetail.pasteImages.map(url => (
-                      <div className={styles.imgItem}>
-                        <img src={url} alt="粘贴照片" />
-                      </div>
-                    ))}
-                </div>
-              </Fragment>
-            )}
+            </PullToRefreshWrap>
           </div>
         </Fragment>
       </DocumentTitle>

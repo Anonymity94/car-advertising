@@ -10,7 +10,6 @@ export default connect(({ wechatModel }) => ({
 }))(props => (
   <div className={styles.h5Wrapper}>
     <Fragment>
-      <WhiteSpace size="lg" />
       <WingBlank size="lg">
         <LocaleProvider locale={zhCN}>
           <Fragment>
@@ -20,7 +19,6 @@ export default connect(({ wechatModel }) => ({
           </Fragment>
         </LocaleProvider>
       </WingBlank>
-      <WhiteSpace size="lg" />
     </Fragment>
   </div>
 ));

@@ -9,6 +9,7 @@ import Empty from '@/components/Empty';
 
 import router from 'umi/router';
 import styles from './styles.less';
+import PullToRefreshWrap from '@/components/PullToRefresh';
 
 @connect(({ activityModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,

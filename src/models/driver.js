@@ -19,7 +19,7 @@ import {
   queryUserExchanges,
   updateIntegral,
 } from '@/services/driver';
-import { AUDIT_STATE_PASSED, AUDIT_STATE_UNREVIEWED, AUDIT_STATE_REFUSE } from '@/common/constants';
+import { AUDIT_STATE_PASSED, AUDIT_STATE_UNREVIEWED, AUDIT_STATE_REFUSE, SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED } from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'driverModel',
@@ -286,7 +286,11 @@ export default modelExtend(model, {
     *queryUserSignings({ payload }, { call, put }) {
       const { success, result } = yield call(queryUserSignings, payload);
 
-      const adSignings = success ? result : [];
+      let adSignings = success ? result : [];
+
+      // 排序按照签约时间倒序
+      adSignings = _.sortBy(adSignings, [o => -+new Date(o.createTime)]);
+
       yield put({
         type: 'updateState',
         payload: {
@@ -305,17 +309,32 @@ export default modelExtend(model, {
      */
     *queryUserSettlements({ payload }, { call, put }) {
       const { success, result } = yield call(queryUserSettlements, payload);
-      const adSettlements = success ? result : [];
+      let list = success ? result : [];
+      // 排序按照结算时间倒序
+      let unFinishList = [];
+      let otherList = [];
+      list.forEach(item => {
+        if (item.settlementState === SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED) {
+          unFinishList.push(item);
+        } else {
+          otherList.push(item);
+        }
+      });
+
+      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.pasteTime)]);
+      otherList = _.sortBy(otherList, [o => -+new Date(o.settlementTime)]);
+      list = [...unFinishList, ...otherList];
+
       yield put({
         type: 'updateState',
         payload: {
-          adSettlements,
+          adSettlements: list,
         },
       });
 
       return {
         success,
-        adSettlements,
+        adSettlements: list,
       };
     },
 

@@ -7,6 +7,7 @@ import { Card } from 'antd-mobile';
 import moment from 'moment';
 import styles from './IntegralExchange.less';
 import { INTEGRAL_SETTLEMENT_STATE_YES } from '@/common/constants';
+import PullToRefreshWrap from '@/components/PullToRefresh';
 
 @connect(({ driverModel: { integralExchanges }, loading }) => ({
   integralExchanges,
@@ -14,11 +15,15 @@ import { INTEGRAL_SETTLEMENT_STATE_YES } from '@/common/constants';
 }))
 class IntegralExchange extends PureComponent {
   componentDidMount() {
+    this.queryUserExchanges();
+  }
+
+  queryUserExchanges = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'driverModel/queryUserExchanges',
     });
-  }
+  };
 
   render() {
     const { integralExchanges, loading } = this.props;
@@ -29,36 +34,40 @@ class IntegralExchange extends PureComponent {
 
     return (
       <DocumentTitle title="兑换记录">
-        <div className={styles.content}>
-          {integralExchanges.length === 0 ? (
-            <Empty />
-          ) : (
-            integralExchanges.map(item => (
-              <Card>
-                <Card.Header
-                  title={
-                    <Fragment>
-                      {item.state !== INTEGRAL_SETTLEMENT_STATE_YES ? (
-                        <span className={styles.without}>未使用</span>
-                      ) : (
-                        <span className={styles.finish}>已使用</span>
-                      )}
-                    </Fragment>
-                  }
-                  extra={<span>兑换码：{item.exchangeCode}</span>}
-                />
-                <Card.Body>
-                  <div>{item.goodsName}</div>
-                </Card.Body>
-                <Card.Footer
-                  content={`${item.createTime &&
-                    `${moment(item.createTime).format('YYYY-MM-DD')}/`}${item.businessName}`}
-                  extra={<div>{item.integral}积分</div>}
-                />
-              </Card>
-            ))
-          )}
-        </div>
+        <Fragment>
+          <PullToRefreshWrap onRefresh={() => this.queryUserExchanges()}>
+            <div className={styles.content}>
+              {integralExchanges.length === 0 ? (
+                <Empty />
+              ) : (
+                integralExchanges.map(item => (
+                  <Card>
+                    <Card.Header
+                      title={
+                        <Fragment>
+                          {item.state !== INTEGRAL_SETTLEMENT_STATE_YES ? (
+                            <span className={styles.without}>未使用</span>
+                          ) : (
+                            <span className={styles.finish}>已使用</span>
+                          )}
+                        </Fragment>
+                      }
+                      extra={<span>兑换码：{item.exchangeCode}</span>}
+                    />
+                    <Card.Body>
+                      <div>{item.goodsName}</div>
+                    </Card.Body>
+                    <Card.Footer
+                      content={`${item.createTime &&
+                        `${moment(item.createTime).format('YYYY-MM-DD')}/`}${item.businessName}`}
+                      extra={<div>{item.integral}积分</div>}
+                    />
+                  </Card>
+                ))
+              )}
+            </div>
+          </PullToRefreshWrap>
+        </Fragment>
       </DocumentTitle>
     );
   }

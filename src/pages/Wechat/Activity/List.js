@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Carousel } from 'antd-mobile';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
+import PullToRefreshWrap from '@/components/PullToRefresh';
 import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 
 import styles from './styles.less';
@@ -27,10 +28,10 @@ class List extends PureComponent {
   }
 
   async componentDidMount() {
-    await this.getAds();
+    await this.getList();
   }
 
-  getAds = () => {
+  getList = () => {
     const { dispatch } = this.props;
 
     dispatch({
@@ -84,35 +85,37 @@ class List extends PureComponent {
       <DocumentTitle title="活动中心">
         <Fragment>
           <div className={styles.wrap}>
-            {topList.length > 0 && (
-              <Carousel autoplay={false} infinite className={styles.carousel}>
-                {topList.map(item => (
-                  <Link className={styles.item} to={`/h5/activities/${item.id}`} key={item.id}>
-                    <img src={item.banner} alt={item.title} />
-                  </Link>
-                ))}
-              </Carousel>
-            )}
+            <PullToRefreshWrap onRefresh={() => this.getList()}>
+              {topList.length > 0 && (
+                <Carousel autoplay={false} infinite className={styles.carousel}>
+                  {topList.map(item => (
+                    <Link className={styles.item} to={`/h5/activities/${item.id}`} key={item.id}>
+                      <img src={item.banner} alt={item.title} />
+                    </Link>
+                  ))}
+                </Carousel>
+              )}
 
-            <section className={styles.content}>
-              {pageData.map(item => (
-                <div
-                  className={styles.item}
-                  onClick={() => router.push(`/h5/activities/${item.id}`)}
-                >
-                  <div className={styles.left}>
-                    <div className={styles.title}>{item.title}</div>
-                    <div className={styles.extra}>
-                      <p>{item.company}</p>
-                      <p>{moment(item.publishTime).format('YYYY-MM-DD')}</p>
+              <section className={styles.content}>
+                {pageData.map(item => (
+                  <div
+                    className={styles.item}
+                    onClick={() => router.push(`/h5/activities/${item.id}`)}
+                  >
+                    <div className={styles.left}>
+                      <div className={styles.title}>{item.title}</div>
+                      <div className={styles.extra}>
+                        <p>{item.company}</p>
+                        <p>{moment(item.publishTime).format('YYYY-MM-DD')}</p>
+                      </div>
+                    </div>
+                    <div className={styles.right}>
+                      <img src={item.banner} className={styles.cover} alt={item.title} />
                     </div>
                   </div>
-                  <div className={styles.right}>
-                    <img src={item.banner} className={styles.cover} alt={item.title} />
-                  </div>
-                </div>
-              ))}
-            </section>
+                ))}
+              </section>
+            </PullToRefreshWrap>
           </div>
         </Fragment>
       </DocumentTitle>
