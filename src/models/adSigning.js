@@ -17,7 +17,10 @@ import {
   doSigningSettlement,
   beginPaste,
 } from '@/services/advertisement';
-import { AD_PASTE_STATE_UN_PASTED } from '@/common/constants';
+import {
+  AD_PASTE_STATE_UN_PASTED,
+  SIGNING_GOLD_SETTLEMENT_STATE_SETTLED,
+} from '@/common/constants';
 import { Toast } from 'antd-mobile';
 
 export default modelExtend(model, {
@@ -46,12 +49,23 @@ export default modelExtend(model, {
 
       // 排序
       let list = success ? result : [];
-      list = _.sortBy(list, ['pasteState'], ['asc']);
 
-      list = list.map(item => ({
-        ...item,
-        pasteState: !item.pasteState ? AD_PASTE_STATE_UN_PASTED : item.pasteState,
-      }));
+      // 列表中信息未粘贴状态的信息在最上，
+      // 未粘贴状态以扫描二维码时间的顺序进行排序；
+      // 其他两种状态在未粘贴状态的信息下面以操作时间的倒序进行展示；
+      let unFinishList = [];
+      let otherList = [];
+      list.forEach(item => {
+        if (item.pasteState === AD_PASTE_STATE_UN_PASTED) {
+          unFinishList.push(item);
+        } else {
+          otherList.push(item);
+        }
+      });
+
+      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.scanTime)]);
+      otherList = _.sortBy(otherList, [o => -+new Date(o.pasteTime)]);
+      list = [...unFinishList, ...otherList];
 
       yield put({
         type: 'updateState',
@@ -76,7 +90,23 @@ export default modelExtend(model, {
 
       // 排序
       let list = success ? result : [];
-      list = _.sortBy(list, ['settlementState'], ['asc']);
+
+      // 列表中信息未结算状态的信息在最上，
+      // 未结算状态以粘贴广告时间的顺序进行排序；
+      // 其他两种状态在未结算状态的信息下面以结算时间的倒序进行展示；
+      let unFinishList = [];
+      let otherList = [];
+      list.forEach(item => {
+        if (item.settlementState !== SIGNING_GOLD_SETTLEMENT_STATE_SETTLED) {
+          unFinishList.push(item);
+        } else {
+          otherList.push(item);
+        }
+      });
+
+      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.pasteTime)]);
+      otherList = _.sortBy(otherList, [o => -+new Date(o.settlementTime)]);
+      list = [...unFinishList, ...otherList];
 
       yield put({
         type: 'updateState',

@@ -17,6 +17,7 @@ import {
   Modal,
   Select,
   DatePicker,
+  message,
 } from 'antd';
 import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
 import Ellipsis from '@/components/Ellipsis';
@@ -95,7 +96,13 @@ class AdminList extends PureComponent {
   };
 
   handleTop = (id, isTop) => {
-    const { dispatch } = this.props;
+    const { dispatch, list } = this.props;
+    // 判断当前置顶的数量
+    const topList = list.filter(item => item.isTop === TOP_STATE_YES);
+    if (isTop && topList.length >= 3) {
+      message.error('最多只能置顶3个');
+      return;
+    }
     dispatch({
       type: 'adModel/topAd',
       payload: {
@@ -298,15 +305,19 @@ class AdminList extends PureComponent {
               >
                 <a style={color ? { color } : null}>{publishText}</a>
               </Popconfirm>
-              <Divider key="divider" type="vertical" />
-              <Popconfirm
-                title={`确定${topText}吗？`}
-                onConfirm={() => this.handleTop(id, newTopState)}
-                okText="确定"
-                cancelText="取消"
-              >
-                <a>{topText}</a>
-              </Popconfirm>
+              {isPublish === PUBLISH_STATE_YES && (
+                <Fragment>
+                  <Divider key="divider" type="vertical" />
+                  <Popconfirm
+                    title={`确定${topText}吗？`}
+                    onConfirm={() => this.handleTop(id, newTopState)}
+                    okText="确定"
+                    cancelText="取消"
+                  >
+                    <a>{topText}</a>
+                  </Popconfirm>
+                </Fragment>
+              )}
               <br />
               <Link to={`/application/ads/${id}/update`}>修改</Link>
               <Divider type="vertical" />

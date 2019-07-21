@@ -70,8 +70,21 @@ export default modelExtend(model, {
         list = list.filter(item => item.status === payload.status);
       }
 
-      // 排序
-      list = _.sortBy(list, ['status'], ['asc']);
+      // 列表中信息未审核状态的信息在最上，未审核状态以提交时间的顺序进行排序；
+      // 其他两种状态在未审核状态的信息下面以审核时间的倒序进行展示；
+      let unFinishList = [];
+      let otherList = []
+      list.forEach(item => {
+        if(item.status === AUDIT_STATE_UNREVIEWED){
+          unFinishList.push(item);
+        } else {
+          otherList.push(item)
+        }
+      })
+
+      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.createTime)]);
+      otherList = _.sortBy(otherList, [o => -+new Date(o.verifyTime)]);
+      list = [...unFinishList, ...otherList];
 
       yield put({
         type: 'updateState',

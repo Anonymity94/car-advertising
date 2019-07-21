@@ -16,6 +16,7 @@ import {
   Modal,
   Select,
   DatePicker,
+  message,
 } from 'antd';
 import { handleSearchReset, handleSearch, handleFilterResult } from '@/utils/utils';
 import StandardTable from '@/components/StandardTable';
@@ -79,7 +80,13 @@ class ActivityList extends PureComponent {
   };
 
   handleTop = (id, isTop) => {
-    const { dispatch } = this.props;
+    const { dispatch, list } = this.props;
+    // 判断当前置顶的数量
+    const topList = list.filter(item => item.isTop === TOP_STATE_YES);
+    if (isTop && topList.length >= 3) {
+      message.error('最多只能置顶3个');
+      return;
+    }
     dispatch({
       type: 'activityModel/topActivity',
       payload: {

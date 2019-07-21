@@ -4,6 +4,7 @@ import { model } from '@/utils/model';
 import _ from 'lodash';
 import { queryAppeals, updateAppealState, createAppeal } from '@/services/appeal';
 import router from 'umi/router';
+import { AUDIT_STATE_UNREVIEWED } from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'appealModel',
@@ -33,7 +34,22 @@ export default modelExtend(model, {
 
       // 排序
       let list = success ? result : [];
-      list = _.sortBy(list, ['state', 'createTime'], ['asc', 'desc']);
+      // 列表中信息未审核状态的信息在最上，
+      // 未审核状态以前端用户提交时间的顺序进行排序；
+      // 其他两种状态在未审核状态的信息下面以审核时间的倒序进行展示；
+      let unFinishList = [];
+      let otherList = [];
+      list.forEach(item => {
+        if (item.status === AUDIT_STATE_UNREVIEWED) {
+          unFinishList.push(item);
+        } else {
+          otherList.push(item);
+        }
+      });
+
+      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.createTime)]);
+      otherList = _.sortBy(otherList, [o => -+new Date(o.accessTime)]);
+      list = [...unFinishList, ...otherList];
 
       yield put({
         type: 'updateState',
@@ -46,7 +62,7 @@ export default modelExtend(model, {
     /**
      * 用户提起申诉
      */
-    *createAppeal({ payload }, { call, put }) {
+    *createAppeal({ payload }, { call }) {
       const { success } = yield call(createAppeal, payload);
       if (success) {
         router.push('/h5/user/waiting');

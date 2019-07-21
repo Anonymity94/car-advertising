@@ -275,6 +275,11 @@ class AppealList extends PureComponent {
         align: 'center',
       },
       {
+        title: '审核时间',
+        dataIndex: 'accessTime',
+        align: 'center',
+      },
+      {
         title: '操作',
         dataIndex: 'operate',
         align: 'center',

@@ -78,11 +78,11 @@ const tableColumns = [
       return '待审核';
     },
   },
-  // {
-  //   title: '审核人',
-  //   dataIndex: 'verifyName',
-  //   align: 'center',
-  // },
+  {
+    title: '审核时间',
+    dataIndex: 'verifyTime',
+    align: 'center',
+  },
   {
     title: '操作',
     dataIndex: 'operate',

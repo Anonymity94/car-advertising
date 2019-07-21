@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
+import _ from 'lodash';
 import {
   queryAds,
   createAd,
@@ -10,6 +11,7 @@ import {
   deleteAd,
   queryAdContent,
 } from '@/services/advertisement';
+import { PUBLISH_STATE_NO } from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'adModel',
@@ -43,6 +45,23 @@ export default modelExtend(model, {
       if (payload.isPublish) {
         list = list.filter(item => item.isPublish === payload.isPublish);
       }
+
+      // 列表中信息未发布状态的信息在最上，
+      // 未发布状态以添加广告的时间的顺序进行排序；
+      // 其他状态在未发布状态的信息下面以发布时间的倒序进行展示；
+      let unPublishList = [];
+      let otherList = [];
+      list.forEach(item => {
+        if (item.isPublish === PUBLISH_STATE_NO) {
+          unPublishList.push(item);
+        } else {
+          otherList.push(item);
+        }
+      });
+
+      unPublishList = _.sortBy(unPublishList, [o => +new Date(o.createTime)]);
+      otherList = _.sortBy(otherList, [o => -+new Date(o.publishTime)]);
+      list = [...unPublishList, ...otherList];
 
       yield put({
         type: 'updateState',

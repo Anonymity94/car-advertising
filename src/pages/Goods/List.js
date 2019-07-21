@@ -197,11 +197,11 @@ class ActivityList extends PureComponent {
         align: 'center',
         render: text => text && moment(text).format('YYYY-MM-DD'),
       },
-      {
-        title: '操作人',
-        dataIndex: 'operator',
-        align: 'center',
-      },
+      // {
+      //   title: '操作人',
+      //   dataIndex: 'operator',
+      //   align: 'center',
+      // },
       {
         title: '操作',
         dataIndex: 'operate',
