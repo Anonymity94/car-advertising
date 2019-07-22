@@ -19,7 +19,12 @@ import {
   queryUserExchanges,
   updateIntegral,
 } from '@/services/driver';
-import { AUDIT_STATE_PASSED, AUDIT_STATE_UNREVIEWED, AUDIT_STATE_REFUSE, SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED } from '@/common/constants';
+import {
+  AUDIT_STATE_PASSED,
+  AUDIT_STATE_UNREVIEWED,
+  AUDIT_STATE_REFUSE,
+  SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED,
+} from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'driverModel',
@@ -73,14 +78,14 @@ export default modelExtend(model, {
       // 列表中信息未审核状态的信息在最上，未审核状态以提交时间的顺序进行排序；
       // 其他两种状态在未审核状态的信息下面以审核时间的倒序进行展示；
       let unFinishList = [];
-      let otherList = []
+      let otherList = [];
       list.forEach(item => {
-        if(item.status === AUDIT_STATE_UNREVIEWED){
+        if (item.status === AUDIT_STATE_UNREVIEWED) {
           unFinishList.push(item);
         } else {
-          otherList.push(item)
+          otherList.push(item);
         }
-      })
+      });
 
       unFinishList = _.sortBy(unFinishList, [o => +new Date(o.createTime)]);
       otherList = _.sortBy(otherList, [o => -+new Date(o.verifyTime)]);
@@ -119,10 +124,16 @@ export default modelExtend(model, {
 
       // 如果来自微信，如果用户等待审核
       if (success && from === 'queryWechatUser') {
+        const { pathname } = window.location;
+        const isBindPage = pathname.indexOf('/h5/user/bind');
+        const isRegisterPage = pathname.indexOf('/h5/user/register');
+
         if (result.status === AUDIT_STATE_UNREVIEWED) {
           router.replace('/h5/user/waiting');
         }
-        if (result.status === AUDIT_STATE_REFUSE) {
+
+        // 注册被拒绝了，如果进入的不是注册或绑定页面，允许进入，不再跳转至错误提示
+        if (result.status === AUDIT_STATE_REFUSE && (!isBindPage && !isRegisterPage)) {
           router.replace(`/h5/user/waiting?type=error&msg=${result.bandReason}`);
         }
       }
