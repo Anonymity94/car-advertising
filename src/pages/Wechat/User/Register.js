@@ -1,7 +1,17 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/prefer-stateless-function */
-import React, { PureComponent, Fragment } from 'react';
-import { InputItem, Button, List, Steps, WhiteSpace, DatePicker, Modal, Flex } from 'antd-mobile';
+import React, { PureComponent, Fragment, memo } from 'react';
+import {
+  InputItem,
+  Button,
+  List,
+  Steps,
+  WhiteSpace,
+  DatePicker,
+  Modal,
+  Flex,
+  NoticeBar,
+} from 'antd-mobile';
 import { Upload } from 'antd';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
@@ -10,6 +20,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import { MOCK_API_PREFIX } from '@/common/app';
 import moment from 'moment';
+import router from 'umi/router';
 import UploadLoading from './UploadLoading';
 
 import styles from './style.less';
@@ -34,6 +45,12 @@ import carDemo from './icons/car_demo@2x.png';
 
 // 上传按钮
 import uploadIcon from './icons/icon_upload@2x.png';
+import Loading from '@/components/Loading';
+import {
+  AUDIT_STATE_PASSED,
+  AUDIT_STATE_UNREVIEWED,
+  AUDIT_STATE_NO_REGISTER,
+} from '@/common/constants';
 
 /**
  * 上传图片是校验大小
@@ -250,7 +267,7 @@ export const UserInfoForm = createForm()(
 
     render() {
       const { count } = this.state;
-      const { form } = this.props;
+      const { form, phone } = this.props;
       const { getFieldProps } = form;
       return (
         <div className={styles.formWrap}>
@@ -279,6 +296,7 @@ export const UserInfoForm = createForm()(
               placeholder="请输入手机号码"
               className="required"
               {...getFieldProps('phone', {
+                initialValue: phone || '',
                 validateFirst: true,
                 rules: [
                   { required: true, whitespace: true, message: '请输入手机号码' },
@@ -562,11 +580,38 @@ export const CarForm = createForm()(
   }
 );
 
+const CustomModal = memo(({ title, desc, okText, onOk }) => (
+  <div className="am-modal-wrap " role="dialog" aria-labelledby="Delete">
+    <div role="document" className="am-modal am-modal-transparent">
+      <div className="am-modal-content">
+        <div className="am-modal-header">
+          <div className="am-modal-title">{title}</div>
+        </div>
+        <div className="am-modal-body">
+          <div className="am-modal-alert-content">{desc}</div>
+        </div>
+        {okText && onOk && (
+          <div className="am-modal-footer">
+            <div className="am-modal-button-group-v am-modal-button-group-normal" role="group">
+              <a className="am-modal-button" role="button" onClick={() => (onOk ? onOk() : null)}>
+                {okText}
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+));
+
 // eslint-disable-next-line react/no-multi-comp
-@connect(({ loading }) => ({
+@connect(({ driverModel: { detail: driverDetail }, loading }) => ({
+  driverDetail,
   submitLoading: loading.effects['driverModel/register'],
+  detailLoading:
+    loading.effects['driverModel/queryDriverDetail'] || loading.effects['login/queryWechatUser'],
 }))
-class BindPhone extends PureComponent {
+class Register extends PureComponent {
   state = {
     current: 0,
     userInfo: undefined,
@@ -592,6 +637,18 @@ class BindPhone extends PureComponent {
   };
 
   handleSubmitCarInfo = values => {
+    const { driverDetail } = this.props;
+    if (!driverDetail.id) {
+      Modal.alert('请先登录', '登录后才可以注册会员', [
+        {
+          text: '马上登录',
+          onPress: () => {
+            router.push('/h5/user/bind');
+          },
+        },
+      ]);
+      return;
+    }
     if (values) {
       const { userInfo, idcardInfo } = this.state;
       // 检查用户信息身份验证信息
@@ -632,9 +689,11 @@ class BindPhone extends PureComponent {
             dispatch({
               type: 'driverModel/register',
               payload: {
+                id: driverDetail.id,
                 ...userInfo,
                 ...idcardInfo,
                 ...values,
+                status: 0, // 注册就是其实修改信息，把状态修改成未审核的状态
               },
             });
           },
@@ -649,11 +708,36 @@ class BindPhone extends PureComponent {
 
   render() {
     const { current } = this.state;
-    const { dispatch } = this.props;
+    const { dispatch, driverDetail, detailLoading } = this.props;
+
+    if (detailLoading) {
+      return <Loading />;
+    }
 
     return (
       <DocumentTitle title="注册会员">
         <Fragment>
+          <div
+            className={
+              driverDetail.id && driverDetail.status === AUDIT_STATE_NO_REGISTER
+                ? ''
+                : 'am-modal-mask'
+            }
+          />
+          {!driverDetail.id && (
+            <CustomModal
+              title="无法注册"
+              desc="登录后才可注册会员"
+              okText="马上登录"
+              onOk={() => router.push('/h5/user/bind')}
+            />
+          )}
+          {driverDetail.status === AUDIT_STATE_PASSED && (
+            <CustomModal title="无法注册" desc="注册会员已通过，无需再次注册" />
+          )}
+          {driverDetail.status === AUDIT_STATE_UNREVIEWED && (
+            <CustomModal title="无法注册" desc="会员信息审核中，无需再次注册" />
+          )}
           <Steps current={current} direction="horizontal">
             {steps.map(s => (
               <Steps.Step
@@ -665,7 +749,11 @@ class BindPhone extends PureComponent {
           </Steps>
           <WhiteSpace size="lg" />
           <section style={{ display: `${current === 0 ? '' : 'none'}` }}>
-            <UserInfoForm dispatch={dispatch} onSubmit={this.handleSubmitUserInfo} />
+            <UserInfoForm
+              phone={driverDetail.phone}
+              dispatch={dispatch}
+              onSubmit={this.handleSubmitUserInfo}
+            />
           </section>
           <section style={{ display: `${current === 1 ? '' : 'none'}` }}>
             <IdcardForm onSubmit={this.handleSubmitIdcard} />
@@ -679,4 +767,4 @@ class BindPhone extends PureComponent {
   }
 }
 
-export default BindPhone;
+export default Register;

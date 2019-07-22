@@ -6,10 +6,15 @@ import Loading from '@/components/Loading';
 import { countFormatter } from '@/utils/utils';
 
 import router from 'umi/router';
+import { Modal } from 'antd-mobile';
 import styles from './styles.less';
 import Empty from '@/components/Empty';
-import { PUBLISH_STATE_YES, AUDIT_STATE_REFUSE, AUDIT_STATE_UNREVIEWED } from '@/common/constants';
-import PullToRefreshWrap from '@/components/PullToRefresh';
+import {
+  PUBLISH_STATE_YES,
+  AUDIT_STATE_REFUSE,
+  AUDIT_STATE_UNREVIEWED,
+  AUDIT_STATE_NO_REGISTER,
+} from '@/common/constants';
 
 @connect(({ adModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   userInfo,
@@ -70,13 +75,66 @@ class Detail extends PureComponent {
     const renderOperateBtn = () => {
       const { id, status } = userInfo;
       if (!id) {
-        return <span className={styles.btn}>未注册</span>;
+        return (
+          <span
+            className={styles.btn}
+            onClick={() => {
+              Modal.alert('无法参与', '尚未登录', [
+                { text: '知道了', onPress: () => {} },
+                { text: '立即登录', onPress: () => router.push('/h5/user/bind'), style: 'default' },
+              ]);
+            }}
+          >
+            未登录
+          </span>
+        );
+      }
+      if (status === AUDIT_STATE_NO_REGISTER) {
+        return (
+          <span
+            className={styles.btn}
+            onClick={() => {
+              Modal.alert('无法参与', '尚未注册会员', [
+                { text: '知道了', onPress: () => {}, style: 'default' },
+                {
+                  text: '立即注册',
+                  onPress: () => router.push('/h5/user/register'),
+                  style: 'default',
+                },
+              ]);
+            }}
+          >
+            未注册
+          </span>
+        );
       }
       if (!status || status === AUDIT_STATE_UNREVIEWED) {
-        return <span className={styles.btn}>注册信息等待审核</span>;
+        return (
+          <span
+            className={styles.btn}
+            onClick={() => {
+              Modal.alert('无法参与', '注册信息审核中', [
+                { text: '知道了', onPress: () => {}, style: 'default' },
+              ]);
+            }}
+          >
+            注册信息等待审核
+          </span>
+        );
       }
       if (status === AUDIT_STATE_REFUSE) {
-        return <span className={styles.btn}>注册未通过</span>;
+        return (
+          <span
+            className={styles.btn}
+            onClick={() => {
+              Modal.alert('无法参与', '注册申请未通过', [
+                { text: '知道了', onPress: () => {}, style: 'default' },
+              ]);
+            }}
+          >
+            注册未通过
+          </span>
+        );
       }
 
       return (

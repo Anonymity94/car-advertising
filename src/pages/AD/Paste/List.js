@@ -15,6 +15,7 @@ import {
   Select,
   Spin,
   notification,
+  Modal,
 } from 'antd';
 import isEqual from 'lodash/isEqual';
 import { handleSearch, handleSearchReset, handleFilterResult } from '@/utils/utils';
@@ -86,6 +87,59 @@ class AdPasteList extends PureComponent {
     return null;
   }
 
+  onKeyup = e => {
+    if (e.keyCode === 13) {
+      const id = e.target.value;
+      if (!id) {
+        notification.error({
+          message: '扫码失败',
+          description: (
+            <div>
+              <p>1.请鼠标是否聚焦到【扫码结果】输入框</p>
+              <p>2.请检查【扫码结果】输入框是否有值</p>
+            </div>
+          ),
+        });
+      }
+      // 先检查，这条预约的状态
+      const { dispatch } = this.props;
+      // 查签约记录
+      dispatch({
+        type: 'adSigningModel/queryAdSigningDetail',
+        payload: {
+          id,
+        },
+      }).then(({ id: signingId, pasteState }) => {
+        if (!signingId) {
+          notification.error({
+            message: '扫码失败',
+            description: '没有找到相关的签约记录',
+          });
+          return;
+        }
+        if (pasteState !== AD_PASTE_STATE_UN_REVIEW) {
+          notification.info({
+            message: '扫码失败',
+            description: '此签约记录已处理，无需再次处理',
+          });
+          return;
+        }
+
+        this.beginPaste(signingId);
+      });
+    }
+  };
+
+  beginPaste = id => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adSigningModel/beginPaste',
+      payload: {
+        id,
+      },
+    });
+  };
+
   queryAdPastes = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -137,6 +191,7 @@ class AdPasteList extends PureComponent {
         duration: null,
       });
     } else {
+      this.scanInput = null;
       notification.success({
         message: '扫码结束',
         duration: 2,
@@ -390,15 +445,40 @@ class AdPasteList extends PureComponent {
           <StandardTable
             title={() => (
               <div style={{ textAlign: 'right' }}>
+                {isScaning && (
+                  <span
+                    style={{
+                      color: 'red',
+                      marginRight: 10,
+                    }}
+                  >
+                    扫码结果：
+                    <Input
+                      autoFocus
+                      placeholder="扫码前请保证鼠标聚焦在此处"
+                      ref={input => {
+                        this.scanInput = input;
+                      }}
+                      onKeyUp={this.onKeyup}
+                      style={{ width: 300 }}
+                    />
+                  </span>
+                )}
                 <Button
                   icon="play-circle"
                   type="primary"
+                  disabled={isScaning}
                   onClick={() => this.toogleScaning(true)}
                   style={{ marginRight: 10 }}
                 >
                   开始扫码
                 </Button>
-                <Button icon="stop" type="danger" onClick={() => this.toogleScaning(false)}>
+                <Button
+                  icon="stop"
+                  type="danger"
+                  disabled={!isScaning}
+                  onClick={() => this.toogleScaning(false)}
+                >
                   结束扫码
                 </Button>
               </div>

@@ -149,12 +149,15 @@ export default modelExtend(model, {
     /**
      * 开始粘贴广告
      */
-    *beginPaste({ payload }, { call }) {
+    *beginPaste({ payload }, { call, put }) {
       const { success } = yield call(beginPaste, payload);
       if (success) {
-        Toast.success('确认成功', 1);
+        message.success('扫码完成');
+        yield put({
+          type: 'queryAdPastes',
+        });
       } else {
-        Toast.fail('确认失败', 1);
+        message.error('扫码失败');
       }
       return success;
     },

@@ -71,7 +71,7 @@ class SigningDetail extends PureComponent {
     }
 
     // 生成二维码信息
-    QRCode.toDataURL(`${window.location.origin}/wechat/ad-signing-qrcode?id=${signingDetail.id}`)
+    QRCode.toDataURL(`${signingDetail.id}`)
       .then(url => {
         Modal.alert(
           '',

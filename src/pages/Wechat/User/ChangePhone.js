@@ -297,7 +297,7 @@ class ChangePhone extends PureComponent {
         Toast.fail('更换失败', 1);
       } else {
         Toast.success('更换成功', 1);
-        // 重新拉取当前登陆人信息
+        // 重新拉取当前登录人信息
         dispatch({
           type: 'driverModel/queryDriverDetail',
           payload: {

@@ -161,15 +161,20 @@
         right: 0;
         top: 10px;
 
-        .btn {
+        & > span {
           display: inline-block;
-          width: 68px;
+          min-width: 68px;
           height: 25px;
           border-radius: 25px / 2;
-          border: 1px solid @color-primary;
-          color: @color-primary;
+          border: 1px solid @color-caption;
+          color: @color-caption;
           text-align: center;
           line-height: 25px;
+
+          &.active {
+            border: 1px solid @color-primary;
+            color: @color-primary;
+          }
         }
       }
     }

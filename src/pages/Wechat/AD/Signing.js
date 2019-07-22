@@ -12,12 +12,13 @@ import { Popup, PopupHeader } from 'react-weui';
 
 import styles from './styles.less';
 import Empty from '@/components/Empty';
-import { PUBLISH_STATE_NO } from '@/common/constants';
+import { PUBLISH_STATE_NO, PUBLISH_STATE_YES, AUDIT_STATE_PASSED } from '@/common/constants';
 
 const { AgreeItem } = Checkbox;
 
-@connect(({ adModel: { detail }, loading }) => ({
+@connect(({ adModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
+  userInfo,
   queryLoading: loading.effects['adModel/queryAdContent'],
   submitLoading: loading.effects['adSigningModel/doSigning'],
 }))
@@ -82,6 +83,27 @@ class Signing extends PureComponent {
   };
 
   doSigning = () => {
+    const { userInfo, detail, dispatch } = this.props;
+    if (userInfo.status !== AUDIT_STATE_PASSED) {
+      Modal.alert('无法签约', '不是正式注册会员', [
+        { text: '好的', onPress: () => {}, style: 'default' },
+      ]);
+      return;
+    }
+
+    if (!detail.id) {
+      Modal.alert('无法签约', '广告不存在或已被删除', [
+        { text: '好的', onPress: () => {}, style: 'default' },
+      ]);
+      return;
+    }
+    if (detail.isPublish !== PUBLISH_STATE_YES) {
+      Modal.alert('无法签约', '广告已下线', [
+        { text: '好的', onPress: () => {}, style: 'default' },
+      ]);
+      return;
+    }
+
     const { currentAddress, checked } = this.state;
     if (Object.keys(currentAddress).length === 0) {
       Modal.alert('请选择粘贴地址', '', [{ text: '好的', onPress: () => {}, style: 'default' }]);
@@ -93,7 +115,6 @@ class Signing extends PureComponent {
       ]);
       return;
     }
-    const { dispatch, detail } = this.props;
 
     Modal.alert('确定签约吗？', '', [
       { text: '取消', onPress: () => {}, style: 'default' },

@@ -30,7 +30,7 @@ export default {
       }
 
       // Login successfully
-      // 获取登陆用户信息
+      // 获取登录用户信息
       yield put({
         type: 'queryLoggedUser',
         payload: {

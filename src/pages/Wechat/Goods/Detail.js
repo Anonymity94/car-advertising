@@ -9,11 +9,11 @@ import {
   AUDIT_STATE_REFUSE,
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_PASSED,
+  AUDIT_STATE_NO_REGISTER,
 } from '@/common/constants';
 
 import router from 'umi/router';
 import styles from './styles.less';
-import PullToRefreshWrap from '@/components/PullToRefresh';
 
 @connect(({ goodsModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
@@ -34,7 +34,10 @@ class Detail extends PureComponent {
     const {
       dispatch,
       match: { params },
+      userInfo,
     } = this.props;
+
+    if (!userInfo.id) return;
 
     dispatch({
       type: 'goodsModel/checkUserExchangeState',
@@ -76,6 +79,34 @@ class Detail extends PureComponent {
         usedIntegral,
       },
     });
+  };
+
+  showReason = () => {
+    const { userInfo } = this.props;
+    if (!userInfo.id) {
+      Modal.alert('无法兑换', '尚未登录', [
+        { text: '知道了', onPress: () => {} },
+        { text: '立即登录', onPress: () => router.push('/h5/user/bind'), style: 'default' },
+      ]);
+    }
+
+    if (userInfo.id && userInfo.status === AUDIT_STATE_NO_REGISTER) {
+      Modal.alert('无法兑换', '尚未注册会员', [
+        { text: '知道了', onPress: () => {}, style: 'default' },
+        { text: '立即注册', onPress: () => router.push('/h5/user/register'), style: 'default' },
+      ]);
+    }
+
+    if (userInfo.id && userInfo.status === AUDIT_STATE_REFUSE) {
+      Modal.alert('无法兑换', '注册申请未通过', [
+        { text: '知道了', onPress: () => {}, style: 'default' },
+      ]);
+    }
+    if (userInfo.id && (userInfo.status === AUDIT_STATE_UNREVIEWED || !userInfo.status)) {
+      Modal.alert('无法兑换', '注册信息审核中', [
+        { text: '知道了', onPress: () => {}, style: 'default' },
+      ]);
+    }
   };
 
   exchangeGood = () => {
@@ -146,7 +177,7 @@ class Detail extends PureComponent {
     if (!detail.id) {
       return (
         <Fragment>
-          <Empty text="广告不存在或已被删除" />
+          <Empty text="商品不存在或已被删除" />
         </Fragment>
       );
     }
@@ -154,24 +185,9 @@ class Detail extends PureComponent {
     if (detail.isPublish !== PUBLISH_STATE_YES) {
       return (
         <Fragment>
-          <Empty text="广告已下线" />
+          <Empty text="商品已下线" />
         </Fragment>
       );
-    }
-
-    if (!userInfo.id) {
-      Modal.alert('无法兑换', '尚未注册', [{ text: '好的', onPress: () => {}, style: 'default' }]);
-    }
-
-    if (userInfo.id && userInfo.status === AUDIT_STATE_REFUSE) {
-      Modal.alert('无法兑换', '注册申请被拒绝', [
-        { text: '好的', onPress: () => {}, style: 'default' },
-      ]);
-    }
-    if (userInfo.id && (userInfo.status === AUDIT_STATE_UNREVIEWED || !userInfo.status)) {
-      Modal.alert('无法兑换', '注册信息审核中', [
-        { text: '好的', onPress: () => {}, style: 'default' },
-      ]);
     }
 
     return (
@@ -191,13 +207,15 @@ class Detail extends PureComponent {
                     <p className={styles.businessName}>{detail.businessName}</p>
                   </div>
                   <div className={styles.right}>
-                    {userInfo.id && userInfo.status === AUDIT_STATE_PASSED && (
+                    {userInfo.id && userInfo.status === AUDIT_STATE_PASSED ? (
                       <span
-                        className={styles.btn}
+                        className={isExchanged ? '' : styles.active}
                         onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
                       >
                         {isExchanged === false ? '兑换' : '已兑换'}
                       </span>
+                    ) : (
+                      <span onClick={() => this.showReason()}>无法兑换</span>
                     )}
                   </div>
                 </div>

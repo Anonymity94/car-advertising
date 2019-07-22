@@ -3,7 +3,6 @@ import { InputItem, Button, Modal, Flex, Toast } from 'antd-mobile';
 import router from 'umi/router';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
-import Link from 'umi/link';
 import { connect } from 'dva';
 import DocumentTitle from 'react-document-title';
 
@@ -153,11 +152,6 @@ const FormWrapper = createForm()(
             </Flex>
           </section>
           <section className={styles.field}>
-            <Link to="/h5/user/register">
-              <p>还未注册？马上注册</p>
-            </Link>
-          </section>
-          <section className={styles.field}>
             <Flex style={{ justifyContent: 'space-between' }}>
               <Button
                 style={{ width: '45%' }}
@@ -180,19 +174,6 @@ const FormWrapper = createForm()(
 // eslint-disable-next-line react/no-multi-comp
 @connect()
 class BindPhone extends PureComponent {
-  componentDidMount() {
-    const { dispatch, location } = this.props;
-    const { code } = location.query;
-    if (code) {
-      dispatch({
-        type: 'wechatModel/wechatAccess',
-        payload: {
-          code,
-        },
-      });
-    }
-  }
-
   handleSubmit = values => {
     const { dispatch } = this.props;
 

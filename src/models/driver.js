@@ -24,6 +24,7 @@ import {
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_REFUSE,
   SIGNING_GOLD_SETTLEMENT_STATE_UN_SETTLED,
+  AUDIT_STATE_NO_REGISTER,
 } from '@/common/constants';
 
 export default modelExtend(model, {
@@ -125,15 +126,22 @@ export default modelExtend(model, {
       // 如果来自微信，如果用户等待审核
       if (success && from === 'queryWechatUser') {
         const { pathname } = window.location;
-        const isBindPage = pathname.indexOf('/h5/user/bind');
-        const isRegisterPage = pathname.indexOf('/h5/user/register');
+        const isBindPage = pathname.indexOf('/h5/user/bind') > -1;
+        const isRegisterPage = pathname.indexOf('/h5/user/register') > -1;
+        const isUserCenterPage = pathname.indexOf('/h5/user/center') > -1;
 
+        // 未审核，显示等待
         if (result.status === AUDIT_STATE_UNREVIEWED) {
           router.replace('/h5/user/waiting');
         }
+        // 用户中心页面，并且未注册，直接跳转注册
+        if (result.status === AUDIT_STATE_NO_REGISTER && isUserCenterPage) {
+          router.replace('/h5/user/register');
+        }
 
-        // 注册被拒绝了，如果进入的不是注册或绑定页面，允许进入，不再跳转至错误提示
-        if (result.status === AUDIT_STATE_REFUSE && (!isBindPage && !isRegisterPage)) {
+        // 用户中心页面并且，注册被拒绝了，直接显示拒绝信息
+        // 如果进入的不是注册或绑定页面，允许进入，不再跳转至错误提示
+        if (result.status === AUDIT_STATE_REFUSE && isUserCenterPage) {
           router.replace(`/h5/user/waiting?type=error&msg=${result.bandReason}`);
         }
       }
@@ -248,27 +256,25 @@ export default modelExtend(model, {
     *bindPhone({ payload }, { call, put }) {
       const { success, result } = yield call(bindPhone, payload);
       if (success) {
+        yield put({
+          type: 'login/queryWechatUser',
+        });
         const { code } = result;
         if (code === 200) {
-          yield put({
-            type: 'login/queryWechatUser',
-          });
           router.push('/h5/user/center');
         } else if (code === 404) {
-          // 这个号没有注册过，提示一下，是否去注册
-          Modal.alert('帐号没有注册', '现在去注册吗？', [
-            { text: '取消', onPress: () => {}, style: 'default' },
-            {
-              text: '注册',
-              onPress: () => {
-                router.push('/h5/user/register');
-              },
-            },
-          ]);
+          // 这个号没有注册过
+          router.push('/h5/user/register');
         } else if (code === 403) {
           // 这个号没有审核通过
-          Modal.alert('帐号审核中，请等待...', '', [
-            { text: '好的', onPress: () => {}, style: 'default' },
+          Modal.alert('会员信息审核中，请等待...', '', [
+            { text: '知道了', onPress: () => {}, style: 'default' },
+          ]);
+        } else if (code === 500) {
+          // 这个号没有审核通过
+          Modal.alert('会员信息审核未通过', '是否要重新注册？', [
+            { text: '知道了', onPress: () => {} },
+            { text: '重新注册', onPress: () => router.push('/h5/user/register'), style: 'default' },
           ]);
         }
       } else {

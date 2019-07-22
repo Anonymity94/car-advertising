@@ -14,6 +14,11 @@ export const BOOLEAN_NO = 0;
 export const BOOLEAN_YES = 1;
 
 /**
+ * 用户审核状态：绑定了。但是没有注册
+ */
+export const AUDIT_STATE_NO_REGISTER = -1;
+
+/**
  * 用户审核状态：未审核
  */
 export const AUDIT_STATE_UNREVIEWED = BOOLEAN_NO;

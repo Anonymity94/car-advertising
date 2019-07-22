@@ -27,7 +27,7 @@ export default modelExtend(model, {
           type: 'login/queryWechatUser',
         });
       } else {
-        // 如果微信用户没有登陆，当前页面不是个人中心，跳转至，去绑定
+        // 如果微信用户没有登录，当前页面不是个人中心，跳转至，去绑定
         const isUserCenterPage = window.location.pathname.indexOf('/h5/user/center') > -1;
         if (isUserCenterPage) {
           router.push('/h5/user/bind');

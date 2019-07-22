@@ -52,12 +52,14 @@ class UserInfo extends PureComponent {
       payload: {
         id: wechatUser.id,
         ...values,
+        status: 0, // 只有修改过了图片，就设置为待审核状态
       },
     }).then(success => {
       if (!success) {
         Toast.fail('修改失败', 1);
       } else {
         Toast.success('修改成功', 1);
+        this.queryDriverDetail();
       }
     });
   };

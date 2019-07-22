@@ -46,9 +46,8 @@ export async function auditDriver({ id, status, reason = '' }) {
 }
 
 /**
- * 更新行驶证的到期时间
+ * 更新某个用户
  * @param {Stirng} id 用户id
- * @param {Stirng} expireTime  行驶证的到期日期
  */
 export async function updateDriver({ id, ...reset }) {
   return request(`/api/user-manager/user-manager/user-update?id=${id}`, {
