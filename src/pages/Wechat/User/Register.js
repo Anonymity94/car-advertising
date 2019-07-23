@@ -50,6 +50,7 @@ import {
   AUDIT_STATE_PASSED,
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_NO_REGISTER,
+  AUDIT_STATE_REFUSE,
 } from '@/common/constants';
 
 /**
@@ -719,7 +720,9 @@ class Register extends PureComponent {
         <Fragment>
           <div
             className={
-              driverDetail.id && driverDetail.status === AUDIT_STATE_NO_REGISTER
+              driverDetail.id &&
+              (driverDetail.status === AUDIT_STATE_NO_REGISTER ||
+                driverDetail.status === AUDIT_STATE_REFUSE)
                 ? ''
                 : 'am-modal-mask'
             }

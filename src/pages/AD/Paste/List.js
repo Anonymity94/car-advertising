@@ -409,7 +409,7 @@ class AdPasteList extends PureComponent {
         width: 140,
         render: (text, record) => (
           <Fragment>
-            {(record.pasteState === AD_PASTE_STATE_UN_REVIEW || !record.pasteState) && [
+            {(record.pasteState === AD_PASTE_STATE_UN_PASTED || !record.pasteState) && [
               <a onClick={() => this.toogleModal(record, ACCESS_PASTE)}>粘贴</a>,
               <Divider type="vertical" />,
               <a onClick={() => this.toogleModal(record, REJECT_PASTE)}>拒绝</a>,
