@@ -11,8 +11,12 @@ import {
   Modal,
   Flex,
   NoticeBar,
+  ImagePicker,
+  Toast,
 } from 'antd-mobile';
-import { Upload } from 'antd';
+import request from '@/utils/request';
+import Prompt from 'umi/prompt';
+import { Upload, Input } from 'antd';
 import { phoneReg, showError } from '@/utils/utils';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
@@ -54,62 +58,55 @@ import {
 } from '@/common/constants';
 
 /**
- * 上传图片是校验大小
- * @param {} file
- */
-export function beforeUpload(file) {
-  console.log('file对象', file);
-  const isLt5M = file.size / 1000 / 1000 < 5;
-  if (!isLt5M) {
-    Modal.alert('上传的图片不能超过5M', '', [{ text: '知道了', onPress: () => {} }]);
-  }
-  return isLt5M;
-}
-
-/**
  * 上传图片
  * @param {*} info 图片对象
  * @param {*} state 对应的 state 值
  * @param {*} loading loading
  */
-export function handleUpload(info, state, loading) {
-  const { onUpload } = this.props;
-  const { status } = info.file;
+export function handleUpload(files, type, state, loading) {
+  const { onUpload, dispatch } = this.props;
+  if (type === 'add') {
+    const { file } = files[files.length - 1];
 
-  console.log('上传结果', info);
-
-  if (status === 'uploading') {
-    this.setState({ [loading]: true });
-    return;
-  }
-
-  if (status === 'done') {
-    const result = info.fileList.map(file => ({
-      uid: file.uid,
-      url: file.response ? file.response.url : file.url,
-    }));
-
-    const newImage = result.pop();
-
-    // 上传成功后，把新的 url 传递出去，用于用户在个人中心页修改
-    if (onUpload) {
-      onUpload({
-        [state]: newImage.url,
-      });
+    const isLt5M = file.size / 1000 / 1000 < 5;
+    if (!isLt5M) {
+      Modal.alert('上传的图片不能超过5M', '', [{ text: '知道了', onPress: () => {} }]);
+      return;
     }
 
-    this.setState({
-      // 只取最后 一个
-      [state]: [newImage],
-      [loading]: false,
-    });
-  }
+    const formData = new FormData();
+    formData.append('file', file);
 
-  if (status === 'error') {
-    Modal.alert('上传失败', '', [{ text: '知道了', onPress: () => {} }]);
-    this.setState({
-      // [state]: [],
-      [loading]: false,
+    this.setState({ [loading]: true });
+    dispatch({
+      type: 'global/upload',
+      payload: formData,
+    }).then(({ success, result }) => {
+      if (success) {
+        Toast.loading('上传成功，加载中...', 0);
+        const imageUrl = result.url;
+        this.setState(
+          {
+            [state]: imageUrl,
+            [loading]: false,
+          },
+          () => {
+            Toast.hide();
+          }
+        );
+        // 上传成功后，把新的 url 传递出去，用于用户在个人中心页修改
+        if (onUpload) {
+          onUpload({
+            [state]: imageUrl,
+          });
+        }
+      } else {
+        Modal.alert('上传失败', '', [{ text: '知道了', onPress: () => {} }]);
+        this.setState({
+          // [state]: [],
+          [loading]: false,
+        });
+      }
     });
   }
 }
@@ -119,7 +116,6 @@ export function renderUploadHtml(item) {
   const value = this.state[item.field];
   // loading
   const loading = this.state[item.loading];
-
   const {
     form: { getFieldDecorator },
     // eslint-disable-next-line react/no-this-in-sfc
@@ -127,60 +123,41 @@ export function renderUploadHtml(item) {
   return (
     <section className={styles.field}>
       <p className={styles.uploadText}>{item.placeholder}</p>
-      {getFieldDecorator(item.field, {
-        initialValue: value,
-        rules: [
-          {
-            required: true,
-            message: item.placeholder,
-          },
-        ],
-      })(
-        <Upload
-          className={styles.uploadRc}
-          showUploadList={false}
-          withCredentials
-          action={`${IS_DEV ? MOCK_API_PREFIX : ''}/api/upload`}
-          // eslint-disable-next-line react/no-this-in-sfc
-          onChange={info => this.handleUpload(info, item.field, item.loading)}
-          beforeUpload={beforeUpload}
-          accept="image/*"
-          name="file"
-        >
-          <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
-            <img
-              className={styles.demo}
-              src={value.length === 0 ? item.demoImage : value[0].url}
-              alt={item.placeholder}
+      <div style={{ display: 'none' }}>
+        {getFieldDecorator(item.field, {
+          initialValue: value,
+          rules: [
+            {
+              required: true,
+              message: item.placeholder,
+            },
+          ],
+        })(<Input />)}
+      </div>
+      <div className={styles.imagePickerWrap}>
+        <div className={styles.uploadWrap} style={{ backgroundImage: `url(${uploadBgImage})` }}>
+          <img
+            className={styles.demo}
+            src={value.length === 0 ? item.demoImage : value}
+            alt={item.placeholder}
+          />
+          <img className={styles.uploadIcon} src={uploadIcon} alt="上传" />
+          {loading && <UploadLoading />}
+          {!loading && (
+            <ImagePicker
+              length="1"
+              onChange={(files, type) => this.handleUpload(files, type, item.field, item.loading)}
+              onImageClick={(index, fs) => console.log(index, fs)}
+              selectable={value.length < 2}
+              accept="image/*"
+              multiple={false}
             />
-            <img className={styles.uploadIcon} src={uploadIcon} alt="上传" />
-            {loading && <UploadLoading />}
-          </div>
-        </Upload>
-      )}
+          )}
+        </div>
+      </div>
     </section>
   );
 }
-
-/**
- * 从已上传的图片中获取图片的url值
- * @param {} file
- */
-const getUploadImageUrl = data => {
-  let images = [];
-
-  if (Array.isArray(data)) {
-    images = data.map(item => item.url);
-  }
-  if (data && data.fileList) {
-    images = data.fileList.map(file => (file.response ? file.response.url : file.url));
-  }
-
-  // 去掉空值
-  images = _.compact(images);
-
-  return images.join(',');
-};
 
 const iconPorps = {
   backgroundSize: 'contain',
@@ -388,11 +365,11 @@ export const IdcardForm = createForm()(
       this.state = {
         // 反面，人像面
         idcardBackImageLoading: false,
-        idcardBackImage: idcardBackImage ? [{ url: idcardBackImage }] : [],
+        idcardBackImage: idcardBackImage || '',
 
         // 正面，国徽面
         idcardFrontImageLoading: false,
-        idcardFrontImage: idcardFrontImage ? [{ url: idcardFrontImage }] : [],
+        idcardFrontImage: idcardFrontImage || '',
       };
 
       this.renderUploadHtml = renderUploadHtml.bind(this);
@@ -409,12 +386,9 @@ export const IdcardForm = createForm()(
           return;
         }
 
-        const { idcardBackImage, idcardFrontImage } = values;
-
         if (onSubmit) {
           onSubmit({
-            idcardBackImage: getUploadImageUrl(idcardBackImage),
-            idcardFrontImage: getUploadImageUrl(idcardFrontImage),
+            ...values,
           });
         }
       });
@@ -461,15 +435,15 @@ export const CarForm = createForm()(
       this.state = {
         // 行驶证照片
         carCodeLoading: false,
-        carCodeImage: carCodeImage ? [{ url: carCodeImage }] : [],
+        carCodeImage: carCodeImage || '',
 
         // 驾驶证照片
         driverLicenseLoading: false,
-        driverLicenseImage: driverLicenseImage ? [{ url: driverLicenseImage }] : [],
+        driverLicenseImage: driverLicenseImage || '',
 
         // 车辆照片
         carImageLoading: false,
-        carImage: carImage ? [{ url: carImage }] : [],
+        carImage: carImage || '',
       };
 
       this.renderUploadHtml = renderUploadHtml.bind(this);
@@ -492,9 +466,6 @@ export const CarForm = createForm()(
           onSubmit({
             ...values,
             expireTime: moment(expireTime).format('YYYY-MM-DD'),
-            carCodeImage: getUploadImageUrl(carCodeImage),
-            driverLicenseImage: getUploadImageUrl(driverLicenseImage),
-            carImage: getUploadImageUrl(carImage),
           });
         }
       });
@@ -637,19 +608,9 @@ class Register extends PureComponent {
     this.setState({ idcardInfo: values });
   };
 
+  // 没有登录也允许注册
   handleSubmitCarInfo = values => {
     const { driverDetail } = this.props;
-    if (!driverDetail.id) {
-      Modal.alert('请先登录', '登录后才可以注册会员', [
-        {
-          text: '马上登录',
-          onPress: () => {
-            router.push('/h5/user/bind');
-          },
-        },
-      ]);
-      return;
-    }
     if (values) {
       const { userInfo, idcardInfo } = this.state;
       // 检查用户信息身份验证信息
@@ -677,6 +638,7 @@ class Register extends PureComponent {
             },
           },
         ]);
+        return;
       }
 
       const { dispatch } = this.props;
@@ -752,11 +714,15 @@ class Register extends PureComponent {
             />
           </section>
           <section style={{ display: `${current === 1 ? '' : 'none'}` }}>
-            <IdcardForm onSubmit={this.handleSubmitIdcard} />
+            <IdcardForm dispatch={dispatch} onSubmit={this.handleSubmitIdcard} />
           </section>
           <section style={{ display: `${current === 2 ? '' : 'none'}` }}>
-            <CarForm onSubmit={this.handleSubmitCarInfo} />
+            <CarForm dispatch={dispatch} onSubmit={this.handleSubmitCarInfo} />
           </section>
+          <Prompt
+            when
+            message={location => window.confirm(`confirm to leave to ${location.pathname}?`)}
+          />
         </Fragment>
       </DocumentTitle>
     );
