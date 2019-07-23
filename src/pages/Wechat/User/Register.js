@@ -10,22 +10,16 @@ import {
   DatePicker,
   Modal,
   Flex,
-  NoticeBar,
   ImagePicker,
   Toast,
 } from 'antd-mobile';
-import request from '@/utils/request';
-import Prompt from 'umi/prompt';
-import { Upload, Input } from 'antd';
+import { Input } from 'antd';
 import { phoneReg, showError } from '@/utils/utils';
 import storage from '@/utils/storage';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
-import _ from 'lodash';
-import { MOCK_API_PREFIX } from '@/common/app';
 import moment from 'moment';
-import router from 'umi/router';
 import UploadLoading from './UploadLoading';
 
 import styles from './style.less';
@@ -152,10 +146,10 @@ export function renderUploadHtml(item) {
           {loading && <UploadLoading />}
           {!loading && (
             <ImagePicker
-              length="1"
+              files={[]}
+              length={1}
               onChange={(files, type) => this.handleUpload(files, type, item.field, item.loading)}
               onImageClick={(index, fs) => console.log(index, fs)}
-              selectable={value.length < 2}
               accept="image/*"
               multiple={false}
             />
@@ -845,10 +839,6 @@ class Register extends PureComponent {
           <section style={{ display: `${current === 2 ? '' : 'none'}` }}>
             <CarForm dispatch={dispatch} onSubmit={this.handleSubmitCarInfo} />
           </section>
-          <Prompt
-            when
-            message={location => window.confirm(`confirm to leave to ${location.pathname}?`)}
-          />
         </Fragment>
       </DocumentTitle>
     );
