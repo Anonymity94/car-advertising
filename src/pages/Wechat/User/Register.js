@@ -720,21 +720,14 @@ class Register extends PureComponent {
         <Fragment>
           <div
             className={
-              driverDetail.id &&
-              (driverDetail.status === AUDIT_STATE_NO_REGISTER ||
-                driverDetail.status === AUDIT_STATE_REFUSE)
+              !driverDetail.id ||
+              (driverDetail.id &&
+                (driverDetail.status === AUDIT_STATE_NO_REGISTER ||
+                  driverDetail.status === AUDIT_STATE_REFUSE))
                 ? ''
                 : 'am-modal-mask'
             }
           />
-          {!driverDetail.id && (
-            <CustomModal
-              title="无法注册"
-              desc="登录后才可注册会员"
-              okText="马上登录"
-              onOk={() => router.push('/h5/user/bind')}
-            />
-          )}
           {driverDetail.status === AUDIT_STATE_PASSED && (
             <CustomModal title="无法注册" desc="注册会员已通过，无需再次注册" />
           )}
