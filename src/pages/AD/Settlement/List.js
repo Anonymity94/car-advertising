@@ -296,15 +296,37 @@ class AdPasteList extends PureComponent {
         dataIndex: 'operate',
         align: 'center',
         width: 140,
-        render: (text, record) => (
-          <Fragment>
-            {record.settlementState !== SIGNING_GOLD_SETTLEMENT_STATE_SETTLED && [
-              <a onClick={() => this.toogleModal(record)}>结算</a>,
-              <Divider type="vertical" />,
-            ]}
-            <Link to={`/application/ad-signings/settlement/detail?id=${record.id}`}>详情</Link>
-          </Fragment>
-        ),
+        render: (text, record) => {
+          // 粘贴xxx天后，才可以结算
+          const { pasteTime } = record;
+          // 是否显示结算按钮
+          let showFlag = true;
+          // 可以显示结算按钮
+          if (pasteTime) {
+            const pasteTimeString = moment(pasteTime).format('YYYY-MM-DD');
+            const today = moment().format('YYYY-MM-DD');
+            const someDayAfter = moment(pasteTimeString).add(30, 'days');
+            // 如果当前日期，在粘贴时间30之前，不应该显示结算按钮
+            if (moment(someDayAfter) - moment(today) > 0) {
+              // 暂时不做判断，方便测试
+              showFlag = false;
+            }
+          }
+          return (
+            <Fragment>
+              {record.settlementState !== SIGNING_GOLD_SETTLEMENT_STATE_SETTLED && [
+                <Button
+                  disabled={!showFlag}
+                  onClick={() => (showFlag ? this.toogleModal(record) : {})}
+                >
+                  结算
+                </Button>,
+                <Divider type="vertical" />,
+              ]}
+              <Link to={`/application/ad-signings/settlement/detail?id=${record.id}`}>详情</Link>
+            </Fragment>
+          );
+        },
       },
     ];
 

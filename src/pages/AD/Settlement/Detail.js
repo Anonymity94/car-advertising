@@ -1,6 +1,7 @@
 import React, { PureComponent, Suspense, Fragment } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
+import moment from 'moment';
 import { Button, Row, Card } from 'antd';
 import Zmage from 'react-zmage';
 import FooterToolbar from '@/components/FooterToolbar';
@@ -100,6 +101,22 @@ class Info extends PureComponent {
     const { width, modalVisible } = this.state;
     const { loading, settleDetail, userInfo, submitting } = this.props;
 
+    // 粘贴xxx天后，才可以结算
+    const { pasteTime } = settleDetail;
+    // 是否显示结算按钮
+    let showFlag = true;
+    // 可以显示结算按钮
+    if (pasteTime) {
+      const pasteTimeString = moment(pasteTime).format('YYYY-MM-DD');
+      const today = moment().format('YYYY-MM-DD');
+      const someDayAfter = moment(pasteTimeString).add(30, 'days');
+      // 如果当前日期，在粘贴时间30之前，不应该显示结算按钮
+      if (moment(someDayAfter) - moment(today) > 0) {
+        // 暂时不做判断，方便测试
+        showFlag = false;
+      }
+    }
+
     return (
       <Fragment>
         <Suspense fallback={null}>
@@ -132,9 +149,10 @@ class Info extends PureComponent {
               <section style={{ textAlign: 'center' }}>
                 <Button
                   loading={submitting}
+                  disabled={!showFlag}
                   icon="check-circle"
                   type="primary"
-                  onClick={() => this.toogleModal()}
+                  onClick={() => (showFlag ? this.toogleModal() : {})}
                 >
                   结算
                 </Button>
