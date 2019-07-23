@@ -6,6 +6,7 @@ import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import _ from 'lodash';
+import moment from 'moment';
 import {
   queryAdPastes,
   queryAdSettlements,
@@ -63,8 +64,8 @@ export default modelExtend(model, {
         }
       });
 
-      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.scanTime)]);
-      otherList = _.sortBy(otherList, [o => -+new Date(o.pasteTime)]);
+      unFinishList = _.sortBy(unFinishList, [o => +moment(o.scanTime)]);
+      otherList = _.sortBy(otherList, [o => -+moment(o.pasteTime)]);
       list = [...unFinishList, ...otherList];
 
       yield put({
@@ -104,8 +105,8 @@ export default modelExtend(model, {
         }
       });
 
-      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.pasteTime)]);
-      otherList = _.sortBy(otherList, [o => -+new Date(o.settlementTime)]);
+      unFinishList = _.sortBy(unFinishList, [o => +moment(o.pasteTime)]);
+      otherList = _.sortBy(otherList, [o => -+moment(o.settlementTime)]);
       list = [...unFinishList, ...otherList];
 
       yield put({

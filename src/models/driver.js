@@ -3,6 +3,7 @@ import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import router from 'umi/router';
 import _ from 'lodash';
+import moment from 'moment';
 import { Toast, Modal } from 'antd-mobile';
 import {
   queryDrivers,
@@ -88,8 +89,8 @@ export default modelExtend(model, {
         }
       });
 
-      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.createTime)]);
-      otherList = _.sortBy(otherList, [o => -+new Date(o.verifyTime)]);
+      unFinishList = _.sortBy(unFinishList, [o => +moment(o.createTime)]);
+      otherList = _.sortBy(otherList, [o => -+moment(o.verifyTime)]);
       list = [...unFinishList, ...otherList];
 
       yield put({
@@ -306,7 +307,7 @@ export default modelExtend(model, {
       let adSignings = success ? result : [];
 
       // 排序按照签约时间倒序
-      adSignings = _.sortBy(adSignings, [o => -+new Date(o.createTime)]);
+      adSignings = _.sortBy(adSignings, [o => -+moment(o.createTime)]);
 
       yield put({
         type: 'updateState',
@@ -338,8 +339,8 @@ export default modelExtend(model, {
         }
       });
 
-      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.pasteTime)]);
-      otherList = _.sortBy(otherList, [o => -+new Date(o.settlementTime)]);
+      unFinishList = _.sortBy(unFinishList, [o => +moment(o.pasteTime)]);
+      otherList = _.sortBy(otherList, [o => -+moment(o.settlementTime)]);
       list = [...unFinishList, ...otherList];
 
       yield put({

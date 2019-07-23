@@ -2,6 +2,7 @@ import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import _ from 'lodash';
+import moment from 'moment';
 import { queryAppeals, updateAppealState, createAppeal } from '@/services/appeal';
 import router from 'umi/router';
 import { AUDIT_STATE_UNREVIEWED } from '@/common/constants';
@@ -47,8 +48,8 @@ export default modelExtend(model, {
         }
       });
 
-      unFinishList = _.sortBy(unFinishList, [o => +new Date(o.createTime)]);
-      otherList = _.sortBy(otherList, [o => -+new Date(o.accessTime)]);
+      unFinishList = _.sortBy(unFinishList, [o => +moment(o.createTime)]);
+      otherList = _.sortBy(otherList, [o => -+moment(o.accessTime)]);
       list = [...unFinishList, ...otherList];
 
       yield put({

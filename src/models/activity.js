@@ -13,6 +13,7 @@ import {
   checkUserJoinState,
   joinActivity,
 } from '@/services/activity';
+import moment from 'moment';
 import { PUBLISH_STATE_NO } from '@/common/constants';
 
 export default modelExtend(model, {
@@ -61,8 +62,8 @@ export default modelExtend(model, {
         }
       });
 
-      unPublishList = _.sortBy(unPublishList, [o => +new Date(o.createTime)]);
-      otherList = _.sortBy(otherList, [o => -+new Date(o.publishTime)]);
+      unPublishList = _.sortBy(unPublishList, [o => +moment(o.createTime)]);
+      otherList = _.sortBy(otherList, [o => -+moment(o.publishTime)]);
       list = [...unPublishList, ...otherList];
 
       yield put({

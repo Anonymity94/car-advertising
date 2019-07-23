@@ -2,6 +2,7 @@ import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
 import _ from 'lodash';
+import moment from 'moment';
 import {
   queryAds,
   createAd,
@@ -59,8 +60,8 @@ export default modelExtend(model, {
         }
       });
 
-      unPublishList = _.sortBy(unPublishList, [o => +new Date(o.createTime)]);
-      otherList = _.sortBy(otherList, [o => -+new Date(o.publishTime)]);
+      unPublishList = _.sortBy(unPublishList, [o => +moment(o.createTime)]);
+      otherList = _.sortBy(otherList, [o => -+moment(o.publishTime)]);
       list = [...unPublishList, ...otherList];
 
       yield put({
