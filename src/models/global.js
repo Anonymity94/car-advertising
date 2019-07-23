@@ -30,7 +30,7 @@ export default {
       if (pathname.indexOf('h5') === -1 && pathname.indexOf('/wechat/') === -1) {
         dispatch({ type: 'login/queryLoggedUser' });
         // 30秒定时
-        setInterval(() => dispatch({ type: 'login/queryLoggedUser' }), 3000);
+        setInterval(() => dispatch({ type: 'login/queryLoggedUser' }), 30 * 1000);
       } else {
         if (pathname.indexOf('/wechat/') > -1) {
           return;

@@ -39,6 +39,17 @@ const entries = [
   wechatUser,
 }))
 class UserCenter extends PureComponent {
+  componentDidMount() {
+    this.queryWechatUser();
+    this.timer = setInterval(() => this.queryWechatUser(), 3000);
+  }
+
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+
   handleLink = link => {
     const { wechatUser } = this.props;
     if (!wechatUser.id) {
@@ -67,43 +78,41 @@ class UserCenter extends PureComponent {
     return (
       <DocumentTitle title="个人中心">
         <Fragment>
-          <PullToRefresh onRefresh={() => this.queryWechatUser()}>
-            <section className={styles.header}>
-              <div className={styles.info}>
-                <img alt={username} src={avatar || defaultAvatar} />
-                {!id ? <p style={{ color: '#00c7bd' }}>未登录</p> : <p>{username}</p>}
+          <section className={styles.header}>
+            <div className={styles.info}>
+              <img alt={username} src={avatar || defaultAvatar} />
+              {!id ? <p style={{ color: '#00c7bd' }}>未登录</p> : <p>{username}</p>}
+            </div>
+            <div>
+              <Flex>
+                <Flex.Item>
+                  <div className={styles.integral}>
+                    <p className={`${styles.number} ${styles.rest}`}>{restIntegral || 0}</p>
+                    <p>可使用</p>
+                  </div>
+                </Flex.Item>
+                <Flex.Item>
+                  <div className={styles.integral}>
+                    <p className={`${styles.number} ${styles.used}`}>{usedIntegral || 0}</p>
+                    <p>已兑换</p>
+                  </div>
+                </Flex.Item>
+              </Flex>
+            </div>
+          </section>
+          <WhiteSpace size="lg" />
+          <section className={styles.content}>
+            {entries.map(item => (
+              <div
+                key={item.title}
+                className={styles.item}
+                onClick={() => this.handleLink(item.link)}
+              >
+                <img className={styles.icon} src={item.icon} alt={item.title} />
+                <p className={styles.title}>{item.title}</p>
               </div>
-              <div>
-                <Flex>
-                  <Flex.Item>
-                    <div className={styles.integral}>
-                      <p className={`${styles.number} ${styles.rest}`}>{restIntegral || 0}</p>
-                      <p>可使用</p>
-                    </div>
-                  </Flex.Item>
-                  <Flex.Item>
-                    <div className={styles.integral}>
-                      <p className={`${styles.number} ${styles.used}`}>{usedIntegral || 0}</p>
-                      <p>已兑换</p>
-                    </div>
-                  </Flex.Item>
-                </Flex>
-              </div>
-            </section>
-            <WhiteSpace size="lg" />
-            <section className={styles.content}>
-              {entries.map(item => (
-                <div
-                  key={item.title}
-                  className={styles.item}
-                  onClick={() => this.handleLink(item.link)}
-                >
-                  <img className={styles.icon} src={item.icon} alt={item.title} />
-                  <p className={styles.title}>{item.title}</p>
-                </div>
-              ))}
-            </section>
-          </PullToRefresh>
+            ))}
+          </section>
         </Fragment>
       </DocumentTitle>
     );
