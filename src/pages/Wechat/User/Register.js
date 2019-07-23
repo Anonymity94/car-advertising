@@ -18,6 +18,7 @@ import request from '@/utils/request';
 import Prompt from 'umi/prompt';
 import { Upload, Input } from 'antd';
 import { phoneReg, showError } from '@/utils/utils';
+import storage from '@/utils/storage';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
@@ -64,7 +65,7 @@ import {
  * @param {*} loading loading
  */
 export function handleUpload(files, type, state, loading) {
-  const { onUpload, dispatch } = this.props;
+  const { onUpload, dispatch, form } = this.props;
   if (type === 'add') {
     const { file } = files[files.length - 1];
 
@@ -85,6 +86,11 @@ export function handleUpload(files, type, state, loading) {
       if (success) {
         Toast.loading('上传成功，加载中...', 0);
         const imageUrl = result.url;
+        // 刷新form内容值
+        form.setFieldsValue({
+          [state]: imageUrl,
+        });
+        // 填充state
         this.setState(
           {
             [state]: imageUrl,
@@ -120,6 +126,7 @@ export function renderUploadHtml(item) {
     form: { getFieldDecorator },
     // eslint-disable-next-line react/no-this-in-sfc
   } = this.props;
+
   return (
     <section className={styles.field}>
       <p className={styles.uploadText}>{item.placeholder}</p>
@@ -181,15 +188,61 @@ const steps = [
   },
 ];
 
+const LOCAL_USER_INFO = 'local_user_info';
+const LOCAL_IDCARD_INFO = 'local_idcard_info';
+const LOCAL_CAR_INFO = 'local_car_info';
+
+/**
+ * 循环保存临时数据到本地浏览器
+ * @param {String} key key
+ * @param {Object} form
+ * @param {Object} oldValue 老数据
+ */
+const saveValueToStorage = (key, form, oldValue) => {
+  form.validateFields((error, values) => {
+    storage.put(key, JSON.stringify({ ...oldValue, ...values }));
+  });
+};
+
 export const UserInfoForm = createForm()(
   class FormWrapper extends React.Component {
-    state = {
-      count: 0,
-      phoneCaptcha: '',
-    };
+    constructor(props) {
+      super(props);
+      this.state = {
+        count: 0,
+        phoneCaptcha: '',
+
+        historyValue: {},
+      };
+    }
+
+    componentDidMount() {
+      // 只有在注册页面才开始循环保存
+      const { pathname } = window.location;
+      const localValue = storage.get(LOCAL_USER_INFO);
+      const historyValue = localValue ? JSON.parse(localValue) : {};
+      const isRegisterPage = pathname === '/h5/user/register';
+      this.setState({
+        historyValue,
+      });
+
+      if (isRegisterPage) {
+        setTimeout(() => {
+          const { form } = this.props;
+          this.saveToStorageLooper = setInterval(() => {
+            saveValueToStorage(LOCAL_USER_INFO, form, historyValue);
+          }, 2000);
+        }, 0);
+      }
+    }
 
     componentWillUnmount() {
-      clearInterval(this.interval);
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+      if (this.saveToStorageLooper) {
+        clearInterval(this.saveToStorageLooper);
+      }
     }
 
     runGetCaptchaCountDown = () => {
@@ -244,7 +297,7 @@ export const UserInfoForm = createForm()(
     };
 
     render() {
-      const { count } = this.state;
+      const { count, historyValue } = this.state;
       const { form, phone } = this.props;
       const { getFieldProps } = form;
       return (
@@ -254,6 +307,7 @@ export const UserInfoForm = createForm()(
               placeholder="请输入您的姓名（不可修改）"
               className="required"
               {...getFieldProps('username', {
+                initialValue: historyValue.username || '',
                 validateFirst: true,
                 rules: [{ required: true, whitespace: true, message: '请输入您的姓名' }],
               })}
@@ -274,7 +328,7 @@ export const UserInfoForm = createForm()(
               placeholder="请输入手机号码"
               className="required"
               {...getFieldProps('phone', {
-                initialValue: phone || '',
+                initialValue: phone || historyValue.phone || '',
                 validateFirst: true,
                 rules: [
                   { required: true, whitespace: true, message: '请输入手机号码' },
@@ -329,6 +383,7 @@ export const UserInfoForm = createForm()(
               placeholder="请输入您的身份证号"
               className="required"
               {...getFieldProps('idcard', {
+                initialValue: historyValue.idcard || '',
                 validateFirst: true,
                 rules: [{ required: true, whitespace: true, message: '请输入您的身份证号' }],
               })}
@@ -359,21 +414,52 @@ export const IdcardForm = createForm()(
   class FormWrapper extends React.Component {
     constructor(props) {
       super(props);
+      const { pathname } = window.location;
+      const isRegisterPage = pathname === '/h5/user/register';
+
+      const localValue = storage.get(LOCAL_IDCARD_INFO);
+      const historyValue = localValue ? JSON.parse(localValue) : {};
 
       const { idcardBackImage, idcardFrontImage } = this.props;
 
       this.state = {
         // 反面，人像面
         idcardBackImageLoading: false,
-        idcardBackImage: idcardBackImage || '',
+        idcardBackImage: isRegisterPage
+          ? historyValue.idcardBackImage || ''
+          : idcardBackImage || '',
 
         // 正面，国徽面
         idcardFrontImageLoading: false,
-        idcardFrontImage: idcardFrontImage || '',
+        idcardFrontImage: isRegisterPage
+          ? historyValue.idcardFrontImage || ''
+          : idcardFrontImage || '',
+
+        historyValue,
+        isRegisterPage,
       };
 
       this.renderUploadHtml = renderUploadHtml.bind(this);
       this.handleUpload = handleUpload.bind(this);
+    }
+
+    componentDidMount() {
+      // 只有在注册页面才开始循环保存
+      const { isRegisterPage, historyValue } = this.state;
+      if (isRegisterPage) {
+        setTimeout(() => {
+          const { form } = this.props;
+          this.saveToStorageLooper = setInterval(() => {
+            saveValueToStorage(LOCAL_IDCARD_INFO, form, historyValue);
+          }, 2000);
+        }, 0);
+      }
+    }
+
+    componentWillUnmount() {
+      if (this.saveToStorageLooper) {
+        clearInterval(this.saveToStorageLooper);
+      }
     }
 
     handleOk = () => {
@@ -431,23 +517,53 @@ export const CarForm = createForm()(
   class FormWrapper extends React.Component {
     constructor(props) {
       super(props);
+      const { pathname } = window.location;
+      const isRegisterPage = pathname === '/h5/user/register';
+
+      const localValue = storage.get(LOCAL_CAR_INFO);
+      const historyValue = localValue ? JSON.parse(localValue) : {};
+
       const { carCodeImage, driverLicenseImage, carImage } = this.props;
       this.state = {
+        isRegisterPage,
+        historyValue,
+
         // 行驶证照片
         carCodeLoading: false,
-        carCodeImage: carCodeImage || '',
+        carCodeImage: isRegisterPage ? historyValue.carCodeImage || '' : carCodeImage || '',
 
         // 驾驶证照片
         driverLicenseLoading: false,
-        driverLicenseImage: driverLicenseImage || '',
+        driverLicenseImage: isRegisterPage
+          ? historyValue.driverLicenseImage || ''
+          : driverLicenseImage || '',
 
         // 车辆照片
         carImageLoading: false,
-        carImage: carImage || '',
+        carImage: isRegisterPage ? historyValue.carImage || '' : carImage || '',
       };
 
       this.renderUploadHtml = renderUploadHtml.bind(this);
       this.handleUpload = handleUpload.bind(this);
+    }
+
+    componentDidMount() {
+      // 只有在注册页面才开始循环保存
+      const { isRegisterPage, historyValue } = this.state;
+      if (isRegisterPage) {
+        setTimeout(() => {
+          const { form } = this.props;
+          this.saveToStorageLooper = setInterval(() => {
+            saveValueToStorage(LOCAL_CAR_INFO, form, historyValue);
+          }, 2000);
+        }, 0);
+      }
+    }
+
+    componentWillUnmount() {
+      if (this.saveToStorageLooper) {
+        clearInterval(this.saveToStorageLooper);
+      }
     }
 
     handleOk = () => {
@@ -474,6 +590,7 @@ export const CarForm = createForm()(
     render() {
       const { form, showinfo = true, showbtn = true } = this.props;
       const { getFieldProps } = form;
+      const { historyValue } = this.state;
 
       const renderUpload = [
         {
@@ -506,6 +623,7 @@ export const CarForm = createForm()(
                   placeholder="请输入车辆类型"
                   className="required"
                   {...getFieldProps('carType', {
+                    initialValue: historyValue.carType || '',
                     validateFirst: true,
                     rules: [{ required: true, whitespace: true, message: '请输入车辆类型' }],
                   })}
@@ -516,6 +634,7 @@ export const CarForm = createForm()(
                   placeholder="请输入行驶证号"
                   className="required"
                   {...getFieldProps('carCode', {
+                    initialValue: historyValue.carCode || '',
                     validateFirst: true,
                     rules: [{ required: true, whitespace: true, message: '请输入行驶证号' }],
                   })}
@@ -658,6 +777,13 @@ class Register extends PureComponent {
                 ...values,
                 status: 0, // 注册就是其实修改信息，把状态修改成未审核的状态
               },
+            }).then(success => {
+              if (success) {
+                // 注册成功了，清除所有的key
+                storage.remove(LOCAL_USER_INFO);
+                storage.remove(LOCAL_IDCARD_INFO);
+                storage.remove(LOCAL_CAR_INFO);
+              }
             });
           },
         },
