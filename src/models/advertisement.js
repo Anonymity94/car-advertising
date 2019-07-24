@@ -11,6 +11,7 @@ import {
   topAd,
   deleteAd,
   queryAdContent,
+  checkUserSigningState,
 } from '@/services/advertisement';
 import { PUBLISH_STATE_NO } from '@/common/constants';
 
@@ -171,6 +172,12 @@ export default modelExtend(model, {
         message.error('删除失败');
       }
       return success;
+    },
+    /**
+     * 检查某个人是否可以再次签约某个广告
+     */
+    *checkUserSigningState({ payload }, { call }) {
+      return yield call(checkUserSigningState, payload);
     },
   },
 });

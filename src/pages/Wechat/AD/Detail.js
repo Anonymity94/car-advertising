@@ -6,7 +6,7 @@ import Loading from '@/components/Loading';
 import { countFormatter } from '@/utils/utils';
 
 import router from 'umi/router';
-import { Modal } from 'antd-mobile';
+import { Modal, Toast } from 'antd-mobile';
 import Empty from '@/components/Empty';
 import {
   PUBLISH_STATE_YES,
@@ -24,12 +24,38 @@ import styles from '../article.less';
 }))
 class Detail extends PureComponent {
   state = {
-    refreshing: false,
+    canSigning: true, // 是否可以签约
   };
 
   componentDidMount() {
     this.getAdContent();
+    this.checkUserSigningState();
   }
+
+  checkUserSigningState = () => {
+    const {
+      dispatch,
+      match: { params },
+      userInfo,
+    } = this.props;
+
+    if (!userInfo.id) return;
+
+    dispatch({
+      type: 'adModel/checkUserSigningState',
+      payload: {
+        id: params.id,
+      },
+    }).then(({ success, result }) => {
+      if (success) {
+        this.setState({
+          canSigning: result,
+        });
+      } else {
+        Toast.fail('检查签约情况失败', 2);
+      }
+    });
+  };
 
   getAdContent = () => {
     const {
@@ -45,12 +71,8 @@ class Detail extends PureComponent {
     });
   };
 
-  // 下拉刷新
-  pullDownRefresh = () => {
-    console.log('下拉刷新');
-  };
-
   render() {
+    const { canSigning } = this.state;
     const { queryLoading, detail, userInfo } = this.props;
 
     if (queryLoading) {
@@ -128,6 +150,21 @@ class Detail extends PureComponent {
         );
       }
 
+      if (!canSigning) {
+        return (
+          <span
+            className={styles.btn}
+            onClick={() => {
+              Modal.alert('无法签约', '您已经签约过这个广告', [
+                { text: '知道了', onPress: () => {}, style: 'default' },
+              ]);
+            }}
+          >
+            已签约
+          </span>
+        );
+      }
+
       return (
         <span className={styles.btn} onClick={() => router.push(`/h5/ads/${detail.id}/signing`)}>
           立即签约
@@ -146,7 +183,9 @@ class Detail extends PureComponent {
                 <p className={styles.author}>
                   {detail.operator}/{moment(detail.createTime).format('YYYY-MM-DD')}
                 </p>
-                <p className={styles.visit}>阅读{countFormatter((detail.visitCount || 0) * 3200)}</p>
+                <p className={styles.visit}>
+                  阅读{countFormatter((detail.visitCount || 0) * 3200)}
+                </p>
               </div>
             </div>
             {/* 内容 */}

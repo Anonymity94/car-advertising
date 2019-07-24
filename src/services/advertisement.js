@@ -86,6 +86,16 @@ export async function deleteAd({ id }) {
 }
 
 /**
+ * 检查广告的签约情况
+ * @param {String} id
+ */
+export async function checkUserSigningState({ id }) {
+  return request(`/api/poster/${id}/check-signing`, {
+    method: 'GET',
+  });
+}
+
+/**
  * 查询广告签约详情
  */
 export async function queryAdSigningDetail({ id }) {
