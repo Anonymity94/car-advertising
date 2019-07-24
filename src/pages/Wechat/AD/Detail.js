@@ -146,7 +146,7 @@ class Detail extends PureComponent {
                 <p className={styles.author}>
                   {detail.operator}/{moment(detail.createTime).format('YYYY-MM-DD')}
                 </p>
-                <p className={styles.visit}>阅读{countFormatter(detail.visitCount)}</p>
+                <p className={styles.visit}>阅读{countFormatter((detail.visitCount || 0) * 3200)}</p>
               </div>
             </div>
             {/* 内容 */}

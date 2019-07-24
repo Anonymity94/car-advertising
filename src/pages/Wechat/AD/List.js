@@ -31,7 +31,7 @@ const ColumnList = memo(({ list }) => (
             extra={
               <div className={styles.extra}>
                 <img className={styles.icon} src={signingIcon} alt="签约人数" />
-                {countFormatter(item.signingCount)}
+                {countFormatter((item.signingCount || 0) * 200)}
               </div>
             }
           />

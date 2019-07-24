@@ -14,6 +14,7 @@ import Empty from '@/components/Empty';
 
 import router from 'umi/router';
 import styles from '../article.less';
+import { countFormatter } from '@/utils/utils';
 
 @connect(({ activityModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
@@ -213,7 +214,7 @@ class Detail extends PureComponent {
                 <p className={styles.author}>
                   {detail.company}/{moment(detail.createTime).format('YYYY-MM-DD')}
                 </p>
-                <p className={styles.visit}>阅读{detail.visitCount}</p>
+                <p className={styles.visit}>阅读{countFormatter((detail.visitCount || 0) * 500)}</p>
               </div>
             </div>
             {/* 内容 */}
