@@ -104,7 +104,7 @@ class Info extends PureComponent {
     // 粘贴xxx天后，才可以结算
     const { pasteTime } = settleDetail;
     // 是否显示结算按钮
-    let showFlag = true;
+    const showFlag = true;
     // 可以显示结算按钮
     if (pasteTime) {
       const pasteTimeString = moment(pasteTime).format('YYYY-MM-DD');
@@ -113,7 +113,7 @@ class Info extends PureComponent {
       // 如果当前日期，在粘贴时间30之前，不应该显示结算按钮
       if (moment(someDayAfter) - moment(today) > 0) {
         // 暂时不做判断，方便测试
-        showFlag = false;
+        // showFlag = false;
       }
     }
 

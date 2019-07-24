@@ -83,14 +83,7 @@ class Detail extends PureComponent {
 
   showReason = () => {
     const { userInfo } = this.props;
-    if (!userInfo.id) {
-      Modal.alert('无法兑换', '尚未登录', [
-        { text: '知道了', onPress: () => {} },
-        { text: '立即登录', onPress: () => router.push('/h5/user/bind'), style: 'default' },
-      ]);
-    }
-
-    if (userInfo.id && userInfo.status === AUDIT_STATE_NO_REGISTER) {
+    if (!userInfo.id || userInfo.status === AUDIT_STATE_NO_REGISTER) {
       Modal.alert('无法兑换', '尚未注册会员', [
         { text: '知道了', onPress: () => {}, style: 'default' },
         { text: '立即注册', onPress: () => router.push('/h5/user/register'), style: 'default' },
@@ -100,10 +93,15 @@ class Detail extends PureComponent {
     if (userInfo.id && userInfo.status === AUDIT_STATE_REFUSE) {
       Modal.alert('无法兑换', '注册申请未通过', [
         { text: '知道了', onPress: () => {}, style: 'default' },
+        {
+          text: '重新注册',
+          onPress: () => router.push('/h5/user/register'),
+          style: 'default',
+        },
       ]);
     }
     if (userInfo.id && (userInfo.status === AUDIT_STATE_UNREVIEWED || !userInfo.status)) {
-      Modal.alert('无法兑换', '注册信息审核中', [
+      Modal.alert('无法兑换', '注册信息审核中，审核通过后才可以兑换', [
         { text: '知道了', onPress: () => {}, style: 'default' },
       ]);
     }

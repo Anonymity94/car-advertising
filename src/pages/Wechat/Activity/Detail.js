@@ -132,22 +132,7 @@ class Detail extends PureComponent {
 
     const renderOperateBtn = () => {
       const { id, status } = userInfo;
-      if (!id) {
-        return (
-          <span
-            className={styles.btnCancel}
-            onClick={() => {
-              Modal.alert('无法参与', '尚未登录', [
-                { text: '知道了', onPress: () => {} },
-                { text: '立即登录', onPress: () => router.push('/h5/user/bind'), style: 'default' },
-              ]);
-            }}
-          >
-            未登录
-          </span>
-        );
-      }
-      if (status === AUDIT_STATE_NO_REGISTER) {
+      if (!id || status === AUDIT_STATE_NO_REGISTER) {
         return (
           <span
             className={styles.btnCancel}
@@ -162,7 +147,7 @@ class Detail extends PureComponent {
               ]);
             }}
           >
-            未注册会员
+            尚未注册
           </span>
         );
       }
@@ -171,7 +156,7 @@ class Detail extends PureComponent {
           <span
             className={styles.btnCancel}
             onClick={() => {
-              Modal.alert('无法参与', '注册信息审核中', [
+              Modal.alert('无法参与', '注册信息审核中，审核通过后才可以参与', [
                 { text: '知道了', onPress: () => {}, style: 'default' },
               ]);
             }}
@@ -187,6 +172,11 @@ class Detail extends PureComponent {
             onClick={() => {
               Modal.alert('无法参与', '注册申请未通过', [
                 { text: '知道了', onPress: () => {}, style: 'default' },
+                {
+                  text: '重新注册',
+                  onPress: () => router.push('/h5/user/register'),
+                  style: 'default',
+                },
               ]);
             }}
           >
