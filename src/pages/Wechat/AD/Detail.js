@@ -95,6 +95,18 @@ class Detail extends PureComponent {
       );
     }
 
+    if (
+      detail.signingExpireTime &&
+      !moment(detail.signingExpireTime).isAfter(moment().format('YYYY-MM-DD'))
+    ) {
+      // 如果存在签约截至时间，并且截至日期不在今天之后，就不能签约了
+      return (
+        <Fragment>
+          <Empty text="已达广告签约截止日，无法签约" />
+        </Fragment>
+      );
+    }
+
     const renderOperateBtn = () => {
       const { id, status } = userInfo;
       if (!id || status === AUDIT_STATE_NO_REGISTER) {
