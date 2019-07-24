@@ -1,0 +1,170 @@
+@import '~@/utils/utils.less';
+@import '~@/wechat.less';
+
+.article {
+  .header {
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #ececec;
+
+    .title {
+      font-size: 16px;
+      color: @color-base;
+      margin-bottom: 10px;
+    }
+    .caption {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: @color-caption;
+    }
+  }
+  .content {
+    padding-bottom: 80px;
+    img {
+      display: block;
+      width: auto !important;
+      max-width: 90% !important;
+      height: auto !important;
+      margin: 10px auto;
+    }
+    p {
+      line-height: 1.8 !important;
+    }
+    .divider {
+      color: @color-base;
+      margin: 20px 0 10px !important;
+      font-weight: bold;
+    }
+  }
+
+  &.ad {
+    // 页面底部的签约按钮等
+    .operate {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      line-height: 60px;
+      background: #fff;
+
+      .operateItem {
+        width: 50%;
+        text-align: center;
+        font-size: 16px;
+        .integral {
+          color: rgb(255, 52, 52);
+          font-weight: bold;
+          padding: 0 4px;
+        }
+        .btn {
+          display: block;
+          background: rgb(255, 52, 52);
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  &.activity {
+    // 页面底部的参与按钮
+    .operate {
+      position: fixed;
+      bottom: 10px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      line-height: 50px;
+
+      .operateItem {
+        width: 90%;
+        text-align: center;
+        font-size: 16px;
+        margin: 0 auto;
+        & > span {
+          border-radius: 4px;
+          display: block;
+        }
+
+        .btnCancel {
+          background: rgb(231, 223, 222);
+        }
+
+        .btnOk {
+          background: rgb(255, 52, 52);
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  &.goods {
+    .header {
+      margin-bottom: 20px;
+      border-radius: 6px;
+      background: #fff;
+      padding-bottom: 0 !important;
+      border: none;
+
+      & > img {
+        height: 150px;
+        width: 100%;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+      }
+
+      .info {
+        min-height: 90px;
+        padding: 20px;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+
+        .title {
+          font-size: 16px;
+          color: @color-base;
+
+          & > span {
+            color: rgb(255, 52, 52);
+            margin-left: 20px;
+          }
+        }
+        .businessName {
+          font-size: 14px;
+          color: @color-caption;
+        }
+
+        .right {
+          position: relative;
+          right: 0;
+          top: 10px;
+
+          & > span {
+            display: inline-block;
+            min-width: 68px;
+            height: 25px;
+            border-radius: 25px / 2;
+            border: 1px solid @color-caption;
+            color: @color-caption;
+            text-align: center;
+            line-height: 25px;
+            padding: 0 8px;
+
+            &.active {
+              border: 1px solid @color-primary;
+              color: @color-primary;
+            }
+          }
+        }
+      }
+    }
+    .content{
+      padding-bottom: 20px;
+    }
+  }
+}

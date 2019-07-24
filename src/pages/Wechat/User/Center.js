@@ -42,7 +42,7 @@ const entries = [
 }))
 class UserCenter extends PureComponent {
   componentDidMount() {
-    this.wechatLogin();
+    // this.wechatLogin();
     this.timer = setInterval(() => this.queryWechatUser(), 3000);
   }
 

@@ -13,7 +13,7 @@ import {
 } from '@/common/constants';
 
 import router from 'umi/router';
-import styles from './styles.less';
+import styles from '../article.less';
 
 @connect(({ goodsModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
@@ -191,42 +191,40 @@ class Detail extends PureComponent {
     return (
       <DocumentTitle title="积分商品详情">
         <Fragment>
-          <div className={styles.wrap}>
-            <div className={styles.article}>
-              {/* 标题 */}
-              <div className={styles.header}>
-                <img src={detail.image} alt={detail.name} />
-                <div className={styles.info}>
-                  <div className={styles.left}>
-                    <h2 className={styles.title}>
-                      {detail.name}
-                      <span>{detail.integral}积分</span>
-                    </h2>
-                    <p className={styles.businessName}>{detail.businessName}</p>
-                  </div>
-                  <div className={styles.right}>
-                    {userInfo.id && userInfo.status === AUDIT_STATE_PASSED ? (
-                      <span
-                        className={isExchanged ? '' : styles.active}
-                        onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
-                      >
-                        {isExchanged === false ? '兑换' : '已兑换'}
-                      </span>
-                    ) : (
-                      <span onClick={() => this.showReason()}>无法兑换</span>
-                    )}
-                  </div>
+          <div className={`${styles.article} ${styles.goods}`}>
+            {/* 标题 */}
+            <div className={styles.header}>
+              <img src={detail.image} alt={detail.name} />
+              <div className={styles.info}>
+                <div className={styles.left}>
+                  <h2 className={styles.title}>
+                    {detail.name}
+                    <span>{detail.integral}积分</span>
+                  </h2>
+                  <p className={styles.businessName}>{detail.businessName}</p>
+                </div>
+                <div className={styles.right}>
+                  {userInfo.id && userInfo.status === AUDIT_STATE_PASSED ? (
+                    <span
+                      className={isExchanged ? '' : styles.active}
+                      onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
+                    >
+                      {isExchanged === false ? '兑换' : '已兑换'}
+                    </span>
+                  ) : (
+                    <span onClick={() => this.showReason()}>无法兑换</span>
+                  )}
                 </div>
               </div>
-              {/* 内容 */}
-              <div className={styles.content}>
-                {/* 活动内容 */}
-                <p className={styles.divider}>取货地址</p>
-                <div dangerouslySetInnerHTML={{ __html: `${detail.address}` }} />
+            </div>
+            {/* 内容 */}
+            <div className={styles.content}>
+              {/* 活动内容 */}
+              <p className={styles.divider}>取货地址</p>
+              <div dangerouslySetInnerHTML={{ __html: `${detail.address}` }} />
 
-                <p className={styles.divider}>商品内容</p>
-                <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
-              </div>
+              <p className={styles.divider}>商品内容</p>
+              <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
             </div>
           </div>
         </Fragment>

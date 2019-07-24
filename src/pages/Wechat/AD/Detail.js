@@ -7,7 +7,6 @@ import { countFormatter } from '@/utils/utils';
 
 import router from 'umi/router';
 import { Modal } from 'antd-mobile';
-import styles from './styles.less';
 import Empty from '@/components/Empty';
 import {
   PUBLISH_STATE_YES,
@@ -15,6 +14,8 @@ import {
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_NO_REGISTER,
 } from '@/common/constants';
+
+import styles from '../article.less';
 
 @connect(({ adModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   userInfo,
@@ -137,37 +138,33 @@ class Detail extends PureComponent {
     return (
       <DocumentTitle title={detail.title}>
         <Fragment>
-          <div className={`${styles.wrap} ${styles.detail}`}>
-            <div className={styles.article}>
-              {/* 标题 */}
-              <div className={styles.header}>
-                <h2 className={styles.title}>{detail.title}</h2>
-                <div className={styles.caption}>
-                  <p className={styles.author}>
-                    {detail.operator}/{moment(detail.createTime).format('YYYY-MM-DD')}
-                  </p>
-                  <p className={styles.visit}>阅读{countFormatter(detail.visitCount)}</p>
-                </div>
+          <div className={`${styles.article} ${styles.ad}`}>
+            {/* 标题 */}
+            <div className={styles.header}>
+              <h2 className={styles.title}>{detail.title}</h2>
+              <div className={styles.caption}>
+                <p className={styles.author}>
+                  {detail.operator}/{moment(detail.createTime).format('YYYY-MM-DD')}
+                </p>
+                <p className={styles.visit}>阅读{countFormatter(detail.visitCount)}</p>
               </div>
-              {/* 内容 */}
-              <div className={styles.content}>
-                {/* 内容列表图片 */}
-                {Array.isArray(detail.cover) &&
-                  detail.cover.map(img => <img src={img} alt="图片" />)}
-                {/* 广告内容 */}
-                <p className={styles.divider}>广告内容</p>
-                <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
+            </div>
+            {/* 内容 */}
+            <div className={styles.content}>
+              {/* 内容列表图片 */}
+              {Array.isArray(detail.cover) && detail.cover.map(img => <img src={img} alt="图片" />)}
+              {/* 广告内容 */}
+              <p className={styles.divider}>广告内容</p>
+              <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
 
-                <p className={styles.divider}>积分说明</p>
-                <div dangerouslySetInnerHTML={{ __html: `${detail.remark}` }} />
-
+              <p className={styles.divider}>积分说明</p>
+              <div dangerouslySetInnerHTML={{ __html: `${detail.remark}` }} />
+            </div>
+            <div className={styles.operate}>
+              <div className={styles.operateItem}>
+                签约可获<span className={styles.integral}>{detail.integral}</span>积分
               </div>
-              <div className={styles.operate}>
-                <div className={styles.operateItem}>
-                  签约可获<span className={styles.integral}>{detail.integral}</span>积分
-                </div>
-                <div className={styles.operateItem}>{renderOperateBtn()}</div>
-              </div>
+              <div className={styles.operateItem}>{renderOperateBtn()}</div>
             </div>
           </div>
         </Fragment>

@@ -13,7 +13,7 @@ import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
 
 import router from 'umi/router';
-import styles from './styles.less';
+import styles from '../article.less';
 
 @connect(({ activityModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
@@ -205,31 +205,29 @@ class Detail extends PureComponent {
     return (
       <DocumentTitle title={detail.title}>
         <Fragment>
-          <div className={`${styles.wrap} ${styles.detail}`}>
-            <div className={styles.article}>
-              {/* 标题 */}
-              <div className={styles.header}>
-                <h2 className={styles.title}>{detail.title}</h2>
-                <div className={styles.caption}>
-                  <p className={styles.author}>
-                    {detail.company}/{moment(detail.createTime).format('YYYY-MM-DD')}
-                  </p>
-                  <p className={styles.visit}>阅读{detail.visitCount}</p>
-                </div>
+          <div className={`${styles.article} ${styles.activity}`}>
+            {/* 标题 */}
+            <div className={styles.header}>
+              <h2 className={styles.title}>{detail.title}</h2>
+              <div className={styles.caption}>
+                <p className={styles.author}>
+                  {detail.company}/{moment(detail.createTime).format('YYYY-MM-DD')}
+                </p>
+                <p className={styles.visit}>阅读{detail.visitCount}</p>
               </div>
-              {/* 内容 */}
-              <div className={styles.content}>
-                {/* 活动内容 */}
-                <p className={styles.divider}>活动内容</p>
-                <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
+            </div>
+            {/* 内容 */}
+            <div className={styles.content}>
+              {/* 活动内容 */}
+              <p className={styles.divider}>活动内容</p>
+              <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
 
-                <p className={styles.divider}>参与方式</p>
-                <div dangerouslySetInnerHTML={{ __html: `${detail.participation}` }} />
-              </div>
+              <p className={styles.divider}>参与方式</p>
+              <div dangerouslySetInnerHTML={{ __html: `${detail.participation}` }} />
+            </div>
 
-              <div className={styles.operate}>
-                <div className={styles.operateItem}>{renderOperateBtn()}</div>
-              </div>
+            <div className={styles.operate}>
+              <div className={styles.operateItem}>{renderOperateBtn()}</div>
             </div>
           </div>
         </Fragment>
