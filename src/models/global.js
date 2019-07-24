@@ -1,4 +1,5 @@
 import { WECHAT_APPID } from '@/common/constants';
+import { upload } from '@/services/api';
 
 export default {
   namespace: 'global',
@@ -7,7 +8,11 @@ export default {
     collapsed: false,
   },
 
-  effects: {},
+  effects: {
+    *upload({ payload }, { call }) {
+      return yield call(upload, payload);
+    },
+  },
 
   reducers: {
     changeState(state, { payload }) {

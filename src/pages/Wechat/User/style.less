@@ -51,14 +51,18 @@
     padding-left: 20px;
   }
 
+  @height: 160px;
+  @width: 250px;
+
   .uploadWrap {
-    width: 250px;
-    height: 160px;
+    width: @width;
+    height: @height;
     background-size: contain;
     margin: 38px auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     .demo {
       width: 214px;
@@ -68,6 +72,41 @@
       position: absolute;
       width: 58px;
       height: 58px;
+    }
+
+    :global {
+      .am-image-picker {
+        width: @width;
+        height: @height;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .am-image-picker-list {
+        width: @width;
+        height: @height;
+        position: absolute;
+        overflow: hidden;
+        padding: 0;
+        margin-bottom: 0;
+      }
+      .am-flexbox-item {
+        height: @height;
+      }
+      .am-image-picker-item {
+        position: absolute;
+        top: 0;
+        width: @width;
+        transform: translateY(0);
+      }
+      .am-image-picker-upload-btn {
+        border: none;
+        background: transparent;
+        &::after,
+        &::before {
+          display: none;
+        }
+      }
     }
   }
 }
@@ -80,6 +119,7 @@
   background: #666;
   opacity: 0.43;
   border-radius: 10px;
+  text-align: center;
   .icon {
     position: relative;
     top: 50%;

@@ -35,6 +35,7 @@ class UserInfo extends PureComponent {
       type: 'driverModel/queryDriverDetail',
       payload: {
         id: wechatUser.id,
+        from: 'queryWechatUser',
       },
     });
   };
@@ -57,6 +58,8 @@ class UserInfo extends PureComponent {
     }).then(success => {
       if (!success) {
         Toast.fail('修改失败', 1);
+        // 跳转至等待审核状态
+        router.push('/h5/user/waiting');
       } else {
         Toast.success('修改成功', 1);
         this.queryDriverDetail();
@@ -65,7 +68,7 @@ class UserInfo extends PureComponent {
   };
 
   render() {
-    const { loading, detail, wechatUser } = this.props;
+    const { loading, detail, wechatUser, dispatch } = this.props;
     if (loading) {
       return <Loading />;
     }
@@ -111,6 +114,7 @@ class UserInfo extends PureComponent {
               >
                 <div className={styles.item}>
                   <IdcardForm
+                    dispatch={dispatch}
                     idcardBackImage={detail.idcardBackImage}
                     idcardFrontImage={detail.idcardFrontImage}
                     showbtn={false}
@@ -119,6 +123,7 @@ class UserInfo extends PureComponent {
                 </div>
                 <div className={styles.item}>
                   <CarForm
+                    dispatch={dispatch}
                     carCodeImage={detail.carCodeImage}
                     driverLicenseImage={detail.driverLicenseImage}
                     carImage={detail.carImage}
