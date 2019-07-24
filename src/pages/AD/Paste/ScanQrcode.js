@@ -4,7 +4,6 @@ import { List, WhiteSpace, Flex, Button, Modal, Toast } from 'antd-mobile';
 import { connect } from 'dva';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
-import PullToRefreshWrap from '@/components/PullToRefresh';
 import {
   AD_PASTE_STATE_PASTED,
   AD_PASTE_STATE_REFUSE,
@@ -128,82 +127,79 @@ class SigningDetail extends PureComponent {
 
     return (
       <DocumentTitle title="广告粘贴审核">
-        <PullToRefreshWrap onRefresh={() => this.queryAdSigningDetail()}>
-          <div className={styles.signingDetail}>
-            <List>
-              <List.Item
-                extra={
-                  <Fragment>
-                    {signingDetail.pasteState === AD_PASTE_STATE_UN_REVIEW && (
-                      <Tag color="#ff9800">待确定</Tag>
-                    )}
-                    {signingDetail.pasteState === AD_PASTE_STATE_UN_PASTED && (
-                      <Tag color="#2db7f5">未粘贴</Tag>
-                    )}
-                    {signingDetail.pasteState === AD_PASTE_STATE_PASTED && (
-                      <Tag color="#87d068">已粘贴</Tag>
-                    )}
-                    {signingDetail.pasteState === AD_PASTE_STATE_REFUSE && (
-                      <Tag color="#f50">拒绝粘贴</Tag>
-                    )}
-                  </Fragment>
-                }
-              >
-                状态
-              </List.Item>
-              <List.Item extra={signingDetail.username}>用户</List.Item>
-              <List.Item extra={signingDetail.createTime}>提交时间</List.Item>
-            </List>
-            <WhiteSpace size="sm" />
-            <List>
-              <List.Item extra={adDetail.title}>广告</List.Item>
-              <List.Item extra={adDetail.company}>机构名称</List.Item>
-              <List.Item extra={`${signingDetail.bonus}元/月`}>签约金额</List.Item>
-              <List.Item extra={signingDetail.signingExpireTime}>签约有效期</List.Item>
-              <List.Item
-                extra={
-                  <Fragment>
-                    {signingDetail.address}
-                    <br />
-                    {signingDetail.beginTime} - {signingDetail.endTime}
-                  </Fragment>
-                }
-              >
-                粘贴地点
-              </List.Item>
-              {!isNot && (
+        <div className={styles.signingDetail}>
+          <List>
+            <List.Item
+              extra={
                 <Fragment>
-                  <List.Item extra={signingDetail.pastePerson}>操作人</List.Item>
-                  <List.Item extra={signingDetail.pasteRemark}>备注</List.Item>
+                  {signingDetail.pasteState === AD_PASTE_STATE_UN_REVIEW && (
+                    <Tag color="#ff9800">待确定</Tag>
+                  )}
+                  {signingDetail.pasteState === AD_PASTE_STATE_UN_PASTED && (
+                    <Tag color="#2db7f5">未粘贴</Tag>
+                  )}
+                  {signingDetail.pasteState === AD_PASTE_STATE_PASTED && (
+                    <Tag color="#87d068">已粘贴</Tag>
+                  )}
+                  {signingDetail.pasteState === AD_PASTE_STATE_REFUSE && (
+                    <Tag color="#f50">拒绝粘贴</Tag>
+                  )}
                 </Fragment>
-              )}
-            </List>
+              }
+            >
+              状态
+            </List.Item>
+            <List.Item extra={signingDetail.username}>用户</List.Item>
+            <List.Item extra={signingDetail.createTime}>提交时间</List.Item>
+          </List>
+          <WhiteSpace size="sm" />
+          <List>
+            <List.Item extra={adDetail.title}>广告</List.Item>
+            <List.Item extra={adDetail.company}>机构名称</List.Item>
+            <List.Item extra={`${signingDetail.bonus}元/月`}>签约金额</List.Item>
+            <List.Item extra={signingDetail.signingExpireTime}>签约有效期</List.Item>
+            <List.Item
+              extra={
+                <Fragment>
+                  {signingDetail.address}
+                  <br />
+                  {signingDetail.beginTime} - {signingDetail.endTime}
+                </Fragment>
+              }
+            >
+              粘贴地点
+            </List.Item>
             {!isNot && (
               <Fragment>
-                <div className={styles.pasteImages}>
-                  {Array.isArray(signingDetail.pasteImages) &&
-                    signingDetail.pasteImages.map(url => (
-                      <div className={styles.imgItem}>
-                        <img src={url} alt="粘贴照片" />
-                      </div>
-                    ))}
-                </div>
+                <List.Item extra={signingDetail.pastePerson}>操作人</List.Item>
+                <List.Item extra={signingDetail.pasteRemark}>备注</List.Item>
               </Fragment>
             )}
-            {(!signingDetail.pasteState ||
-              signingDetail.pasteState === AD_PASTE_STATE_UN_REVIEW) && (
-              <Fragment>
-                <Flex style={{ width: '90%', margin: '20px auto 0' }}>
-                  <Flex.Item>
-                    <Button type="primary" onClick={() => this.handleOk()}>
-                      开始粘贴
-                    </Button>
-                  </Flex.Item>
-                </Flex>
-              </Fragment>
-            )}
-          </div>
-        </PullToRefreshWrap>
+          </List>
+          {!isNot && (
+            <Fragment>
+              <div className={styles.pasteImages}>
+                {Array.isArray(signingDetail.pasteImages) &&
+                  signingDetail.pasteImages.map(url => (
+                    <div className={styles.imgItem}>
+                      <img src={url} alt="粘贴照片" />
+                    </div>
+                  ))}
+              </div>
+            </Fragment>
+          )}
+          {(!signingDetail.pasteState || signingDetail.pasteState === AD_PASTE_STATE_UN_REVIEW) && (
+            <Fragment>
+              <Flex style={{ width: '90%', margin: '20px auto 0' }}>
+                <Flex.Item>
+                  <Button type="primary" onClick={() => this.handleOk()}>
+                    开始粘贴
+                  </Button>
+                </Flex.Item>
+              </Flex>
+            </Fragment>
+          )}
+        </div>
       </DocumentTitle>
     );
   }

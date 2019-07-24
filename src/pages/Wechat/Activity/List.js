@@ -21,9 +21,8 @@ class List extends PureComponent {
 
     this.state = {
       topList: [], // 置顶的
-      waterfallList: [], // 非置顶的
-
       pageData: [], // 页面显示的列表
+      refresh: false,
     };
   }
 
@@ -40,6 +39,9 @@ class List extends PureComponent {
         isPublish: PUBLISH_STATE_YES,
       },
     }).then(({ success, list }) => {
+      this.setState({
+        refresh: false,
+      });
       if (success) {
         const topList = [];
         const waterfallList = [];
@@ -54,7 +56,6 @@ class List extends PureComponent {
         this.setState(
           {
             topList,
-            waterfallList,
             pageData: waterfallList,
           },
           () => {
@@ -65,11 +66,22 @@ class List extends PureComponent {
     });
   };
 
+  handleRefresh = () => {
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.getList();
+      }
+    );
+  };
+
   render() {
     const { queryLoading } = this.props;
-    const { pageData, topList } = this.state;
+    const { pageData, topList, refresh } = this.state;
 
-    if (queryLoading) {
+    if (queryLoading && !refresh) {
       return <Loading />;
     }
 
@@ -85,7 +97,7 @@ class List extends PureComponent {
       <DocumentTitle title="活动中心">
         <Fragment>
           <div className={styles.wrap}>
-            <PullToRefreshWrap onRefresh={() => this.getList()}>
+            <PullToRefreshWrap onRefresh={() => this.handleRefresh()}>
               {topList.length > 0 && (
                 <Carousel autoplay={false} infinite className={styles.carousel}>
                   {topList.map(item => (

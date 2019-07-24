@@ -24,6 +24,10 @@ import PullToRefreshWrap from '@/components/PullToRefresh';
   })
 )
 class AdSigning extends PureComponent {
+  state = {
+    refresh: false,
+  };
+
   componentDidMount() {
     this.getList();
   }
@@ -32,6 +36,10 @@ class AdSigning extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'driverModel/queryUserSignings',
+    }).then(() => {
+      this.setState({
+        refresh: false,
+      });
     });
   };
 
@@ -94,10 +102,22 @@ class AdSigning extends PureComponent {
       });
   };
 
+  handleRefresh = () => {
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.getList();
+      }
+    );
+  };
+
   render() {
+    const { refresh } = this.state;
     const { adSignings, loading } = this.props;
 
-    if (loading) {
+    if (loading && !refresh) {
       return <Loading />;
     }
 
@@ -112,11 +132,11 @@ class AdSigning extends PureComponent {
     return (
       <DocumentTitle title="签约记录">
         <Fragment>
-          <PullToRefreshWrap onRefresh={() => this.getList()}>
+          <PullToRefreshWrap onRefresh={() => this.handleRefresh()}>
             <div className={styles.signing}>
               {adSignings.map(item => (
                 <div className={styles.card}>
-                  <p className={styles.title}>{item.adTitle}</p>
+                  <p className={styles.title}>{item.advTitle || item.title || '[广告已被删除]'}</p>
 
                   <div className={`${styles.extra} ${styles.flex}`}>
                     <span>{moment(item.createTime).format('YYYY-MM-DD')}</span>

@@ -15,6 +15,10 @@ import PullToRefreshWrap from '@/components/PullToRefresh';
   loading: loading.effects['driverModel/queryUserSettlements'],
 }))
 class AdSettlement extends PureComponent {
+  state = {
+    refresh: false,
+  };
+
   componentDidMount() {
     this.getList();
   }
@@ -23,20 +27,36 @@ class AdSettlement extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'driverModel/queryUserSettlements',
+    }).then(() => {
+      this.setState({
+        refresh: false,
+      });
     });
   };
 
+  handleRefresh = () => {
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.getList();
+      }
+    );
+  };
+
   render() {
+    const { refresh } = this.state;
     const { adSettlements, loading } = this.props;
 
-    if (loading) {
+    if (loading && !refresh) {
       return <Loading />;
     }
 
     return (
       <DocumentTitle title="结算记录">
         <Fragment>
-          <PullToRefreshWrap onRefresh={() => this.getList()}>
+          <PullToRefreshWrap onRefresh={() => this.handleRefresh()}>
             <div className={styles.content}>
               {adSettlements.length === 0 ? (
                 <Empty />

@@ -7,7 +7,6 @@ import { Carousel, Card } from 'antd-mobile';
 import { TOP_STATE_YES, PUBLISH_STATE_YES } from '@/common/constants';
 import { countFormatter } from '@/utils/utils';
 import Empty from '@/components/Empty';
-// import Scroll from '@/components/Scroll';
 
 import signingIcon from '../icons/icon_signing@2x.png';
 import styles from './styles.less';
@@ -50,9 +49,9 @@ class List extends PureComponent {
 
     this.state = {
       topList: [], // 置顶的
-      waterfallList: [], // 非置顶的
-
       pageData: [], // 页面显示的列表
+
+      refresh: false,
     };
   }
 
@@ -71,20 +70,20 @@ class List extends PureComponent {
     }).then(({ success, list }) => {
       if (success) {
         const topList = [];
-        const waterfallList = [];
+        const pageData = [];
         list.forEach(item => {
           if (item.isTop === TOP_STATE_YES) {
             topList.push(item);
           } else {
-            waterfallList.push(item);
+            pageData.push(item);
           }
         });
 
         this.setState(
           {
             topList,
-            waterfallList,
-            pageData: waterfallList,
+            pageData,
+            refresh: false,
           },
           () => {
             // this.getMoreData(this.state.page);
@@ -94,15 +93,22 @@ class List extends PureComponent {
     });
   };
 
-  handleOnPullDownRefresh = () => {
-    console.log(3434);
+  handleRefresh = () => {
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.getList();
+      }
+    );
   };
 
   render() {
     const { queryLoading } = this.props;
-    const { pageData, topList } = this.state;
+    const { pageData, topList, refresh } = this.state;
 
-    if (queryLoading) {
+    if (queryLoading && !refresh) {
       return <Loading />;
     }
 
@@ -117,7 +123,7 @@ class List extends PureComponent {
     return (
       <DocumentTitle title="广告签约">
         <div className={styles.wrap}>
-          <PullToRefreshWrap onRefresh={() => this.getList()}>
+          <PullToRefreshWrap onRefresh={() => this.handleRefresh()}>
             {topList.length > 0 && (
               <Carousel autoplay={false} infinite className={styles.carousel}>
                 {topList.map(item => (

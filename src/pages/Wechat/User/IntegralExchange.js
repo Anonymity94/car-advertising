@@ -14,6 +14,10 @@ import PullToRefreshWrap from '@/components/PullToRefresh';
   loading: loading.effects['driverModel/queryUserExchanges'],
 }))
 class IntegralExchange extends PureComponent {
+  state = {
+    refresh: false,
+  };
+
   componentDidMount() {
     this.queryUserExchanges();
   }
@@ -22,20 +26,36 @@ class IntegralExchange extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'driverModel/queryUserExchanges',
+    }).then(() => {
+      this.setState({
+        refresh: false,
+      });
     });
   };
 
+  handleRefresh = () => {
+    this.setState(
+      {
+        refresh: true,
+      },
+      () => {
+        this.getList();
+      }
+    );
+  };
+
   render() {
+    const { refresh } = this.state;
     const { integralExchanges, loading } = this.props;
 
-    if (loading) {
+    if (loading && !refresh) {
       return <Loading />;
     }
 
     return (
       <DocumentTitle title="兑换记录">
         <Fragment>
-          <PullToRefreshWrap onRefresh={() => this.queryUserExchanges()}>
+          <PullToRefreshWrap onRefresh={() => this.handleRefresh()}>
             <div className={styles.content}>
               {integralExchanges.length === 0 ? (
                 <Empty />
