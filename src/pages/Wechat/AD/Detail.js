@@ -49,7 +49,7 @@ class Detail extends PureComponent {
     }).then(({ success, result }) => {
       if (success) {
         this.setState({
-          canSigning: result,
+          canSigning: !result,
         });
       } else {
         Toast.fail('检查签约情况失败', 2);
