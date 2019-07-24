@@ -99,6 +99,41 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
       // 剩余可用积分
       const restIntegral = currentUser.restIntegral || 0;
 
+      const renderContent = () => {
+        if (!exchangeDetail.id) {
+          return <h3 style={{ color: 'red', textAlign: 'center' }}>未找到相关记录</h3>;
+        }
+        if (exchangeDetail.businessId !== currentUser.id) {
+          return (
+            <h3 style={{ color: 'red', textAlign: 'center' }}>不是本商户下的商品，无法兑换</h3>
+          );
+        }
+        if (exchangeDetail.state === BOOLEAN_YES) {
+          return <h3 style={{ color: 'red', textAlign: 'center' }}>已兑换</h3>;
+        }
+        return (
+          <Fragment>
+            <Form.Item style={{ marginBottom: 0 }} label="姓名">
+              {exchangeDetail.username || '--'}
+            </Form.Item>
+            <Form.Item style={{ marginBottom: 0 }} label="手机号码">
+              {exchangeDetail.phone || '--'}
+            </Form.Item>
+            <Form.Item style={{ marginBottom: 0 }} label="兑换商品">
+              {exchangeDetail.goodsName || '--'}
+            </Form.Item>
+            <Form.Item style={{ marginBottom: 0 }} label="积分数">
+              {exchangeDetail.integral || '--'}
+            </Form.Item>
+            <Form.Item style={{ display: 'none' }}>
+              {getFieldDecorator('integral', {
+                initialValue: exchangeDetail.integral || 0,
+              })(<Input />)}
+            </Form.Item>
+          </Fragment>
+        );
+      };
+
       return (
         <Modal
           visible={visible}
@@ -110,7 +145,9 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
           okButtonProps={{
             disabled:
               type === MODEL_TYPE_EXCHANGE &&
-              (!exchangeDetail.id || exchangeDetail.state === BOOLEAN_YES),
+              (!exchangeDetail.id ||
+                exchangeDetail.businessId !== currentUser.id ||
+                exchangeDetail.state === BOOLEAN_YES),
           }}
         >
           <Form labelCol={{ span: 5 }} wrapperCol={{ span: 16 }}>
@@ -130,29 +167,7 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     </Col>
                   </Row>
                 </Form.Item>
-                {exchangeDetail.state === BOOLEAN_YES ? (
-                  <h3 style={{ color: 'red', textAlign: 'center' }}>已兑换</h3>
-                ) : (
-                  <Fragment>
-                    <Form.Item style={{ marginBottom: 0 }} label="姓名">
-                      {exchangeDetail.username || '--'}
-                    </Form.Item>
-                    <Form.Item style={{ marginBottom: 0 }} label="手机号码">
-                      {exchangeDetail.phone || '--'}
-                    </Form.Item>
-                    <Form.Item style={{ marginBottom: 0 }} label="兑换商品">
-                      {exchangeDetail.goodsName || '--'}
-                    </Form.Item>
-                    <Form.Item style={{ marginBottom: 0 }} label="积分数">
-                      {exchangeDetail.integral || '--'}
-                    </Form.Item>
-                    <Form.Item style={{ display: 'none' }}>
-                      {getFieldDecorator('integral', {
-                        initialValue: exchangeDetail.integral || 0,
-                      })(<Input />)}
-                    </Form.Item>
-                  </Fragment>
-                )}
+                {renderContent()}
               </Fragment>
             )}
             {type === MODEL_TYPE_SETTLEMENT && (

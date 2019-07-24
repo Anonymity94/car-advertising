@@ -154,7 +154,13 @@ class Detail extends PureComponent {
                 {/* 内容列表图片 */}
                 {Array.isArray(detail.cover) &&
                   detail.cover.map(img => <img src={img} alt="图片" />)}
+                {/* 广告内容 */}
+                <p className={styles.divider}>广告内容</p>
                 <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
+
+                <p className={styles.divider}>积分说明</p>
+                <div dangerouslySetInnerHTML={{ __html: `${detail.remark}` }} />
+
               </div>
               <div className={styles.operate}>
                 <div className={styles.operateItem}>
