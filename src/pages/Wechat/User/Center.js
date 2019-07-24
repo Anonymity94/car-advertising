@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
-import { Flex, Modal, PullToRefresh, WhiteSpace } from 'antd-mobile';
+import { Flex, Modal, WhiteSpace } from 'antd-mobile';
 import router from 'umi/router';
 
 import styles from './Center.less';
@@ -11,6 +11,7 @@ import iconInfo from './icons/icon_info@2x.png';
 import iconSettlement from './icons/icon_settlement@2x.png';
 import iconSigning from './icons/icon_signing@2x.png';
 import defaultAvatar from './icons/default_avatar.png';
+import Loading from '@/components/Loading';
 
 const entries = [
   {
@@ -35,12 +36,13 @@ const entries = [
   },
 ];
 
-@connect(({ login: { wechatUser } }) => ({
+@connect(({ login: { wechatUser }, loading }) => ({
   wechatUser,
+  checkLogin: loading.effects['wechatModel/wechatLogin'],
 }))
 class UserCenter extends PureComponent {
   componentDidMount() {
-    this.queryWechatUser();
+    this.wechatLogin();
     this.timer = setInterval(() => this.queryWechatUser(), 3000);
   }
 
@@ -64,6 +66,14 @@ class UserCenter extends PureComponent {
     router.push(link);
   };
 
+  // 检查微信用户是否登录
+  wechatLogin = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'wechatModel/wechatLogin',
+    });
+  };
+
   queryWechatUser = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -74,7 +84,17 @@ class UserCenter extends PureComponent {
   render() {
     const {
       wechatUser: { id, username, usedIntegral, restIntegral, avatar },
+      checkLogin,
     } = this.props;
+
+    if (checkLogin) {
+      return (
+        <DocumentTitle title="个人中心">
+          <Loading />
+        </DocumentTitle>
+      );
+    }
+
     return (
       <DocumentTitle title="个人中心">
         <Fragment>
