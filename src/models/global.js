@@ -1,5 +1,6 @@
 import { WECHAT_APPID } from '@/common/constants';
 import { upload } from '@/services/api';
+import { notification } from 'antd';
 
 export default {
   namespace: 'global',
@@ -33,6 +34,7 @@ export default {
     setup({ dispatch, history }) {
       const { pathname, query } = history.location;
       if (pathname.indexOf('h5') === -1 && pathname.indexOf('/wechat/') === -1) {
+        notification.destroy();
         dispatch({ type: 'login/queryLoggedUser' });
         // 30秒定时
         setInterval(() => dispatch({ type: 'login/queryLoggedUser' }), 30 * 1000);

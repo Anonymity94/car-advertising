@@ -11,7 +11,7 @@ import {
   topAd,
   deleteAd,
   queryAdContent,
-  checkUserSigningState,
+  checkUserAllowSigning,
 } from '@/services/advertisement';
 import { PUBLISH_STATE_NO } from '@/common/constants';
 
@@ -176,8 +176,8 @@ export default modelExtend(model, {
     /**
      * 检查某个人是否可以再次签约某个广告
      */
-    *checkUserSigningState({ payload }, { call }) {
-      return yield call(checkUserSigningState, payload);
+    *checkUserAllowSigning({ payload }, { call }) {
+      return yield call(checkUserAllowSigning, payload);
     },
   },
 });

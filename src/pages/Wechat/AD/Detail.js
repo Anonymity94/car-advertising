@@ -29,30 +29,37 @@ class Detail extends PureComponent {
 
   componentDidMount() {
     this.getAdContent();
-    this.checkUserSigningState();
+    this.checkUserAllowSigning();
   }
 
-  checkUserSigningState = () => {
+  checkUserAllowSigning = () => {
     const {
       dispatch,
       match: { params },
       userInfo,
     } = this.props;
 
-    if (!userInfo.id) return;
+    if (!userInfo.id || !params.id) {
+      Toast.fail('无效的用户或广告', 1);
+      this.setState({
+        canSigning: false,
+      });
+
+      return;
+    }
 
     dispatch({
-      type: 'adModel/checkUserSigningState',
+      type: 'adModel/checkUserAllowSigning',
       payload: {
         id: params.id,
       },
     }).then(({ success, result }) => {
       if (success) {
         this.setState({
-          canSigning: !result,
+          canSigning: result,
         });
       } else {
-        Toast.fail('检查签约情况失败', 2);
+        Toast.fail('检查签约情况失败', 1);
       }
     });
   };

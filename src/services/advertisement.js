@@ -86,11 +86,13 @@ export async function deleteAd({ id }) {
 }
 
 /**
- * 检查广告的签约情况
- * @param {String} id
+ * 检查用户是否允许签约广告
+ * @param {String} id 广告 id
+ * @returns true-允许
+ * @returns false-不允许
  */
-export async function checkUserSigningState({ id }) {
-  return request(`/api/poster/${id}/check-signing`, {
+export async function checkUserAllowSigning({ id }) {
+  return request(`/api/ad-signings/allow/${id}`, {
     method: 'GET',
   });
 }

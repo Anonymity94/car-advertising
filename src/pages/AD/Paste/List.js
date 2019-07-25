@@ -84,6 +84,47 @@ class AdPasteList extends PureComponent {
     return null;
   }
 
+  handleScanResult = e => {
+    const id = e.target.value;
+    if (!id) {
+      notification.error({
+        message: '扫码失败',
+        description: (
+          <div>
+            <p>1.请鼠标是否聚焦到【扫码结果】输入框</p>
+            <p>2.请检查【扫码结果】输入框是否有值</p>
+          </div>
+        ),
+      });
+    }
+    // 先检查，这条预约的状态
+    const { dispatch } = this.props;
+    // 查签约记录
+    dispatch({
+      type: 'adSigningModel/queryAdSigningDetail',
+      payload: {
+        id,
+      },
+    }).then(({ id: signingId, pasteState }) => {
+      if (!signingId) {
+        notification.error({
+          message: '扫码失败',
+          description: '没有找到相关的签约记录',
+        });
+        return;
+      }
+      if (pasteState !== AD_PASTE_STATE_UN_REVIEW) {
+        notification.info({
+          message: '扫码失败',
+          description: '此签约记录已处理，无需再次处理',
+        });
+        return;
+      }
+
+      this.beginPaste(signingId);
+    });
+  };
+
   onKeyup = e => {
     if (e.keyCode === 13) {
       const id = e.target.value;
@@ -387,11 +428,12 @@ class AdPasteList extends PureComponent {
                     扫码结果：
                     <Input
                       autoFocus
-                      placeholder="扫码前请保证鼠标聚焦在此处"
+                      placeholder="扫码结果"
                       ref={input => {
                         this.scanInput = input;
                       }}
                       onKeyUp={this.onKeyup}
+                      // onChange={this.handleScanResult}
                       style={{ width: 300 }}
                     />
                   </span>
