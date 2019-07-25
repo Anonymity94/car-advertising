@@ -1,11 +1,47 @@
 import React, { PureComponent } from 'react';
 import { Table } from 'antd';
+import Ellipsis from '@/components/Ellipsis';
 import styles from './index.less';
 
 class StandardTable extends PureComponent {
-  state = {
-    selectedRowKeys: [],
-  };
+  constructor(props) {
+    super(props);
+
+    const { columns } = props;
+
+    let tableColumnsProps = columns || [];
+
+    // 如果开启自定义设置，从还原本地设置
+
+    tableColumnsProps = tableColumnsProps.map(item => {
+      if (item.dataIndex === 'id' || item.dataIndex === 'userId') {
+        return {
+          ...item,
+          width: 100,
+          render: text => (
+            <Ellipsis tooltip lines={1} style={{ width: 100 }}>
+              {text}
+            </Ellipsis>
+          ),
+        };
+      }
+      if (['reason', 'remark', 'goods', 'address', 'title'].indexOf(item.dataIndex) > -1) {
+        return {
+          ...item,
+          width: 240,
+          render: text => (
+            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all' }}>{text}</div>
+          ),
+        };
+      }
+      return item;
+    });
+
+    this.state = {
+      selectedRowKeys: [],
+      tableColumns: tableColumnsProps, // 表格显示列表
+    };
+  }
 
   static getDerivedStateFromProps(nextProps) {
     // clean state
@@ -38,7 +74,7 @@ class StandardTable extends PureComponent {
   };
 
   render() {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, tableColumns } = this.state;
     const { data = {}, rowKey, onChange, ...rest } = this.props;
     const { list = [], pagination } = data;
 
@@ -70,8 +106,10 @@ class StandardTable extends PureComponent {
           // rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}
+          scroll={{ x: '110%' }}
           // onChange={this.handleTableChange}
           {...rest}
+          columns={tableColumns}
         />
       </div>
     );
