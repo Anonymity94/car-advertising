@@ -95,11 +95,12 @@ class Detail extends PureComponent {
       );
     }
 
+    // 如果存在签约截至时间，并且截至日期今天之前，就不能签约了
+    // 截止日当天应该也可以进行签约
     if (
       detail.signingExpireTime &&
-      !moment(detail.signingExpireTime).isAfter(moment().format('YYYY-MM-DD'))
+      moment(detail.signingExpireTime).isBefore(moment().format('YYYY-MM-DD'))
     ) {
-      // 如果存在签约截至时间，并且截至日期不在今天之后，就不能签约了
       return (
         <Fragment>
           <Empty text="已达广告签约截止日，无法签约" />
