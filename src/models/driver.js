@@ -132,7 +132,7 @@ export default modelExtend(model, {
         const isUserCenterPage = pathname.indexOf('/h5/user/center') > -1;
 
         // 未审核，显示等待
-        if (result.status === AUDIT_STATE_UNREVIEWED) {
+        if (result.status === AUDIT_STATE_UNREVIEWED && isUserCenterPage) {
           router.replace('/h5/user/waiting');
         }
         // 用户中心页面，并且未注册，直接跳转注册
