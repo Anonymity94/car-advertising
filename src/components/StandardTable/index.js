@@ -25,7 +25,7 @@ class StandardTable extends PureComponent {
           ),
         };
       }
-      if (['reason', 'remark', 'goods', 'address', 'title'].indexOf(item.dataIndex) > -1) {
+      if (['reason', 'remark', 'address', 'title'].indexOf(item.dataIndex) > -1) {
         return {
           ...item,
           width: 240,
