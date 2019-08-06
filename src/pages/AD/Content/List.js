@@ -215,13 +215,14 @@ class AdminList extends PureComponent {
         dataIndex: 'clause',
         align: 'center',
         width: 150,
-        render: text => (
-          <Ellipsis tooltip lines={1}>
-            <Link target="_blank" rel="noopener noreferer" to={text}>
-              {text}
-            </Link>
-          </Ellipsis>
-        ),
+        render: text =>
+          text && (
+            <Ellipsis tooltip lines={1}>
+              <Link target="_blank" rel="noopener noreferer" to={text}>
+                {text}
+              </Link>
+            </Ellipsis>
+          ),
       },
       {
         title: '签约金',
