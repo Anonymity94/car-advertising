@@ -179,12 +179,12 @@ class Signing extends PureComponent {
             <div className={styles.signing}>
               <div className={styles.title}>
                 <p>贴广告地址</p>
-                <span onClick={() => this.showDrawer()}>修改</span>
+                <span onClick={() => this.showDrawer()}>修改选择地址</span>
               </div>
               <div className={styles.address}>{currentAddress.address}</div>
 
               <div className={styles.time}>
-                <span className={styles.label}>工作时间</span>
+                <span className={styles.label}>粘贴地工作时间</span>
                 <span className={styles.value}>
                   {currentAddress.beginTime} - {currentAddress.endTime}
                 </span>
@@ -192,9 +192,11 @@ class Signing extends PureComponent {
               <div className={styles.clause}>
                 <AgreeItem data-seed="addressList" onChange={() => this.toogleCheck()}>
                   我已确认，并同意{' '}
-                  <Link target="_blank" rel="noopener noreferer" to={detail.clause}>
-                    签约条款
-                  </Link>
+                  {detail.clause && (
+                    <Link target="_blank" rel="noopener noreferer" to={detail.clause}>
+                      签约条款
+                    </Link>
+                  )}
                 </AgreeItem>
               </div>
             </div>

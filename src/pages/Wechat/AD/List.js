@@ -26,7 +26,7 @@ const ColumnList = memo(({ list }) => (
             <div className={styles.desc}>{item.company}</div>
           </Card.Body>
           <Card.Footer
-            content={<div className={styles.money}>￥{item.bonus}</div>}
+            content={<div className={styles.money}>乐蚁果:{item.integral}</div>}
             extra={
               <div className={styles.extra}>
                 <img className={styles.icon} src={signingIcon} alt="签约人数" />

@@ -151,7 +151,6 @@ export default [
       },
     ],
   },
-  // 商户工作台
   {
     path: '/wechat/ad-signing-qrcode',
     name: 'ad-signing-qrcode',
@@ -176,7 +175,7 @@ export default [
       // 商户工作台
       {
         path: '/index',
-        name: 'workplace',
+        name: 'business-workplace',
         icon: 'dashboard',
         component: './Workplace/Business',
         authority: ['business'],

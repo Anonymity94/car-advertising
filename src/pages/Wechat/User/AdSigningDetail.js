@@ -165,7 +165,7 @@ class SigningDetail extends PureComponent {
             <List>
               <List.Item extra={adDetail.title}>广告</List.Item>
               <List.Item extra={adDetail.company}>机构名称</List.Item>
-              <List.Item extra={`${signingDetail.bonus}元/月`}>签约金额</List.Item>
+              <List.Item extra={signingDetail.integral}>签约可获得乐蚁果</List.Item>
               <List.Item extra={signingDetail.signingExpireTime}>签约有效期</List.Item>
               {!isNot && (
                 <Fragment>

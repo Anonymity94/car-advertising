@@ -210,7 +210,7 @@ class FormTemp extends PureComponent {
             </Col>
             <Col span={12}>
               <Form.Item style={{ display: 'inline-block' }}>
-                <span className="ant-form-text">营业时间</span>
+                <span className="ant-form-text">粘贴地工作时间</span>
                 {getFieldDecorator(`beginTime[${k}]`, {
                   initialValue: initBeginTime,
                   validateTrigger: ['onChange'],
@@ -364,7 +364,8 @@ class FormTemp extends PureComponent {
             rules: [{ required: true, message: '请选择签约有效期' }],
           })(<DatePicker format="YYYY-MM-DD" />)}
         </Form.Item>
-        <Form.Item label="签约金" {...formItemLayout}>
+        {/* 签约金功能一期先不上，前端隐藏并且无效 */}
+        {/* <Form.Item label="签约金" {...formItemLayout}>
           {getFieldDecorator('bonus', {
             initialValue: values.bonus || undefined,
             validateFirst: true,
@@ -374,16 +375,16 @@ class FormTemp extends PureComponent {
             ],
           })(<InputNumber style={{ width: 160 }} min={1} />)}
           <span className="ant-form-text"> 元/月</span>
-        </Form.Item>
-        <Form.Item label="积分" {...formItemLayout}>
+        </Form.Item> */}
+        <Form.Item label="乐蚁果" {...formItemLayout}>
           {getFieldDecorator('integral', {
             initialValue: values.integral || undefined,
             validateFirst: true,
             rules: [
-              { required: true, message: '请输入积分' },
+              { required: true, message: '请输入乐蚁果数量' },
               { pattern: /^[1-9]\d*$/, message: '请输入正整数' },
             ],
-          })(<InputNumber placeholder="积分" style={{ width: 160 }} min={1} />)}
+          })(<InputNumber placeholder="乐蚁果" style={{ width: 160 }} min={1} />)}
         </Form.Item>
         <Form.Item label="内容" {...formItemLayout}>
           {getFieldDecorator('content', {
@@ -403,15 +404,15 @@ class FormTemp extends PureComponent {
             validateTrigger: 'onBlur',
           })(<RichTextEditor onBlur={this.handleEditorChange} />)}
         </Form.Item>
-        <Form.Item label="积分说明" {...formItemLayout}>
+        <Form.Item label="乐蚁果说明" {...formItemLayout}>
           {getFieldDecorator('remark', {
             initialValue: values.remark || undefined,
             validateFirst: true,
             rules: [
-              { required: true, whitespace: true, message: '请输入积分说明' },
+              { required: true, whitespace: true, message: '请输入乐蚁果说明' },
               { max: 512, message: '最长限制512个字符' },
             ],
-          })(<Input.TextArea rows={3} placeholder="请输入积分说明，最长限制512个字符" />)}
+          })(<Input.TextArea rows={3} placeholder="请输入乐蚁果说明，最长限制512个字符" />)}
         </Form.Item>
 
         {/* 地址 */}
@@ -419,7 +420,7 @@ class FormTemp extends PureComponent {
         {/* 增加地址按钮 */}
         <Form.Item {...formItemLayoutWithOutLabel}>
           <Button type="dashed" onClick={this.addAddressItem} style={{ width: '60%' }}>
-            <Icon type="plus" /> 新增地址
+            <Icon type="plus" /> 新增粘贴地址
           </Button>
         </Form.Item>
 

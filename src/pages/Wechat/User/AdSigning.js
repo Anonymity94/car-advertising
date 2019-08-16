@@ -136,7 +136,7 @@ class AdSigning extends PureComponent {
             <div className={styles.signing}>
               {adSignings.map(item => (
                 <div className={styles.card}>
-                  <p className={styles.title}>{item.advTitle || item.title || '[广告已被删除]'}</p>
+                  <p className={styles.title}>{item.advTitle || item.title || '广告名称[广告已被删除]'}</p>
 
                   <div className={`${styles.extra} ${styles.flex}`}>
                     <span>{moment(item.createTime).format('YYYY-MM-DD')}</span>

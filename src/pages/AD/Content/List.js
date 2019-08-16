@@ -224,14 +224,14 @@ class AdminList extends PureComponent {
             </Ellipsis>
           ),
       },
+      // {
+      //   title: '签约金',
+      //   dataIndex: 'bonus',
+      //   align: 'center',
+      //   render: bonus => `${numeral(bonus).format('0,0')}元/月`,
+      // },
       {
-        title: '签约金',
-        dataIndex: 'bonus',
-        align: 'center',
-        render: bonus => `${numeral(bonus).format('0,0')}元/月`,
-      },
-      {
-        title: '积分',
+        title: '乐蚁果数量',
         dataIndex: 'integral',
         align: 'center',
       },

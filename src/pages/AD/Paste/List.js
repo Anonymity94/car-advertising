@@ -342,9 +342,14 @@ class AdPasteList extends PureComponent {
         dataIndex: 'expireTime',
         align: 'center',
       },
+      // {
+      //   title: '签约金',
+      //   dataIndex: 'bonus',
+      //   align: 'center',
+      // },
       {
-        title: '签约金额',
-        dataIndex: 'bonus',
+        title: '乐蚁果数量',
+        dataIndex: 'integral',
         align: 'center',
       },
       {

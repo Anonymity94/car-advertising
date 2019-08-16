@@ -1,6 +1,7 @@
 export default {
   'menu.home': '首页',
   'menu.workplace': '工作台',
+  'menu.business-workplace': '自取商品兑换管理',
   'menu.application': '审核管理',
   'menu.application.driver': '人员管理',
   'menu.application.driver.list': '人员列表',

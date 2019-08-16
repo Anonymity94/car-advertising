@@ -216,12 +216,12 @@ class Detail extends PureComponent {
               <p className={styles.divider}>广告内容</p>
               <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
 
-              <p className={styles.divider}>积分说明</p>
+              <p className={styles.divider}>乐蚁果说明</p>
               <div dangerouslySetInnerHTML={{ __html: `${detail.remark}` }} />
             </div>
             <div className={styles.operate}>
               <div className={styles.operateItem}>
-                签约可获<span className={styles.integral}>{detail.integral}</span>积分
+                签约可获<span className={styles.integral}>{detail.integral}</span>乐蚁果
               </div>
               <div className={styles.operateItem}>{renderOperateBtn()}</div>
             </div>
