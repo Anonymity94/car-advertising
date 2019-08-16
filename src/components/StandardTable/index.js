@@ -106,7 +106,7 @@ class StandardTable extends PureComponent {
           // rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}
-          scroll={{ x: '110%' }}
+          scroll={{ x: '1300px' }}
           // onChange={this.handleTableChange}
           {...rest}
           columns={tableColumns}
