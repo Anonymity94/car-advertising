@@ -1,5 +1,5 @@
 /**
- * 商品积分管理
+ * 商品乐蚁果管理
  */
 
 import { stringify } from 'qs';

@@ -34,7 +34,7 @@ const modules = [
   },
   {
     key: 'integral-settlement',
-    name: '积分提现管理',
+    name: '乐蚁果提现管理',
     link: '/application/integral/settlement',
   },
 ];

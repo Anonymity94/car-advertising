@@ -1,5 +1,5 @@
 /**
- * 积分兑换管理
+ * 乐蚁果兑换管理
  */
 
 const content = {
@@ -7,7 +7,7 @@ const content = {
   fullname: '张三', //
   telephone: '18366133937',
 
-  integral: 20, // 积分数
+  integral: 20, // 乐蚁果数
   money: 2323, // 金额
 
   goodsName: '', // 商品名称

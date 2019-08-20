@@ -44,7 +44,7 @@ const countTodos = [
   },
   {
     module: 'integral-settlement',
-    name: '积分体现管理管理', // name 可以不返回
+    name: '乐蚁果体现管理管理', // name 可以不返回
     count: 34,
   },
 ];

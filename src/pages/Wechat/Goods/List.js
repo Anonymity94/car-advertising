@@ -18,7 +18,7 @@ const BigItem = memo(({ data }) => (
         <img src={data.shopImage} alt={data.name} />
         <div className={styles.footer}>
           <p>
-            {data.name}/{data.integral}积分
+            {data.name}/{data.integral}乐蚁果
           </p>
           <span>{data.businessName}</span>
         </div>
@@ -36,7 +36,7 @@ const SmallItem = memo(({ data }) => (
       <Card.Body>
         <div className={styles.title}>{data.name}</div>
         <div className={styles.businessName}>{data.businessName}</div>
-        <div className={styles.integral}>{data.integral}积分</div>
+        <div className={styles.integral}>{data.integral}乐蚁果</div>
       </Card.Body>
     </Card>
   </div>
@@ -125,14 +125,14 @@ class List extends PureComponent {
 
     if ([...pageData, ...topList].length === 0) {
       return (
-        <DocumentTitle title="积分商城">
+        <DocumentTitle title="乐蚁果商城">
           <Empty showback={false} text="还没有相关商品哟~" />
         </DocumentTitle>
       );
     }
 
     return (
-      <DocumentTitle title="积分商城">
+      <DocumentTitle title="乐蚁果商城">
         <Fragment>
           <div className={styles.wrap}>
             <PullToRefreshWrap onRefresh={() => this.handleRefresh()}>

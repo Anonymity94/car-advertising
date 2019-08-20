@@ -126,13 +126,13 @@ class AdPasteList extends PureComponent {
       if (success) {
         // 如果同意完成了。
         const { id, usedIntegral = 0, restIntegral = 0 } = userInfo;
-        // 同意完成，增加用户的积分情况
-        // 如果用户存在再去增加积分
+        // 同意完成，增加用户的乐蚁果情况
+        // 如果用户存在再去增加乐蚁果
         if (userInfo.id && advInfo.id) {
-          // 已使用积分不变
-          // 新的积分 = 老的积分 + 广告的积分
+          // 已使用乐蚁果不变
+          // 新的乐蚁果 = 老的乐蚁果 + 广告的乐蚁果
           const newIntegral = restIntegral + (advInfo.integral || 0);
-          // 更新用户的积分
+          // 更新用户的乐蚁果
           this.updateDriverIntegral({ id, restIntegral: newIntegral, usedIntegral });
         }
 

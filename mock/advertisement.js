@@ -6,9 +6,9 @@ const adContent = {
   cover: ['https://pic4.zhimg.com/v2-4e1c5559fff9909b56c2573a79570e3a_1200x500.jpg'], // 列表图片
   clause: '/12/234/2323.pdf', // 签约条款的 pdf 文件路径
   bonus: 1000, // 签约金, xxx/月
-  integral: 20, // 积分
+  integral: 20, // 乐蚁果
   content: '广告内容', // 内容
-  remark: '积分备注', // 积分备注
+  remark: '乐蚁果备注', // 乐蚁果备注
   address: [
     {
       address: '北京市海淀区',
@@ -46,7 +46,7 @@ function mockAdsList(req, res) {
   list[3].title = '广告名称广告名称广告名称广告名称广告名称广告名称广告名称';
 
   list[1].title = '广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称广告名称';
-  
+
   list[13].isTop = 1;
   list[23].isTop = 1;
 

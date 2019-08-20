@@ -54,7 +54,7 @@ class Settlement extends PureComponent {
   renderUnpaidItem = item => (
     <section className={styles.unpaidList}>
       <Field label="名称:" value={item.username} />
-      <Field label="积分数:" value={item.integral} />
+      <Field label="乐蚁果数:" value={item.integral} />
       <Field label="金额数:" value={`￥${numeral(item.money).format('0,0')}`} />
       <Field label="手机号:" value={item.telephone} />
     </section>
@@ -144,7 +144,7 @@ class Settlement extends PureComponent {
         align: 'center',
       },
       {
-        title: '积分数',
+        title: '乐蚁果数',
         dataIndex: 'integral',
         align: 'center',
       },
@@ -174,7 +174,7 @@ class Settlement extends PureComponent {
 
     return (
       <PageHeaderWrapper>
-        <Card size="small" bordered={false} title="未结账积分" style={{ marginBottom: 10 }}>
+        <Card size="small" bordered={false} title="未结账乐蚁果" style={{ marginBottom: 10 }}>
           <List
             grid={{
               gutter: 10,
@@ -202,7 +202,7 @@ class Settlement extends PureComponent {
             )}
           />
         </Card>
-        <Card size="small" bordered={false} title="已结账积分">
+        <Card size="small" bordered={false} title="已结账乐蚁果">
           {this.renderSearchForm()}
           <StandardTable
             title={() => (

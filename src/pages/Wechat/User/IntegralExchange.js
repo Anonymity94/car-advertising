@@ -80,7 +80,7 @@ class IntegralExchange extends PureComponent {
                     <Card.Footer
                       content={`${item.createTime &&
                         `${moment(item.createTime).format('YYYY-MM-DD')}/`}${item.businessName}`}
-                      extra={<div>{item.integral}积分</div>}
+                      extra={<div>{item.integral}乐蚁果</div>}
                     />
                   </Card>
                 ))

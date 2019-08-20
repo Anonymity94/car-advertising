@@ -36,7 +36,7 @@ POST /api/goods/${id}/exchange
 
 - 广告列表：testzyy.limitouch.com/h5/ads
 - 活动列表：testzyy.limitouch.com/h5/activities
-- 积分商城：testzyy.limitouch.com/h5/goods
+- 乐蚁果商城：testzyy.limitouch.com/h5/goods
 
 
 ## 微信端：我的签约记录
@@ -107,7 +107,7 @@ POST /api/goods/${id}/exchange
 ]
 ```
 
-## 微信端：我的积分兑换记录
+## 微信端：我的乐蚁果兑换记录
 ```
  GET /api/integrals/user
  
@@ -116,7 +116,7 @@ POST /api/goods/${id}/exchange
  返回值：
 {
   id: Math.random(), // 兑换记录id
-  integral: 20, // 所需积分数
+  integral: 20, // 所需乐蚁果数
 
   createTime: '2019-06-22', // 用户提交兑换的时间
 

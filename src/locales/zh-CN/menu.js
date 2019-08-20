@@ -23,7 +23,7 @@ export default {
   'menu.application.ad-content.create': '新增广告',
   'menu.application.ad-content.update': '编辑广告',
 
-  'menu.application.withdrawal': '积分提现管理',
+  'menu.application.withdrawal': '乐蚁果提现管理',
 
   'menu.application.activity': '活动内容管理',
   'menu.application.activity.list': '活动内容',
@@ -31,12 +31,12 @@ export default {
   'menu.application.activity.create': '新增活动',
   'menu.application.activity.update': '编辑活动',
 
-  'menu.integral': '积分管理',
+  'menu.integral': '乐蚁果管理',
   'menu.integral.business': '商户管理',
   'menu.integral.business.list': '商户列表',
   'menu.integral.business.create': '新增商户',
-  'menu.integral.goods': '商品积分管理',
-  'menu.integral.goods.list': '商品积分列表',
+  'menu.integral.goods': '商品乐蚁果管理',
+  'menu.integral.goods.list': '商品乐蚁果列表',
   'menu.integral.goods.create': '新增商品',
   'menu.integral.goods.update': '编辑商品',
 

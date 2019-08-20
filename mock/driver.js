@@ -83,12 +83,12 @@ function mocksigningsList(req, res) {
 }
 
 /**
- * 积分兑换管理
+ * 乐蚁果兑换管理
  */
 
 const exchange = {
   id: Math.random(), // 兑换记录id
-  integral: 20, // 所需积分数
+  integral: 20, // 所需乐蚁果数
 
   createTime: '2019-06-22', // 用户提交兑换的时间
 

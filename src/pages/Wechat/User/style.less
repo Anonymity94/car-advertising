@@ -1,9 +1,11 @@
 @import '~@/wechat.less';
 
 .formWrap {
-  :global {
-    .am-input-label-5 {
-      width: 30px !important;
+  &:not(.normalLabel) {
+    :global {
+      .am-input-label-5 {
+        width: 30px !important;
+      }
     }
   }
   .field {
@@ -15,6 +17,23 @@
 
     &:last-child {
       padding-top: 20px;
+    }
+  }
+  &.normalLabel {
+    .field {
+      margin-bottom: 0 !important;
+      .title {
+        height: 30px;
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    }
+    :global {
+      .am-input-control {
+        input {
+          text-align: right;
+        }
+      }
     }
   }
   .captchaItem {

@@ -1,5 +1,5 @@
 /**
- * 积分结算管理
+ * 乐蚁果结算管理
  */
 
 import { stringify } from 'qs';

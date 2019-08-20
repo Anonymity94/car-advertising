@@ -61,7 +61,7 @@ export default [
             name: 'ad-settlement',
             component: './Wechat/User/AdSettlement',
           },
-          // 积分兑换记录
+          // 乐蚁果兑换记录
           {
             path: '/h5/user/integral-exchange',
             name: 'integral-exchange',
@@ -300,7 +300,7 @@ export default [
               },
             ],
           },
-          // 积分提现管理
+          // 乐蚁果提现管理
           {
             path: '/application/integral/settlement',
             name: 'withdrawal',
@@ -365,7 +365,7 @@ export default [
               },
             ],
           },
-          // 商品积分列表
+          // 商品乐蚁果列表
           {
             path: '/integral/goods',
             name: 'goods',

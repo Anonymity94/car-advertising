@@ -151,7 +151,7 @@ class FormTemp extends PureComponent {
         <FormItem {...formItemLayout} label="id" style={{ display: 'none' }}>
           {getFieldDecorator('id', {
             initialValue: selectedGoods.id || '',
-          })(<Input placeholder="商品积分id" />)}
+          })(<Input placeholder="商品乐蚁果id" />)}
         </FormItem>
 
         <FormItem {...formItemLayout} label="商品名称">
@@ -190,15 +190,15 @@ class FormTemp extends PureComponent {
           {extraText}
         </Form.Item>
 
-        <Form.Item label="积分" {...formItemLayout}>
+        <Form.Item label="乐蚁果" {...formItemLayout}>
           {getFieldDecorator('integral', {
             initialValue: values.integral || undefined,
             validateFirst: true,
             rules: [
-              { required: true, message: '请输入积分' },
+              { required: true, message: '请输入乐蚁果' },
               { pattern: /^[1-9]\d*$/, message: '请输入正整数' },
             ],
-          })(<InputNumber placeholder="积分" style={{ width: 160 }} min={1} />)}
+          })(<InputNumber placeholder="乐蚁果" style={{ width: 160 }} min={1} />)}
         </Form.Item>
         <FormItem {...formItemLayout} label="商品头图" extra="建议尺寸：16:9比例">
           {getFieldDecorator('image', {

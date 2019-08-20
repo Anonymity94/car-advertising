@@ -181,7 +181,7 @@ class ActivityList extends PureComponent {
         align: 'center',
       },
       {
-        title: '积分',
+        title: '乐蚁果',
         dataIndex: 'integral',
         align: 'center',
       },
@@ -229,7 +229,7 @@ class ActivityList extends PureComponent {
 
           return (
             <Fragment>
-              {// 有积分的才可以发布
+              {// 有乐蚁果的才可以发布
               integral && [
                 <Popconfirm
                   title={`确定${publishText}吗？`}

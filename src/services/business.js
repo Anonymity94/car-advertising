@@ -54,10 +54,10 @@ export async function updateBusiness({ id, ...resetParams }) {
 }
 
 /**
- * 更新积分
+ * 更新乐蚁果
  * @param {Stirng} id 用户id
- * @param {Number} restIntegral 可用积分
- * @param {Number} usedIntegral 已使用积分
+ * @param {Number} restIntegral 可用乐蚁果
+ * @param {Number} usedIntegral 已使用乐蚁果
  */
 export async function updateIntegral({ id, restIntegral, usedIntegral }) {
   return request(
@@ -80,7 +80,7 @@ export async function deleteBusiness({ id }) {
 }
 
 /**
- * 某个商户用积分发起提现申请
+ * 某个商户用乐蚁果发起提现申请
  */
 export async function startIntegralSettlement({ id, integral, telephone, money }) {
   return request(`/api/businesses/${id}/integral-settlement`, {

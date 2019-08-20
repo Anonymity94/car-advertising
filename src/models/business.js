@@ -100,7 +100,7 @@ export default modelExtend(model, {
     },
 
     /**
-     * 更新商户的积分
+     * 更新商户的乐蚁果
      */
     *updateIntegral({ payload }, { call }) {
       const { success } = yield call(updateIntegral, payload);

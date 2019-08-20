@@ -36,7 +36,7 @@
 用户主页：https://testzyy.limitouch.com/h5/user/center
 广告列表：https://testzyy.limitouch.com/h5/ads
 活动列表：https://testzyy.limitouch.com/h5/activities
-积分商城：https://testzyy.limitouch.com/h5/goods
+乐蚁果商城：https://testzyy.limitouch.com/h5/goods
 
 
 我们这周末会持续更新，继续整理微信端。

@@ -61,7 +61,7 @@ export default modelExtend(model, {
     },
 
     /**
-     * 积分结算
+     * 乐蚁果结算
      */
     *doSettlement({ payload }, { call, put }) {
       const { success } = yield call(doSettlement, payload);

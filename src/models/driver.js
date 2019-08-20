@@ -185,7 +185,7 @@ export default modelExtend(model, {
     },
 
     /**
-     * 更新用户的积分
+     * 更新用户的乐蚁果
      */
     *updateDriverIntegral({ payload }, { call, put }) {
       const { success } = yield call(updateIntegral, payload);
@@ -357,7 +357,7 @@ export default modelExtend(model, {
     },
 
     /**
-     * 微信端：我的积分兑换记录
+     * 微信端：我的乐蚁果兑换记录
      */
     *queryUserExchanges({ payload }, { call, put }) {
       const { success, result } = yield call(queryUserExchanges, payload);

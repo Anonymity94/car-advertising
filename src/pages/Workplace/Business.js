@@ -30,7 +30,7 @@ const tableColumns = [
     render: (text, record) => `${record.businessName}-${text}`,
   },
   {
-    title: '所获积分',
+    title: '所获乐蚁果',
     dataIndex: 'integral',
     align: 'center',
   },
@@ -96,7 +96,7 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
       const { visible, onCancel, form, type, currentUser, loading } = this.props;
       const { getFieldDecorator } = form;
 
-      // 剩余可用积分
+      // 剩余可用乐蚁果
       const restIntegral = currentUser.restIntegral || 0;
 
       const renderContent = () => {
@@ -122,7 +122,7 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
             <Form.Item style={{ marginBottom: 0 }} label="兑换商品">
               {exchangeDetail.goodsName || '--'}
             </Form.Item>
-            <Form.Item style={{ marginBottom: 0 }} label="积分数">
+            <Form.Item style={{ marginBottom: 0 }} label="乐蚁果数">
               {exchangeDetail.integral || '--'}
             </Form.Item>
             <Form.Item style={{ display: 'none' }}>
@@ -177,16 +177,16 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     initialValue: currentUser.username,
                   })(<Input readOnly />)}
                 </Form.Item>
-                <Form.Item label="积分数" extra={`剩余可用积分：${restIntegral}`}>
+                <Form.Item label="乐蚁果数" extra={`剩余可用乐蚁果：${restIntegral}`}>
                   {getFieldDecorator('integral', {
                     validateFirst: true,
                     rules: [
-                      { required: true, message: '请输入积分' },
+                      { required: true, message: '请输入乐蚁果' },
                       { pattern: /^[1-9]\d*$/, message: '请输入正整数' },
                       {
                         validator: (rule, value, callback) => {
                           if (value > restIntegral) {
-                            callback(`剩余可用积分：${restIntegral}`);
+                            callback(`剩余可用乐蚁果：${restIntegral}`);
                           } else {
                             callback();
                           }
@@ -197,7 +197,7 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
                     <InputNumber style={{ width: '100%' }} onChange={this.handleIntegralChange} />
                   )}
                 </Form.Item>
-                <Form.Item label="金额数" extra="输入积分后自动生成，不可修改">
+                <Form.Item label="金额数" extra="输入乐蚁果后自动生成，不可修改">
                   {getFieldDecorator('money', {
                     rules: [{ required: true, message: '请输入金额数' }],
                   })(<InputNumber readOnly style={{ width: '100%' }} />)}
@@ -302,7 +302,7 @@ class Workplace extends PureComponent {
     }).then(success => {
       if (success) {
         this.setState({ visible: false });
-        // 更新商户的积分
+        // 更新商户的乐蚁果
         const { id, restIntegral = 0, usedIntegral = 0 } = currentUser;
         this.updateIntegral({ id, restIntegral: restIntegral + integral, usedIntegral });
         this.queryGoodsExchangeLogs();
@@ -310,7 +310,7 @@ class Workplace extends PureComponent {
     });
   };
 
-  // 更新商户的积分
+  // 更新商户的乐蚁果
   updateIntegral = ({ id, restIntegral, usedIntegral }) => {
     const { dispatch } = this.props;
     dispatch({
@@ -321,7 +321,7 @@ class Workplace extends PureComponent {
         usedIntegral,
       },
     }).then(() => {
-      // 刷新积分后，重新拉取一边用户积分情况
+      // 刷新乐蚁果后，重新拉取一边用户乐蚁果情况
       this.queryCurrent();
     });
   };
@@ -337,7 +337,7 @@ class Workplace extends PureComponent {
       },
     }).then(success => {
       if (success) {
-        // 更新积分
+        // 更新乐蚁果
         const { id, restIntegral = 0, usedIntegral = 0 } = currentUser;
         this.updateIntegral({
           id,
@@ -371,7 +371,7 @@ class Workplace extends PureComponent {
               <p className={styles.value}>{goodsExchangeLogs.length}人</p>
             </Col>
             <Col sm={24} md={5} style={{ textAlign: 'center' }}>
-              <p className={styles.label}>可提现积分</p>
+              <p className={styles.label}>可提现乐蚁果</p>
               <p className={styles.value}>
                 <div className={styles.red}>
                   <span>{currentUser.restIntegral || 0}</span>
@@ -388,7 +388,7 @@ class Workplace extends PureComponent {
               </p>
             </Col>
             <Col sm={24} md={7} style={{ textAlign: 'center' }}>
-              <p className={styles.label}>已提现积分</p>
+              <p className={styles.label}>已提现乐蚁果</p>
               <p className={styles.value}>{currentUser.usedIntegral || 0}</p>
             </Col>
           </Row>
