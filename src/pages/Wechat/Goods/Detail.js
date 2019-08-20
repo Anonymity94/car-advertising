@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
-import { Toast, Modal } from 'antd-mobile';
+import { TextareaItem, InputItem, Button, Toast, Flex, Modal, Picker, List } from 'antd-mobile';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
 import {
@@ -10,11 +10,135 @@ import {
   AUDIT_STATE_UNREVIEWED,
   AUDIT_STATE_PASSED,
   AUDIT_STATE_NO_REGISTER,
+  GOOD_EXCHANGE_TYPE_LIST,
+  GOOD_EXCHANGE_TYPE_SELF_MAIL,
 } from '@/common/constants';
+import 'weui';
+import 'react-weui/build/packages/react-weui.css';
+import { Popup } from 'react-weui';
+import { createForm } from 'rc-form';
+import { showError, phoneReg } from '@/utils/utils';
 
 import router from 'umi/router';
 import styles from '../article.less';
+import formStyle from '../User/style.less';
 
+@connect()
+class FormContent extends React.Component {
+  submit = () => {
+    const { form, onOk } = this.props;
+    form.validateFields((error, values) => {
+      if (error) {
+        const errKeys = Object.keys(error);
+        showError(error[errKeys[0]].errors[0].message);
+        return;
+      }
+
+      onOk({ ...values, exchangeType: values.exchangeType.join('') });
+    });
+  };
+
+  render() {
+    const {
+      form,
+      form: { getFieldValue },
+      onCancle,
+    } = this.props;
+    const { getFieldProps } = form;
+    return (
+      <div className={[formStyle.formWrap, formStyle.normalLabel].join(' ')}>
+        <section className={formStyle.field}>
+          <InputItem
+            placeholder="请输入兑换数量"
+            className="required"
+            {...getFieldProps('count', {
+              normalize: v => {
+                if (v && (v.charAt(0) === '0' || v.indexOf('.') >= 0)) {
+                  return v.replace(/^0*(\d*).*$/, '$1');
+                }
+                return v;
+              },
+              validateFirst: true,
+              rules: [{ required: true, whitespace: true, message: '请输入兑换数量' }],
+              // TODO: 判断选择的数量所需的乐蚁果，和自己拥有的乐蚁果的数量
+            })}
+          >
+            兑换数量
+          </InputItem>
+        </section>
+        <section className={formStyle.field}>
+          <Picker
+            data={GOOD_EXCHANGE_TYPE_LIST}
+            cols={1}
+            {...getFieldProps('exchangeType', {
+              validateFirst: true,
+              rules: [{ required: true, message: '请选择兑换方式' }],
+            })}
+            className="required"
+          >
+            <List.Item arrow="horizontal">兑换方式</List.Item>
+          </Picker>
+        </section>
+        {getFieldValue('exchangeType') &&
+          +getFieldValue('exchangeType').join('') === GOOD_EXCHANGE_TYPE_SELF_MAIL && (
+            <Fragment>
+              <section className={formStyle.field}>
+                <InputItem
+                  placeholder="请输入收货人姓名"
+                  className="required"
+                  {...getFieldProps('recvName', {
+                    validateFirst: true,
+                    rules: [{ required: true, whitespace: true, message: '请输入收货人姓名' }],
+                  })}
+                >
+                  收货人姓名
+                </InputItem>
+              </section>
+              <section className={formStyle.field}>
+                <InputItem
+                  placeholder="请输入手机号码"
+                  className="required"
+                  {...getFieldProps('phone', {
+                    validateFirst: true,
+                    rules: [
+                      { required: true, whitespace: true, message: '请输入手机号码' },
+                      { pattern: phoneReg, message: '请输入正确的手机号码' },
+                    ],
+                  })}
+                >
+                  手机号码
+                </InputItem>
+              </section>
+              <section className={formStyle.field}>
+                <p className={formStyle.title}>收货地址：</p>
+                <TextareaItem
+                  placeholder="详细地址：省、市、县区、街道、门牌号、小区、楼栋号、单元室等"
+                  rows={4}
+                  {...getFieldProps('address', {
+                    rules: [{ required: false, whitespace: true, message: '请填写收货地址' }],
+                  })}
+                />
+              </section>
+            </Fragment>
+          )}
+        <section className={formStyle.field} style={{ padding: 20 }}>
+          <Flex style={{ justifyContent: 'space-between' }}>
+            <Button style={{ width: '45%' }} className="button-cancel" onClick={onCancle}>
+              取消
+            </Button>
+            <Button style={{ width: '45%' }} className="button-ok" onClick={this.submit}>
+              确定
+            </Button>
+          </Flex>
+        </section>
+      </div>
+    );
+  }
+}
+
+const FormWrapper = createForm()(FormContent);
+
+// eslint-disable-next-line react/no-multi-comp
 @connect(({ goodsModel: { detail }, driverModel: { detail: userInfo }, loading }) => ({
   detail,
   userInfo,
@@ -22,6 +146,7 @@ import styles from '../article.less';
 }))
 class Detail extends PureComponent {
   state = {
+    exchangeModalOpen: false, // 兑换弹出框
     isExchanged: 'NAN', // 未检查状态, true 已兑换，false 未兑换
   };
 
@@ -107,15 +232,26 @@ class Detail extends PureComponent {
     }
   };
 
+  handleCloseModal = () => {
+    this.setState({
+      exchangeModalOpen: false,
+    });
+  };
+
+  handleSubmit = values => {
+    // TODO: 判断提交
+    console.log(values);
+  };
+
   exchangeGood = () => {
     const { dispatch, detail, userInfo } = this.props;
     if (!detail.id) return;
 
     const { restIntegral = 0, usedIntegral = 0, id: userId } = userInfo;
 
-    // 检查自己的积分是否足够兑换
+    // 检查自己的乐蚁果是否足够兑换
     if (detail.integral > restIntegral) {
-      Modal.alert('兑换失败', `积分不足：当前可用积分${restIntegral}`, [
+      Modal.alert('兑换失败', `乐蚁果不足：当前可用乐蚁果${restIntegral}`, [
         { text: '好的', onPress: () => {} },
       ]);
       return;
@@ -136,7 +272,7 @@ class Detail extends PureComponent {
             Toast.hide();
             if (success) {
               this.setState({ isExchanged: true });
-              // 去更新用户的积分情况
+              // 去更新用户的乐蚁果情况
               this.updateDriverIntegral({
                 id: userId,
                 restIntegral: restIntegral - detail.integral,
@@ -148,7 +284,7 @@ class Detail extends PureComponent {
                   text: '好的',
                   onPress: () => {
                     router.goBack();
-                    // 重新获取用户信息，刷新积分情况
+                    // 重新获取用户信息，刷新乐蚁果情况
                     dispatch({
                       type: 'login/queryWechatUser',
                     });
@@ -165,7 +301,7 @@ class Detail extends PureComponent {
   };
 
   render() {
-    const { isExchanged } = this.state;
+    const { isExchanged, exchangeModalOpen } = this.state;
     const { queryLoading, detail, userInfo } = this.props;
 
     if (queryLoading) {
@@ -189,7 +325,7 @@ class Detail extends PureComponent {
     }
 
     return (
-      <DocumentTitle title="积分商品详情">
+      <DocumentTitle title="乐蚁果商品详情">
         <Fragment>
           <div className={`${styles.article} ${styles.goods}`}>
             {/* 标题 */}
@@ -199,7 +335,7 @@ class Detail extends PureComponent {
                 <div className={styles.left}>
                   <h2 className={styles.title}>
                     {detail.name}
-                    <span>{detail.integral}积分</span>
+                    <span>{detail.integral}乐蚁果</span>
                   </h2>
                   <p className={styles.businessName}>{detail.businessName}</p>
                 </div>
@@ -226,6 +362,26 @@ class Detail extends PureComponent {
               <p className={styles.divider}>商品内容</p>
               <div dangerouslySetInnerHTML={{ __html: `${detail.content}` }} />
             </div>
+
+            {/* 兑换弹出框 */}
+            <Popup
+              className={styles.popupWrap}
+              show={exchangeModalOpen}
+              // 点击模态框不关闭
+              onRequestClose={() => false}
+            >
+              {/* <PopupHeader
+                left="修改地址"
+                right={<span className={styles.popOk}>确认</span>}
+                rightOnClick={() => {
+                  this.setState({ exchangeModalOpen: false });
+                  return false;
+                }}
+              /> */}
+              <div>
+                <FormWrapper onOk={this.handleSubmit} onCancle={this.handleCloseModal} />
+              </div>
+            </Popup>
           </div>
         </Fragment>
       </DocumentTitle>
