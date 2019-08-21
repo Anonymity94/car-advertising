@@ -32,3 +32,16 @@ export async function auditExchange({ exchangeCode }) {
     },
   });
 }
+
+/**
+ * 发起退还申请
+ * 审核退还申请
+ */
+export async function updateExchangeLog({ id, ...restParams }) {
+  return request(`/api/goods-ext/exchange/logs?id=${id}`, {
+    method: 'POST',
+    body: {
+      ...restParams,
+    },
+  });
+}

@@ -10,6 +10,7 @@ import {
   INTEGRAL_SETTLEMENT_STATE_YES,
   GOOD_EXCHANGE_TYPE_SELF_MAIL,
   GOOD_EXCHANGE_TYPE_SELF_TAKING,
+  EXCHANGE_CANCEL_WAITING,
 } from '@/common/constants';
 import PullToRefreshWrap from '@/components/PullToRefresh';
 
@@ -43,7 +44,7 @@ class IntegralExchange extends PureComponent {
         refresh: true,
       },
       () => {
-        this.getList();
+        this.queryUserExchanges();
       }
     );
   };
@@ -102,7 +103,13 @@ class IntegralExchange extends PureComponent {
                     <Card.Footer
                       content={`${item.createTime &&
                         `${moment(item.createTime).format('YYYY-MM-DD')}/`}${item.businessName}`}
-                      extra={<span>退还乐蚁果</span>}
+                      extra={
+                        item.cancelState === EXCHANGE_CANCEL_WAITING ? (
+                          <span className={styles.applyCancelBtn}>退还乐蚁果</span>
+                        ) : (
+                          <span>退还审核中</span>
+                        )
+                      }
                     />
                   </Card>
                 ))

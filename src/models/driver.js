@@ -361,7 +361,40 @@ export default modelExtend(model, {
      */
     *queryUserExchanges({ payload }, { call, put }) {
       const { success, result } = yield call(queryUserExchanges, payload);
+      // const mockData = [{
+      //   id: 1, // 兑换记录id
+      //   integral: 20, // 所需乐蚁果数
+      //   exchangeCode: 34343434, // 兑换码
+      //   goodsName: 'iPhone X', // 商品名称
+      //   businessName: '苹果公司', // 所属商户
+      //   createTime: '2019-06-22', // 结算日期
+      //   state: 0, // 兑换状态
+      //   cancelState: 1,
+      //   exchangeType: 1,
+      //   address: '北京市海淀区',
+      //   applyCancelTime: '2019-08-21 22:08:14',
+      //   verifyTimeTime: '2019-08-21 20:08:14',
+      //   reason: '兑换错了',
+      //   remark: '已经发货了',
+      //   operator: '测试', // 操作人
+      // },{
+      //   id: 2, // 兑换记录id
+      //   integral: 20, // 所需乐蚁果数
+      //   exchangeCode: 34343434, // 兑换码
+      //   goodsName: 'iPhone X', // 商品名称
+      //   businessName: '苹果公司', // 所属商户
+      //   createTime: '2019-06-22', // 结算日期
+      //   state: 0, // 兑换状态
+      //   cancelState: 1,
+      //   exchangeType: 0,
+      //   address: '北京市海淀区',
+      //   applyCancelTime: '2019-08-21 22:08:14',
+      //   verifyTimeTime: '2019-08-21 20:08:14',
+      //   reason: '兑换错了',
+      //   remark: '已经发货了',
+      // }]
       const integralExchanges = success ? result : [];
+      // const integralExchanges = mockData
       yield put({
         type: 'updateState',
         payload: {

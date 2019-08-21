@@ -165,12 +165,12 @@ export const WECHAT_APP_SECRET = '429c9d561e8009e0586e6f5d1c4d28b5';
 /**
  * 商品兑换方式：自取
  */
-export const GOOD_EXCHANGE_TYPE_SELF_TAKING = 0
+export const GOOD_EXCHANGE_TYPE_SELF_TAKING = 0;
 
 /**
  * 商品兑换方式：邮寄
  */
-export const GOOD_EXCHANGE_TYPE_SELF_MAIL = 1
+export const GOOD_EXCHANGE_TYPE_SELF_MAIL = 1;
 
 /**
  * 商品兑换方式
@@ -185,3 +185,23 @@ export const GOOD_EXCHANGE_TYPE_LIST = [
     value: GOOD_EXCHANGE_TYPE_SELF_MAIL,
   },
 ];
+
+/**
+ * 申请退还：没有申请
+ */
+export const EXCHANGE_CANCEL_DEFAULT = 0;
+
+/**
+ * 申请退还：申请中，等待审核
+ */
+export const EXCHANGE_CANCEL_WAITING = 1;
+
+/**
+ * 申请退还：退还通过
+ */
+export const EXCHANGE_CANCEL_APPROVE = 2;
+
+/**
+ * 申请退还：退还被拒绝
+ */
+export const EXCHANGE_CANCEL_REFUSE = 3;

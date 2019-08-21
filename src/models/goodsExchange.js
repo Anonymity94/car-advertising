@@ -1,7 +1,12 @@
 import { message } from 'antd';
 import modelExtend from 'dva-model-extend';
 import { model } from '@/utils/model';
-import { queryExchangeLogs, auditExchange, queryExchangeDetail } from '@/services/goodsExchange';
+import {
+  queryExchangeLogs,
+  auditExchange,
+  queryExchangeDetail,
+  updateExchangeLog,
+} from '@/services/goodsExchange';
 
 export default modelExtend(model, {
   namespace: 'goodsExchangeModel',
@@ -45,6 +50,11 @@ export default modelExtend(model, {
       } else {
         message.error('兑换失败');
       }
+      return success;
+    },
+
+    *updateEchangeLog({ payload }, { call }) {
+      const { success } = yield call(updateExchangeLog, payload);
       return success;
     },
   },
