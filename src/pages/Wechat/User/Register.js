@@ -14,7 +14,7 @@ import {
   Toast,
 } from 'antd-mobile';
 import { Input } from 'antd';
-import { phoneReg, showError } from '@/utils/utils';
+import { phoneReg, showError, idcardReg } from '@/utils/utils';
 import storage from '@/utils/storage';
 import { createForm } from 'rc-form';
 import DocumentTitle from 'react-document-title';
@@ -379,7 +379,10 @@ export const UserInfoForm = createForm()(
               {...getFieldProps('idcard', {
                 initialValue: historyValue.idcard || '',
                 validateFirst: true,
-                rules: [{ required: true, whitespace: true, message: '请输入您的身份证号' }],
+                rules: [
+                  { required: true, whitespace: true, message: '请输入您的身份证号' },
+                  { pattern: idcardReg, message: '请输入正确的身份证号' },
+                ],
               })}
             >
               <div
@@ -622,6 +625,9 @@ export const CarForm = createForm()(
                     rules: [{ required: true, whitespace: true, message: '请输入车辆类型' }],
                   })}
                 />
+                <p style={{ paddingLeft: 10, lineHeight: '30px', color: '#999' }}>
+                  大小型车或品牌型号
+                </p>
               </section>
               <section className={styles.field}>
                 <InputItem

@@ -43,7 +43,10 @@ class FormContent extends React.Component {
       form,
       form: { getFieldValue },
       onCancle,
+      userInfo = {},
+      maxExchangeCount,
     } = this.props;
+
     const { getFieldProps } = form;
     return (
       <div className={[formStyle.formWrap, formStyle.normalLabel].join(' ')}>
@@ -59,8 +62,26 @@ class FormContent extends React.Component {
                 return v;
               },
               validateFirst: true,
-              rules: [{ required: true, whitespace: true, message: '请输入兑换数量' }],
-              // TODO: 判断选择的数量所需的乐蚁果，和自己拥有的乐蚁果的数量
+              rules: [
+                { required: true, whitespace: true, message: '请输入兑换数量' },
+                {
+                  validator: (_, value, callback) => {
+                    if (maxExchangeCount === 0) {
+                      callback('积分不足,无法兑换');
+                      return;
+                    }
+                    if (value <= 0) {
+                      callback('最少兑换1个');
+                      return;
+                    }
+                    if (value > maxExchangeCount) {
+                      callback(`最多可兑换${maxExchangeCount}个`);
+                      return;
+                    }
+                    callback();
+                  },
+                },
+              ],
             })}
           >
             兑换数量
@@ -88,6 +109,7 @@ class FormContent extends React.Component {
                   className="required"
                   {...getFieldProps('recvName', {
                     validateFirst: true,
+                    initialValue: userInfo.username,
                     rules: [{ required: true, whitespace: true, message: '请输入收货人姓名' }],
                   })}
                 >
@@ -100,6 +122,7 @@ class FormContent extends React.Component {
                   className="required"
                   {...getFieldProps('phone', {
                     validateFirst: true,
+                    initialValue: userInfo.phone,
                     rules: [
                       { required: true, whitespace: true, message: '请输入手机号码' },
                       { pattern: phoneReg, message: '请输入正确的手机号码' },
@@ -147,38 +170,11 @@ const FormWrapper = createForm()(FormContent);
 class Detail extends PureComponent {
   state = {
     exchangeModalOpen: false, // 兑换弹出框
-    isExchanged: 'NAN', // 未检查状态, true 已兑换，false 未兑换
   };
 
   componentDidMount() {
     this.getContent();
-    this.checkUserExchangeState();
   }
-
-  checkUserExchangeState = () => {
-    const {
-      dispatch,
-      match: { params },
-      userInfo,
-    } = this.props;
-
-    if (!userInfo.id) return;
-
-    dispatch({
-      type: 'goodsModel/checkUserExchangeState',
-      payload: {
-        id: params.id,
-      },
-    }).then(({ success, result }) => {
-      if (success) {
-        this.setState({
-          isExchanged: result,
-        });
-      } else {
-        Toast.fail('检查兑换情况失败', 2);
-      }
-    });
-  };
 
   getContent = () => {
     const {
@@ -206,6 +202,7 @@ class Detail extends PureComponent {
     });
   };
 
+  // 兑换失败时显示原因
   showReason = () => {
     const { userInfo } = this.props;
     if (!userInfo.id || userInfo.status === AUDIT_STATE_NO_REGISTER) {
@@ -239,23 +236,37 @@ class Detail extends PureComponent {
   };
 
   handleSubmit = values => {
-    // TODO: 判断提交
-    console.log(values);
+    this.exchangeGood(values);
   };
 
-  exchangeGood = () => {
-    const { dispatch, detail, userInfo } = this.props;
-    if (!detail.id) return;
+  // 点击兑换按钮
+  handleClickExchangeBtn = () => {
+    const { detail, userInfo } = this.props;
+    if (!detail.id) {
+      Modal.alert('兑换失败', '无效的商品', [{ text: '好的', onPress: () => {} }]);
+      return;
+    }
 
-    const { restIntegral = 0, usedIntegral = 0, id: userId } = userInfo;
+    const { restIntegral = 0 } = userInfo;
 
-    // 检查自己的乐蚁果是否足够兑换
+    // 检查自己的乐蚁果是否足够至少兑换1个
     if (detail.integral > restIntegral) {
       Modal.alert('兑换失败', `乐蚁果不足：当前可用乐蚁果${restIntegral}`, [
         { text: '好的', onPress: () => {} },
       ]);
       return;
     }
+
+    // 如果足够兑换1个，显示兑换弹出框
+    this.setState({
+      exchangeModalOpen: true,
+    });
+  };
+
+  // 提交兑换
+  exchangeGood = submitData => {
+    const { dispatch, detail, userInfo } = this.props;
+    const { restIntegral = 0, usedIntegral = 0, id: userId } = userInfo;
 
     Modal.alert('确定兑换商品吗？', '', [
       { text: '取消', onPress: () => {}, style: 'default' },
@@ -267,19 +278,29 @@ class Detail extends PureComponent {
             type: 'goodsModel/exchangeGood',
             payload: {
               id: detail.id, // 活动id
+              ...submitData,
             },
           }).then(success => {
             Toast.hide();
             if (success) {
-              this.setState({ isExchanged: true });
+              const payIntegral = detail.integral * submitData.count;
               // 去更新用户的乐蚁果情况
               this.updateDriverIntegral({
                 id: userId,
-                restIntegral: restIntegral - detail.integral,
-                usedIntegral: usedIntegral + detail.integral,
+                restIntegral: restIntegral - payIntegral,
+                usedIntegral: usedIntegral + payIntegral,
               });
 
-              Modal.alert('兑换成功', '请到取货地址及时取货', [
+              // 兑换方式不同，提示的信息不同
+              const { exchangeType } = submitData;
+              let desc = '';
+              if (exchangeType === GOOD_EXCHANGE_TYPE_SELF_MAIL) {
+                desc = `恭喜您已成功兑换[${detail.name}]，请您及时查收快递哦！`;
+              } else {
+                desc = '请到取货地址及时取货';
+              }
+
+              Modal.alert('兑换成功', desc, [
                 {
                   text: '好的',
                   onPress: () => {
@@ -301,7 +322,7 @@ class Detail extends PureComponent {
   };
 
   render() {
-    const { isExchanged, exchangeModalOpen } = this.state;
+    const { exchangeModalOpen } = this.state;
     const { queryLoading, detail, userInfo } = this.props;
 
     if (queryLoading) {
@@ -324,6 +345,16 @@ class Detail extends PureComponent {
       );
     }
 
+    // 计算最多可以兑换多少个商品
+    let maxExchangeCount = 0;
+    // 计算最多可以兑换多少个商品
+    const { restIntegral = 0 } = userInfo;
+    const { integral } = detail;
+    // eslint-disable-next-line no-restricted-globals
+    if (!isNaN(restIntegral) && !isNaN(integral) && +integral !== 0) {
+      maxExchangeCount = Math.floor(restIntegral / integral);
+    }
+
     return (
       <DocumentTitle title="乐蚁果商品详情">
         <Fragment>
@@ -341,11 +372,8 @@ class Detail extends PureComponent {
                 </div>
                 <div className={styles.right}>
                   {userInfo.id && userInfo.status === AUDIT_STATE_PASSED ? (
-                    <span
-                      className={isExchanged ? '' : styles.active}
-                      onClick={() => (isExchanged === false ? this.exchangeGood() : {})}
-                    >
-                      {isExchanged === false ? '兑换' : '已兑换'}
+                    <span className={styles.active} onClick={() => this.handleClickExchangeBtn()}>
+                      兑换
                     </span>
                   ) : (
                     <span onClick={() => this.showReason()}>无法兑换</span>
@@ -370,16 +398,13 @@ class Detail extends PureComponent {
               // 点击模态框不关闭
               onRequestClose={() => false}
             >
-              {/* <PopupHeader
-                left="修改地址"
-                right={<span className={styles.popOk}>确认</span>}
-                rightOnClick={() => {
-                  this.setState({ exchangeModalOpen: false });
-                  return false;
-                }}
-              /> */}
               <div>
-                <FormWrapper onOk={this.handleSubmit} onCancle={this.handleCloseModal} />
+                <FormWrapper
+                  userInfo={userInfo}
+                  maxExchangeCount={maxExchangeCount}
+                  onOk={this.handleSubmit}
+                  onCancle={this.handleCloseModal}
+                />
               </div>
             </Popup>
           </div>

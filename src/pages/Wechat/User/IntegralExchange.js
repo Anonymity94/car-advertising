@@ -6,7 +6,11 @@ import Empty from '@/components/Empty';
 import { Card } from 'antd-mobile';
 import moment from 'moment';
 import styles from './IntegralExchange.less';
-import { INTEGRAL_SETTLEMENT_STATE_YES } from '@/common/constants';
+import {
+  INTEGRAL_SETTLEMENT_STATE_YES,
+  GOOD_EXCHANGE_TYPE_SELF_MAIL,
+  GOOD_EXCHANGE_TYPE_SELF_TAKING,
+} from '@/common/constants';
 import PullToRefreshWrap from '@/components/PullToRefresh';
 
 @connect(({ driverModel: { integralExchanges }, loading }) => ({
@@ -72,15 +76,33 @@ class IntegralExchange extends PureComponent {
                           )}
                         </Fragment>
                       }
-                      extra={<span>兑换码：{item.exchangeCode}</span>}
+                      extra={
+                        <span>
+                          兑换方式：
+                          {item.exchangeType === GOOD_EXCHANGE_TYPE_SELF_MAIL ? '邮寄' : '自取'}
+                        </span>
+                      }
                     />
                     <Card.Body>
-                      <div>{item.goodsName}</div>
+                      <div className={styles.goodsContent}>
+                        <span>
+                          {item.count}个{item.goodsName}-{item.businessName}
+                        </span>
+                        <span>{item.integral}乐蚁果</span>
+                      </div>
+                      <div>
+                        {item.exchangeType === GOOD_EXCHANGE_TYPE_SELF_TAKING && (
+                          <p>兑换码：{item.exchangeCode}</p>
+                        )}
+                        {item.exchangeType === GOOD_EXCHANGE_TYPE_SELF_MAIL && (
+                          <p>邮寄地址：{item.address}</p>
+                        )}
+                      </div>
                     </Card.Body>
                     <Card.Footer
                       content={`${item.createTime &&
                         `${moment(item.createTime).format('YYYY-MM-DD')}/`}${item.businessName}`}
-                      extra={<div>{item.integral}乐蚁果</div>}
+                      extra={<span>退还乐蚁果</span>}
                     />
                   </Card>
                 ))
