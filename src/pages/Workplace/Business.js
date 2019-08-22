@@ -7,7 +7,12 @@ import StandardTable from '@/components/StandardTable';
 
 import styles from './Business.less';
 import { phoneReg } from '@/utils/utils';
-import { BOOLEAN_YES } from '@/common/constants';
+import {
+  BOOLEAN_YES,
+  EXCHANGE_CANCEL_WAITING,
+  EXCHANGE_CANCEL_APPROVE,
+  EXCHANGE_CANCEL_REFUSE,
+} from '@/common/constants';
 
 const MODEL_TYPE_EXCHANGE = 'exchange';
 const MODEL_TYPE_SETTLEMENT = 'settlement';
@@ -30,9 +35,15 @@ const tableColumns = [
     render: (text, record) => `${record.businessName}-${text}`,
   },
   {
+    title: '兑换兑换数量',
+    dataIndex: 'count',
+    align: 'center',
+  },
+  {
     title: '所获乐蚁果',
     dataIndex: 'integral',
     align: 'center',
+    render: (text, record) => `${(record.count || 1) * record.integral}`,
   },
   {
     title: '兑换日期',
@@ -111,8 +122,23 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
         if (exchangeDetail.state === BOOLEAN_YES) {
           return <h3 style={{ color: 'red', textAlign: 'center' }}>已兑换</h3>;
         }
+        if (exchangeDetail.cancelState === EXCHANGE_CANCEL_WAITING) {
+          return <h3 style={{ color: 'red', textAlign: 'center' }}>用户发起退还申请中</h3>;
+        }
+        if (exchangeDetail.cancelState === EXCHANGE_CANCEL_APPROVE) {
+          return (
+            <h3 style={{ color: 'red', textAlign: 'center' }}>
+              已通过用户的退还申请，无法进行兑换
+            </h3>
+          );
+        }
         return (
           <Fragment>
+            {exchangeDetail.cancelState === EXCHANGE_CANCEL_REFUSE && (
+              <h3 style={{ color: 'red', textAlign: 'center' }}>
+                用户发起过退还申请，管理员已驳回了退还申请。请谨慎兑换。
+              </h3>
+            )}
             <Form.Item style={{ marginBottom: 0 }} label="姓名">
               {exchangeDetail.username || '--'}
             </Form.Item>
@@ -122,12 +148,25 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
             <Form.Item style={{ marginBottom: 0 }} label="兑换商品">
               {exchangeDetail.goodsName || '--'}
             </Form.Item>
+            <Form.Item style={{ marginBottom: 0 }} label="兑换数量">
+              {exchangeDetail.count || '1'}
+            </Form.Item>
             <Form.Item style={{ marginBottom: 0 }} label="乐蚁果数">
-              {exchangeDetail.integral || '--'}
+              {exchangeDetail.integral ? (
+                <span>
+                  {(exchangeDetail.count || 1) * exchangeDetail.integral}（
+                  {exchangeDetail.count || 1}个 * {exchangeDetail.integral}）
+                </span>
+              ) : (
+                '--'
+              )}
             </Form.Item>
             <Form.Item style={{ display: 'none' }}>
               {getFieldDecorator('integral', {
-                initialValue: exchangeDetail.integral || 0,
+                initialValue: exchangeDetail.integral
+                  ? // 这里需要计算总数
+                    exchangeDetail.integral * (exchangeDetail.count || 1)
+                  : 0,
               })(<Input />)}
             </Form.Item>
           </Fragment>
@@ -232,14 +271,17 @@ const ModalForm = Form.create({ name: 'form_in_modal' })(
 
 // eslint-disable-next-line react/no-multi-comp
 @Form.create()
-@connect(({ goodsExchangeModel: { goodsExchangeLogs }, login: { currentUser }, loading }) => ({
-  goodsExchangeLogs,
-  currentUser,
-  loading,
-  submitLoading:
-    loading.effects['goodsExchangeModel/auditExchange'] ||
-    loading.effects['businessModel/startIntegralSettlement'],
-}))
+@connect(
+  ({ goodsExchangeModel: { finishLogs, takingFinishLogs }, login: { currentUser }, loading }) => ({
+    finishLogs,
+    takingFinishLogs,
+    currentUser,
+    loading,
+    submitLoading:
+      loading.effects['goodsExchangeModel/auditExchange'] ||
+      loading.effects['businessModel/startIntegralSettlement'],
+  })
+)
 class Workplace extends PureComponent {
   state = {
     modalType: '',
@@ -353,7 +395,14 @@ class Workplace extends PureComponent {
 
   render() {
     const { visible, modalType } = this.state;
-    const { loading, dispatch, currentUser, goodsExchangeLogs, submitLoading } = this.props;
+    const {
+      loading,
+      dispatch,
+      currentUser,
+      finishLogs,
+      takingFinishLogs,
+      submitLoading,
+    } = this.props;
     return (
       <Fragment>
         <Card size="small" bordered={false} style={{ marginBottom: 20 }}>
@@ -368,7 +417,7 @@ class Workplace extends PureComponent {
             </Col>
             <Col sm={24} md={7} style={{ textAlign: 'center' }}>
               <p className={styles.label}>已服务客户</p>
-              <p className={styles.value}>{goodsExchangeLogs.length}人</p>
+              <p className={styles.value}>{finishLogs.length}人</p>
             </Col>
             <Col sm={24} md={5} style={{ textAlign: 'center' }}>
               <p className={styles.label}>可提现乐蚁果</p>
@@ -408,7 +457,7 @@ class Workplace extends PureComponent {
             rowKey="id"
             loading={loading.effects['goodsExchangeModel/queryExchangeLogs']}
             columns={tableColumns}
-            data={{ list: goodsExchangeLogs }}
+            data={{ list: takingFinishLogs }}
           />
         </Card>
 

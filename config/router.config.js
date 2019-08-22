@@ -180,6 +180,13 @@ export default [
         component: './Workplace/Business',
         authority: ['business'],
       },
+      {
+        path: '/sele-mail-manager',
+        name: 'sele-mail-manager',
+        icon: 'dashboard',
+        component: './Workplace/SeleMail',
+        authority: ['business'],
+      },
       // 管理员工作台
       {
         path: '/workplace',

@@ -138,8 +138,9 @@ class IntegralExchange extends PureComponent {
 
   doGiveback = (id, cancelState, reason = '') => {
     const { dispatch, userInfo, integralExchanges } = this.props;
+    Toast.loading('提交中...', 0);
     dispatch({
-      type: 'goodsExchangeModel/updateEchangeLog',
+      type: 'goodsExchangeModel/updateExchangeLog',
       payload: {
         id,
         cancelState,
@@ -147,6 +148,7 @@ class IntegralExchange extends PureComponent {
         applyCancelTime: moment().format('YYYY-MM-DD HH:mm:ss'),
       },
     }).then(success => {
+      Toast.hide();
       if (!success) {
         Modal.alert('退还失败', '请稍候再试', [
           {
@@ -160,7 +162,7 @@ class IntegralExchange extends PureComponent {
           const { restIntegral = 0, usedIntegral = 0, id: userId } = userInfo;
           const find = integralExchanges.find(item => item.id === id);
           if (find) {
-            const payIntegral = find.integral * find.count;
+            const payIntegral = find.integral * (find.count || 1);
             this.updateDriverIntegral({
               id: userId,
               restIntegral: restIntegral - payIntegral,
@@ -249,7 +251,7 @@ class IntegralExchange extends PureComponent {
                     <Card.Body>
                       <div className={styles.goodsContent}>
                         <span>
-                          {item.count}个{item.goodsName}-{item.businessName}
+                          {item.count || 1}个{item.goodsName}-{item.businessName}
                         </span>
                         <span>{item.integral}乐蚁果</span>
                       </div>

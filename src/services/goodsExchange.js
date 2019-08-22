@@ -38,8 +38,8 @@ export async function auditExchange({ exchangeCode }) {
  * 审核退还申请
  */
 export async function updateExchangeLog({ id, ...restParams }) {
-  return request(`/api/goods-ext/exchange/logs?id=${id}`, {
-    method: 'POST',
+  return request(`/api/goods-ext/exchange/update?id=${id}`, {
+    method: 'PUT',
     body: {
       ...restParams,
     },

@@ -7,12 +7,29 @@ import {
   queryExchangeDetail,
   updateExchangeLog,
 } from '@/services/goodsExchange';
+import {
+  BOOLEAN_YES,
+  GOOD_EXCHANGE_TYPE_SELF_TAKING,
+  GOOD_EXCHANGE_TYPE_SELF_MAIL,
+  EXCHANGE_CANCEL_APPROVE,
+  EXCHANGE_CANCEL_REFUSE,
+  EXCHANGE_CANCEL_WAITING,
+  BOOLEAN_NO,
+} from '@/common/constants';
 
 export default modelExtend(model, {
   namespace: 'goodsExchangeModel',
 
   state: {
-    goodsExchangeLogs: [], // 商户下所有商品的兑换记录
+    totalLogs: [],
+
+    takingFinishLogs: [],
+    tobeMailedLogs: [],
+    tobeGivebackLogs: [],
+    givebackFinishLogs: [],
+    mailedFinishLogs: [],
+
+    finishLogs: [], // 总共完成的
   },
 
   effects: {
@@ -21,10 +38,63 @@ export default modelExtend(model, {
      */
     *queryExchangeLogs({ payload }, { call, put }) {
       const { success, result } = yield call(queryExchangeLogs, payload);
+
+      // 根据状态区分
+      const takingFinishLogs = []; // 自取已兑换客户 state=1&exchangeType=0
+      const tobeMailedLogs = []; // 待邮寄 state=0&exchangeType=1&[0,3].indexOf(cancelState) > -1
+      const tobeGivebackLogs = []; // 待退还 cancelState=1
+      const givebackFinishLogs = []; // 已退还完成 cancelState=2
+      const mailedFinishLogs = []; // 已邮寄完成。state=1&exchangeType=1
+      const finishLogs = []; // 兑换完成的，不区分兑换方式 state=1
+
+      if (success && Array.isArray(result)) {
+        result.forEach(item => {
+          const { state, exchangeType, cancelState } = item;
+          // 自取已完成
+          if (state === BOOLEAN_YES && exchangeType === GOOD_EXCHANGE_TYPE_SELF_TAKING) {
+            takingFinishLogs.push(item);
+          }
+          // 待邮寄
+          if (
+            state === BOOLEAN_NO &&
+            exchangeType === GOOD_EXCHANGE_TYPE_SELF_MAIL &&
+            cancelState !== EXCHANGE_CANCEL_APPROVE &&
+            cancelState !== EXCHANGE_CANCEL_REFUSE
+          ) {
+            tobeMailedLogs.push(item);
+          }
+          // 待退还
+          if (cancelState === EXCHANGE_CANCEL_WAITING) {
+            tobeGivebackLogs.push(item);
+          }
+
+          // 退还完成
+          if (cancelState === EXCHANGE_CANCEL_APPROVE) {
+            givebackFinishLogs.push(item);
+          }
+
+          // 邮寄完成
+          if (state === BOOLEAN_YES && exchangeType === GOOD_EXCHANGE_TYPE_SELF_MAIL) {
+            mailedFinishLogs.push(item);
+          }
+
+          // 不区分兑换类型，用户总完成的
+          if (state === BOOLEAN_YES) {
+            finishLogs.push(item);
+          }
+        });
+      }
+
       yield put({
         type: 'updateState',
         payload: {
-          goodsExchangeLogs: success ? result : [],
+          takingFinishLogs,
+          tobeMailedLogs,
+          tobeGivebackLogs,
+          givebackFinishLogs,
+          mailedFinishLogs,
+          finishLogs,
+          totalLogs: success ? result : [],
         },
       });
     },
@@ -53,7 +123,7 @@ export default modelExtend(model, {
       return success;
     },
 
-    *updateEchangeLog({ payload }, { call }) {
+    *updateExchangeLog({ payload }, { call }) {
       const { success } = yield call(updateExchangeLog, payload);
       return success;
     },

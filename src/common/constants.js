@@ -165,12 +165,12 @@ export const WECHAT_APP_SECRET = '429c9d561e8009e0586e6f5d1c4d28b5';
 /**
  * 商品兑换方式：自取
  */
-export const GOOD_EXCHANGE_TYPE_SELF_TAKING = 0;
+export const GOOD_EXCHANGE_TYPE_SELF_TAKING = '0';
 
 /**
  * 商品兑换方式：邮寄
  */
-export const GOOD_EXCHANGE_TYPE_SELF_MAIL = 1;
+export const GOOD_EXCHANGE_TYPE_SELF_MAIL = '1';
 
 /**
  * 商品兑换方式

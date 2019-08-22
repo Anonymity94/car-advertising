@@ -120,7 +120,7 @@ class FormContent extends React.Component {
                 <InputItem
                   placeholder="请输入手机号码"
                   className="required"
-                  {...getFieldProps('phone', {
+                  {...getFieldProps('recvPhone', {
                     validateFirst: true,
                     initialValue: userInfo.phone,
                     rules: [

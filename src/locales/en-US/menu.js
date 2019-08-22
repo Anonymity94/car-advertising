@@ -1,6 +1,8 @@
 export default {
   'menu.home': '首页',
   'menu.workplace': '工作台',
+  'menu.business-workplace': '自取商品兑换管理',
+  'menu.sele-mail-manager': '邮寄商品兑换管理',
   'menu.application': '审核管理',
   'menu.application.driver': '人员管理',
   'menu.application.driver.list': '人员列表',
@@ -11,6 +13,7 @@ export default {
 
   'menu.application.ad-signing': '广告签约管理',
   'menu.application.ad-signing.paste': '粘贴广告',
+  'menu.ad-signing-qrcode': '签约确认',
   'menu.application.ad-signing.paste.detail': '详情',
   'menu.application.ad-signing.settlement': '签约金结算',
   'menu.application.ad-signing.settlement.detail': '详情',
@@ -36,6 +39,7 @@ export default {
   'menu.integral.goods': '商品乐蚁果管理',
   'menu.integral.goods.list': '商品乐蚁果列表',
   'menu.integral.goods.create': '新增商品',
+  'menu.integral.goods.update': '编辑商品',
 
   'menu.user': '人员管理',
   'menu.user.driver': '车主档案',
@@ -43,4 +47,6 @@ export default {
   'menu.user.admin': '管理员档案',
 
   'menu.account.logout': '退出登录',
+
+  'menu.h5.bind': '绑定手机号',
 };
