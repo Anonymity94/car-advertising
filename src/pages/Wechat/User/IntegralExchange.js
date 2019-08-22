@@ -3,7 +3,7 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import Loading from '@/components/Loading';
 import Empty from '@/components/Empty';
-import { Card } from 'antd-mobile';
+import { Card, Modal, Toast } from 'antd-mobile';
 import moment from 'moment';
 import styles from './IntegralExchange.less';
 import {
@@ -11,11 +11,15 @@ import {
   GOOD_EXCHANGE_TYPE_SELF_MAIL,
   GOOD_EXCHANGE_TYPE_SELF_TAKING,
   EXCHANGE_CANCEL_WAITING,
+  INTEGRAL_SETTLEMENT_STATE_NO,
+  EXCHANGE_CANCEL_APPROVE,
+  EXCHANGE_CANCEL_REFUSE,
 } from '@/common/constants';
 import PullToRefreshWrap from '@/components/PullToRefresh';
 
-@connect(({ driverModel: { integralExchanges }, loading }) => ({
+@connect(({ driverModel: { integralExchanges }, driverModel: { detail: userInfo }, loading }) => ({
   integralExchanges,
+  userInfo,
   loading: loading.effects['driverModel/queryUserExchanges'],
 }))
 class IntegralExchange extends PureComponent {
@@ -49,6 +53,146 @@ class IntegralExchange extends PureComponent {
     );
   };
 
+  handleGiveback = exchangeLog => {
+    const { state, id, cancelState, exchangeType } = exchangeLog;
+    if (cancelState === EXCHANGE_CANCEL_WAITING) {
+      Modal.alert('退还审核中', '请耐心等待审核', [
+        {
+          text: '知道了',
+          onPress: () => {},
+        },
+      ]);
+      return;
+    }
+
+    if (cancelState === EXCHANGE_CANCEL_APPROVE) {
+      Modal.alert('退还已完成', '退还已完成，无法再次退还', [
+        {
+          text: '知道了',
+          onPress: () => {},
+        },
+      ]);
+      return;
+    }
+
+    // 1. 自取
+    if (exchangeType === GOOD_EXCHANGE_TYPE_SELF_TAKING) {
+      // 1.1 没有使用，直接取消
+      if (state === INTEGRAL_SETTLEMENT_STATE_NO) {
+        this.doGiveback(id, EXCHANGE_CANCEL_APPROVE);
+        return;
+      }
+      // 已经使用了，需要填写原因
+      if (state === INTEGRAL_SETTLEMENT_STATE_YES) {
+        this.showReasonModal(id);
+        return;
+      }
+    }
+
+    // 2. 邮寄
+    if (exchangeType === GOOD_EXCHANGE_TYPE_SELF_MAIL) {
+      if (state === INTEGRAL_SETTLEMENT_STATE_NO) {
+        this.doGiveback(id, EXCHANGE_CANCEL_APPROVE);
+        return;
+      }
+      // 已经使用了，需要填写原因
+      if (state === INTEGRAL_SETTLEMENT_STATE_YES) {
+        this.showReasonModal(id);
+        return;
+      }
+    }
+
+    Modal.alert('退还失败', '不符合退还条件', [
+      {
+        text: '知道了',
+        onPress: () => {},
+      },
+    ]);
+  };
+
+  showReasonModal = id => {
+    Modal.prompt(
+      '退还乐蚁果',
+      '请输入退还原因',
+      [
+        {
+          text: '取消',
+        },
+        {
+          text: '提交',
+          onPress: reason => {
+            if (!reason || !reason.replace(/ /g, '')) {
+              Toast.info('请填写退还原因', 1);
+              return;
+            }
+            // 提交退还申请
+            this.doGiveback(id, EXCHANGE_CANCEL_WAITING, reason);
+          },
+        },
+      ],
+      'default',
+      null,
+      ['填写退还原因']
+    );
+  };
+
+  doGiveback = (id, cancelState, reason = '') => {
+    const { dispatch, userInfo, integralExchanges } = this.props;
+    dispatch({
+      type: 'goodsExchangeModel/updateEchangeLog',
+      payload: {
+        id,
+        cancelState,
+        reason,
+        applyCancelTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      },
+    }).then(success => {
+      if (!success) {
+        Modal.alert('退还失败', '请稍候再试', [
+          {
+            text: '知道了',
+            onPress: () => {},
+          },
+        ]);
+      } else {
+        // 如果直接退还完成，需要返回用户的乐蚁果
+        if (cancelState === EXCHANGE_CANCEL_APPROVE) {
+          const { restIntegral = 0, usedIntegral = 0, id: userId } = userInfo;
+          const find = integralExchanges.find(item => item.id === id);
+          if (find) {
+            const payIntegral = find.integral * find.count;
+            this.updateDriverIntegral({
+              id: userId,
+              restIntegral: restIntegral - payIntegral,
+              usedIntegral: usedIntegral + payIntegral,
+            });
+          }
+        }
+        Modal.alert('退还成功', '', [
+          {
+            text: '知道了',
+            onPress: () => {},
+          },
+        ]);
+      }
+    });
+  };
+
+  /**
+   * 退还用户的乐蚁果
+   */
+  updateDriverIntegral = ({ id, restIntegral, usedIntegral }) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'driverModel/updateDriverIntegral',
+      payload: {
+        id,
+        restIntegral,
+        usedIntegral,
+      },
+    });
+  };
+
   render() {
     const { refresh } = this.state;
     const { integralExchanges, loading } = this.props;
@@ -56,6 +200,24 @@ class IntegralExchange extends PureComponent {
     if (loading && !refresh) {
       return <Loading />;
     }
+
+    const renderExtraHtml = log => {
+      const { cancelState } = log;
+      if (cancelState === EXCHANGE_CANCEL_WAITING) {
+        return <span>退还审核中</span>;
+      }
+      if (cancelState === EXCHANGE_CANCEL_APPROVE) {
+        return <span>已退还</span>;
+      }
+      if (cancelState === EXCHANGE_CANCEL_REFUSE) {
+        return <span>退还被拒绝</span>;
+      }
+      return (
+        <span onClick={() => this.handleGiveback(log)} className={styles.applyCancelBtn}>
+          退还乐蚁果
+        </span>
+      );
+    };
 
     return (
       <DocumentTitle title="兑换记录">
@@ -103,13 +265,7 @@ class IntegralExchange extends PureComponent {
                     <Card.Footer
                       content={`${item.createTime &&
                         `${moment(item.createTime).format('YYYY-MM-DD')}/`}${item.businessName}`}
-                      extra={
-                        item.cancelState === EXCHANGE_CANCEL_WAITING ? (
-                          <span className={styles.applyCancelBtn}>退还乐蚁果</span>
-                        ) : (
-                          <span>退还审核中</span>
-                        )
-                      }
+                      extra={renderExtraHtml(item)}
                     />
                   </Card>
                 ))
